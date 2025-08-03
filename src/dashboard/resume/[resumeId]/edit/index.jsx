@@ -15,13 +15,16 @@ function EditResume() {
         setResumeInfo(dummy);
     },[])
 
-
-    const GetResumeInfo=()=>{
-        GlobalApi.GetResumeById(resumeId).then(resp=>{
-          console.log(resp.data.data);
-          setResumeInfo(resp.data.data);
+    const GetResumeInfo = () => {
+      GlobalApi.GetResumeById(resumeId)
+        .then((data) => {
+          console.log("✅ Resume fetched:", data);
+          setResumeInfo(data); // Updated: API already returns .data
         })
-    }
+        .catch((err) => {
+          console.error("❌ Error fetching resume:", err);
+        });
+    };
 
   return (
     <ResumeInfoContext.Provider value={{resumeInfo,setResumeInfo}}>

@@ -1,30 +1,40 @@
-import axios from "axios";
+// src/service/GlobalApi.js
+import axios from 'axios';
 
+const API_BASE = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5001/api';
 
-const API_KEY=import.meta.env.VITE_STRAPI_API_KEY;
-const axiosClient=axios.create({
-    baseURL:import.meta.env.VITE_API_BASE_URL+"/api/",
-    headers:{
-        'Content-Type':'application/json',
-        'Authorization':`Bearer ${API_KEY}`
-    }
-})
+const axiosClient = axios.create({
+  baseURL: API_BASE,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
+// Create a new resume
+const CreateNewResume = (data) =>
+  axiosClient.post('/resumes', data).then(res => res.data);
 
-const CreateNewResume=(data)=>axiosClient.post('/user-resumes',data);
+// Get all resumes (e.g., for a user)
+const GetUserResumes = () =>
+  axiosClient.get('/resumes').then(res => res.data);
 
-const GetUserResumes=(userEmail)=>axiosClient.get('/user-resumes?filters[userEmail][$eq]='+userEmail);
+// Get a specific resume by ID
+const GetResumeById = (id) =>
+  axiosClient.get(`/resumes/${id}`).then(res => res.data);
 
-const UpdateResumeDetail=(id,data)=>axiosClient.put('/user-resumes/'+id,data)
+// Update a resume by ID
+const UpdateResumeDetail = (id, data) =>
+  axiosClient.put(`/resumes/${id}`, data).then(res => res.data);
 
-const GetResumeById=(id)=>axiosClient.get('/user-resumes/'+id+"?populate=*")
+// Delete a resume by ID
+const DeleteResumeById = (id) =>
+  axiosClient.delete(`/resumes/${id}`).then(res => res.data);
 
-const DeleteResumeById=(id)=>axiosClient.delete('/user-resumes/'+id)
-
-export default{
-    CreateNewResume,
-    GetUserResumes,
-    UpdateResumeDetail,
-    GetResumeById,
-    DeleteResumeById
-}
+// Export all methods
+export default {
+  CreateNewResume,
+  GetUserResumes,
+  GetResumeById,
+  UpdateResumeDetail,
+  DeleteResumeById,
+};
