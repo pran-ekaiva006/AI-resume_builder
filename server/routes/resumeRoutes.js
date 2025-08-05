@@ -2,8 +2,17 @@ const express = require('express');
 const router = express.Router();
 const ResumeController = require('../controllers/ResumeController');
 
+// Create resume
 router.post('/', ResumeController.createResume);
-// If you want GET support, add this:
+
+// Get all resumes
 router.get('/', ResumeController.getAllResumes);
+
+// Get resume by ID
+router.get('/:id', ResumeController.getResumeById);
+
+// Update resume by ID
+
+router.put('/:id', ResumeController.updateResume);
 
 module.exports = router;

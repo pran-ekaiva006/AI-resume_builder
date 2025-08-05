@@ -14,7 +14,7 @@ function Summery({ enabledNext }) {
   const [summery, setSummery] = useState('');
   const [loading, setLoading] = useState(false);
   const [aiGeneratedSummeryList, setAiGenerateSummeryList] = useState([]);
-  const resumeId = resumeInfo?.id;
+  const resumeId = resumeInfo?._id;
 
   useEffect(() => {
     if (summery) {
@@ -41,10 +41,10 @@ function Summery({ enabledNext }) {
       toast.error("Resume ID is missing!");
       return;
     }
-
+  
     setLoading(true);
-    const data = { data: { summery } };
-
+    const data = { summery };
+  
     try {
       await GlobalApi.UpdateResumeDetail(resumeId, data);
       enabledNext(true);
@@ -55,7 +55,7 @@ function Summery({ enabledNext }) {
       setLoading(false);
     }
   };
-
+  
   return (
     <div>
       <div className='p-5 shadow-lg rounded-lg border-t-primary border-t-4 mt-10'>

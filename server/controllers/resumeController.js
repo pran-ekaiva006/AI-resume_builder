@@ -1,31 +1,74 @@
+// server/controllers/ResumeController.js
 
+const Resume = require('../models/Resume'); // Use model once, reuse throughout
 
-exports.createResume = async (req, res) => {
+// Create new resume
+const createResume = async (req, res) => {
   try {
-    const resume = new NewResume(req.body);
-    const savedResume = await resume.save();
-    res.status(201).json(savedResume); 
-    
-    
-    console.log("Saved resume:", savedResume);
-// ✅ Return the saved document directly
-  } catch (err) {
-    console.error("Error creating resume:", err.message);
-    res.status(400).json({ error: err.message });
+    console.log("📥 Received resume data:", req.body);
+
+    const resume = new Resume(req.body);
+    await resume.save();
+
+    console.log("✅ Resume saved to DB:", resume);
+
+    res.status(201).json({
+      message: "Resume created successfully",
+      resume,
+    });
+  } catch (error) {
+    console.error("❌ Error creating resume:", error);
+    res.status(500).json({ message: "Failed to create resume", error: error.message });
   }
 };
 
-
-
-exports.getAllResumes = async (req, res) => {
+// Get all resumes
+const getAllResumes = async (req, res) => {
   try {
-    const resumes = await NewResume.find();
-    res.status(200).json({
-      message: "Resumes fetched successfully",
-      resumes,
-    });
-  } catch (err) {
-    console.error("Error fetching resumes:", err.message);
-    res.status(500).json({ error: err.message });
+    const resumes = await Resume.find();
+    res.json(resumes);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching resumes', error: error.message });
   }
+};
+
+// Get resume by ID
+const getResumeById = async (req, res) => {
+  try {
+    const resume = await Resume.findById(req.params.id);
+    if (!resume) {
+      return res.status(404).json({ message: 'Resume not found' });
+    }
+    res.json(resume);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+// Update resume by ID
+const updateResume = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+
+    const updatedResume = await Resume.findByIdAndUpdate(id, updateData, { new: true });
+    if (!updatedResume) {
+      return res.status(404).json({ message: 'Resume not found' });
+    }
+
+    res.json({
+      message: 'Resume updated successfully',
+      updatedResume
+    });
+  } catch (error) {
+    console.error("❌ Error updating resume:", error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+module.exports = {
+  createResume,
+  getAllResumes,
+  getResumeById,
+  updateResume,
 };

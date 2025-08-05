@@ -8,7 +8,7 @@ import GlobalApi from './../../../../../service/GlobalApi';
 import { toast } from 'sonner';
 
 function PersonalDetail({ enabledNext }) {
-  const { resumeId } = useParams(); // ✅ get id from URL
+  const { resumeId } = useParams(); // ✅ Get resume ID from URL
   const { resumeInfo, setResumeInfo } = useContext(ResumeInfoContext);
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
@@ -32,10 +32,20 @@ function PersonalDetail({ enabledNext }) {
   const onSave = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+  
+    console.log('resumeId:', resumeId);
+    console.log('Data being sent:', formData);
+  
+    // Add this check here:
+    if (!resumeId) {
+      toast.error('Resume ID is missing, cannot update');
+      setLoading(false);
+      return;
+    }
+  
     try {
-      const resp = await GlobalApi.UpdateResumeDetail(resumeId, formData); // ✅ send formData directly
-      console.log('✅ Resume updated:', resp);
+      const response = await GlobalApi.UpdateResumeDetail(resumeId, formData);
+      console.log('✅ Resume updated:', response);
       toast.success('Details updated');
       enabledNext(true);
     } catch (error) {
@@ -45,6 +55,7 @@ function PersonalDetail({ enabledNext }) {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className='p-5 shadow-lg rounded-lg border-t-primary border-t-4 mt-10'>

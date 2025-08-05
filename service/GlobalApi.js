@@ -1,8 +1,9 @@
-// src/service/GlobalApi.js
 import axios from 'axios';
 
-const API_BASE = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5001/api';
+// ✅ Use environment variable OR fallback to localhost
+const API_BASE = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:5001/api').trim();
 
+// ✅ Create an axios instance with default headers
 const axiosClient = axios.create({
   baseURL: API_BASE,
   headers: {
@@ -10,27 +11,29 @@ const axiosClient = axios.create({
   },
 });
 
-// Create a new resume
+// ✅ Create a new resume
 const CreateNewResume = (data) =>
-  axiosClient.post('/resumes', data).then(res => res.data);
+  axiosClient.post('/resumes', data).then((res) => res.data);
 
-// Get all resumes (e.g., for a user)
+// ✅ Get all resumes
 const GetUserResumes = () =>
-  axiosClient.get('/resumes').then(res => res.data);
+  axiosClient.get('/resumes').then((res) => res.data);
 
-// Get a specific resume by ID
+// ✅ Get a specific resume by MongoDB _id
 const GetResumeById = (id) =>
-  axiosClient.get(`/resumes/${id}`).then(res => res.data);
+  axiosClient.get(`/resumes/${id}`).then((res) => res.data);
 
-// Update a resume by ID
+
+// ✅ Update a resume by MongoDB _id
+// ✅ correct
 const UpdateResumeDetail = (id, data) =>
-  axiosClient.put(`/resumes/${id}`, data).then(res => res.data);
+  axiosClient.put('/resumes/' + id, data).then((res) => res.data);
 
-// Delete a resume by ID
+// ✅ Delete a resume by MongoDB _id
 const DeleteResumeById = (id) =>
-  axiosClient.delete(`/resumes/${id}`).then(res => res.data);
+  axiosClient.delete(`/resumes/${id}`).then((res) => res.data);
 
-// Export all methods
+// ✅ Export all functions
 export default {
   CreateNewResume,
   GetUserResumes,
