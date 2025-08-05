@@ -49,9 +49,11 @@ const getResumeById = async (req, res) => {
 const updateResume = async (req, res) => {
   try {
     const { id } = req.params;
-    const updateData = req.body;
+    const updateData = req.body;  // ✅ FIXED HERE
+    console.log("🪵 updateData:", updateData);
 
     const updatedResume = await Resume.findByIdAndUpdate(id, updateData, { new: true });
+
     if (!updatedResume) {
       return res.status(404).json({ message: 'Resume not found' });
     }
@@ -65,6 +67,8 @@ const updateResume = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+
+
 
 module.exports = {
   createResume,

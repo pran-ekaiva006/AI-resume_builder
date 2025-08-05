@@ -8,7 +8,9 @@ import GlobalApi from './../../../../../service/GlobalApi';
 import { toast } from 'sonner';
 
 function PersonalDetail({ enabledNext }) {
-  const { resumeId } = useParams(); // ✅ Get resume ID from URL
+  const { resumeId } = useParams();
+console.log('resumeId:', resumeId); // ⛔ Will say "undefined" if not passed via URL
+
   const { resumeInfo, setResumeInfo } = useContext(ResumeInfoContext);
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
@@ -30,32 +32,33 @@ function PersonalDetail({ enabledNext }) {
   };
 
   const onSave = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-  
-    console.log('resumeId:', resumeId);
-    console.log('Data being sent:', formData);
-  
-    // Add this check here:
-    if (!resumeId) {
-      toast.error('Resume ID is missing, cannot update');
-      setLoading(false);
-      return;
-    }
-  
-    try {
-      const response = await GlobalApi.UpdateResumeDetail(resumeId, formData);
-      console.log('✅ Resume updated:', response);
-      toast.success('Details updated');
-      enabledNext(true);
-    } catch (error) {
-      console.error('❌ Error updating resume:', error);
-      toast.error('Failed to update');
-    } finally {
-      setLoading(false);
-    }
-  };
-  
+  e.preventDefault();
+  setLoading(true);
+
+  console.log('🧪 resumeId:', resumeId);
+  console.log('📤 Data being sent:', formData);
+
+  // ❗ Check if resumeId is valid
+  if (!resumeId || resumeId === 'undefined') {
+    toast.error('❌ Resume ID is missing or invalid. Cannot update.');
+    setLoading(false);
+    return;
+  }
+
+  try {
+    const response = await GlobalApi.UpdateResumeDetail(resumeId, formData);
+
+    console.log('✅ Resume updated successfully:', response);
+    toast.success('Details updated ✅');
+    enabledNext(true); // Enable next step if needed
+  } catch (error) {
+    console.error('❌ Error updating resume:', error);
+    toast.error('Failed to update resume ❌');
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className='p-5 shadow-lg rounded-lg border-t-primary border-t-4 mt-10'>

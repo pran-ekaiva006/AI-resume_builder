@@ -23,11 +23,9 @@ const GetUserResumes = () =>
 const GetResumeById = (id) =>
   axiosClient.get(`/resumes/${id}`).then((res) => res.data);
 
-
 // ✅ Update a resume by MongoDB _id
-// ✅ correct
 const UpdateResumeDetail = (id, data) =>
-  axiosClient.put('/resumes/' + id, data).then((res) => res.data);
+  axiosClient.put(`/resumes/${id}`, data).then((res) => res.data);
 
 // ✅ Delete a resume by MongoDB _id
 const DeleteResumeById = (id) =>

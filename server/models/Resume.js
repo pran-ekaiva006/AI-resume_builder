@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { stringify } = require('querystring');
 
 const resumeSchema = new mongoose.Schema({
   resumeId: {
@@ -33,19 +34,24 @@ const resumeSchema = new mongoose.Schema({
   summery: String,
   experience: [
     {
-      company: String,
-      role: String,
-      startYear: String,
-      endYear: String,
-      description: String,
+      title: String,         // ✅ not 'role'
+      companyName: String,   // ✅ not 'company'
+      city: String,
+      state: String,
+      startDate: String,
+      endDate: String,
+      workSummery: String,   // ✅ not 'description'
     },
   ],
+  
   education: [
     {
-      school: String,
+      universityName: String,
       degree: String,
       startYear: String,
       endYear: String,
+      major:String,
+      description:String,
     },
   ],
   skills: [String],

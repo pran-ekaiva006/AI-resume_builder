@@ -5,6 +5,7 @@ import Summery from './forms/Summery';
 import Experience from './forms/Experience';
 import Education from './forms/Education';
 import { ArrowLeft, ArrowRight, LayoutGrid } from 'lucide-react';
+import Skills from './forms/Skills';
 
 function FormSection({ resumeId }) {
   const [activeFormIndex, setActiveFormIndex] = useState(1);
@@ -37,6 +38,7 @@ function FormSection({ resumeId }) {
       {activeFormIndex === 2 && <Summery enabledNext={setEnableNext} resumeId={resumeId} />}
       {activeFormIndex === 3 && <Experience enabledNext={setEnableNext} resumeId={resumeId} />}
       {activeFormIndex === 4 && <Education enabledNext={setEnableNext} resumeId={resumeId} />}
+      {activeFormIndex === 5 && <Skills enabledNext={setEnableNext} resumeId={resumeId}/>}
     </div>
   );
 }
