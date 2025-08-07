@@ -7,7 +7,22 @@ import { Brain, LoaderCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { AIchatSession } from './../../../../../service/AIModal';
 
-const prompt = 'Job Title: {jobTitle} , Depends on job title give me list of  summery for 3 experience level, Mid Level and Freasher level in 3 -4 lines in array format, With summery and experience_level Field in JSON Format';
+const prompt = `Generate 3 professional resume summaries for a {jobTitle} position at different experience levels.
+IMPORTANT: Respond ONLY with a JSON array in this EXACT format, no other text:
+[
+  {
+    "experience_level": "Mid Level",
+    "summary": "4+ years experience..."
+  },
+  {
+    "experience_level": "Entry Level",
+    "summary": "2 years experience..."
+  },
+  {
+    "experience_level": "Fresher Level",
+    "summary": "Recent graduate..."
+  }
+] JSON array`;
 
 function Summery({ enabledNext }) {
   const { resumeInfo, setResumeInfo } = useContext(ResumeInfoContext);
@@ -24,15 +39,28 @@ function Summery({ enabledNext }) {
 
   const GenerateSummeryFromAI = async () => {
     setLoading(true);
-    const PROMPT = prompt.replace('{jobTitle}', resumeInfo?.jobTitle || '');
     try {
+      const PROMPT = prompt.replace('{jobTitle}', resumeInfo?.jobTitle || '');
       const result = await AIchatSession.sendMessage(PROMPT);
-      const parsed = JSON.parse(await result.response.text());
-      setAiGenerateSummeryList(parsed);
-    } catch (e) {
-      toast.error("AI response parsing failed");
+      const rawText = await result.response.text();
+      
+      // Parse the JSON response
+      const parsed = JSON.parse(rawText);
+      
+      if (Array.isArray(parsed) && parsed.every(item => 
+        item.experience_level && item.summary
+      )) {
+        setAiGenerateSummeryList(parsed);
+        toast.success("AI suggestions generated!");
+      } else {
+        throw new Error("Invalid response format");
+      }
+    } catch (error) {
+      console.error("AI Error:", error);
+      toast.error("Failed to generate suggestions");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const onSave = async (e) => {

@@ -12,9 +12,13 @@ const createResume = async (req, res) => {
 
     console.log("✅ Resume saved to DB:", resume);
 
+    // Map resumeId to documentId in the response
+    const obj = resume.toObject();
+    obj.documentId = obj.resumeId;
+
     res.status(201).json({
       message: "Resume created successfully",
-      resume,
+      resume: obj,
     });
   } catch (error) {
     console.error("❌ Error creating resume:", error);
@@ -26,7 +30,13 @@ const createResume = async (req, res) => {
 const getAllResumes = async (req, res) => {
   try {
     const resumes = await Resume.find();
-    res.json(resumes);
+    // Map resumeId to documentId for each resume
+    const mappedResumes = resumes.map(r => {
+      const obj = r.toObject();
+      obj.documentId = obj.resumeId;
+      return obj;
+    });
+    res.json(mappedResumes);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching resumes', error: error.message });
   }
@@ -39,17 +49,23 @@ const getResumeById = async (req, res) => {
     if (!resume) {
       return res.status(404).json({ message: 'Resume not found' });
     }
-    res.json(resume);
+    // Map resumeId to documentId
+    const obj = resume.toObject();
+    obj.documentId = obj.resumeId;
+    res.json(obj);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
 // Update resume by ID
+// Update resume by ID
 const updateResume = async (req, res) => {
   try {
     const { id } = req.params;
-    const updateData = req.body;  // ✅ FIXED HERE
+    const updateData = req.body;
+
+    console.log("📥 Incoming data:", req.body);
     console.log("🪵 updateData:", updateData);
 
     const updatedResume = await Resume.findByIdAndUpdate(id, updateData, { new: true });
@@ -58,18 +74,19 @@ const updateResume = async (req, res) => {
       return res.status(404).json({ message: 'Resume not found' });
     }
 
+    // Map resumeId to documentId
+    const obj = updatedResume.toObject();
+    obj.documentId = obj.resumeId;
+
     res.json({
       message: 'Resume updated successfully',
-      updatedResume
+      updatedResume: obj
     });
   } catch (error) {
     console.error("❌ Error updating resume:", error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
-
-
-
 module.exports = {
   createResume,
   getAllResumes,

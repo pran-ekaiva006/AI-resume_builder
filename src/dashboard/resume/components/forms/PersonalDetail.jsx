@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 
 function PersonalDetail({ enabledNext }) {
   const { resumeId } = useParams();
-console.log('resumeId:', resumeId); // ⛔ Will say "undefined" if not passed via URL
+  console.log('resumeId:', resumeId);
 
   const { resumeInfo, setResumeInfo } = useContext(ResumeInfoContext);
   const [formData, setFormData] = useState({});
@@ -32,33 +32,34 @@ console.log('resumeId:', resumeId); // ⛔ Will say "undefined" if not passed vi
   };
 
   const onSave = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+    e.preventDefault();
+    setLoading(true);
 
-  console.log('🧪 resumeId:', resumeId);
-  console.log('📤 Data being sent:', formData);
+    // Remove documentId before sending to backend
+    const { documentId, ...updateData } = formData;
 
-  // ❗ Check if resumeId is valid
-  if (!resumeId || resumeId === 'undefined') {
-    toast.error('❌ Resume ID is missing or invalid. Cannot update.');
-    setLoading(false);
-    return;
-  }
+    console.log('🧪 resumeId:', resumeId);
+    console.log('📤 Data being sent:', updateData);
 
-  try {
-    const response = await GlobalApi.UpdateResumeDetail(resumeId, formData);
+    if (!resumeId || resumeId === 'undefined') {
+      toast.error('❌ Resume ID is missing or invalid. Cannot update.');
+      setLoading(false);
+      return;
+    }
 
-    console.log('✅ Resume updated successfully:', response);
-    toast.success('Details updated ✅');
-    enabledNext(true); // Enable next step if needed
-  } catch (error) {
-    console.error('❌ Error updating resume:', error);
-    toast.error('Failed to update resume ❌');
-  } finally {
-    setLoading(false);
-  }
-};
+    try {
+      const response = await GlobalApi.UpdateResumeDetail(resumeId, updateData);
 
+      console.log('✅ Resume updated successfully:', response);
+      toast.success('Details updated ✅');
+      enabledNext(true);
+    } catch (error) {
+      console.error('❌ Error updating resume:', error);
+      toast.error('Failed to update resume ❌');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className='p-5 shadow-lg rounded-lg border-t-primary border-t-4 mt-10'>

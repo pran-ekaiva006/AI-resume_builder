@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const ResumeController = require('../controllers/ResumeController');
+const ResumeController = require('../controllers/resumeController');
 
 // Create resume
 router.post('/', ResumeController.createResume);
