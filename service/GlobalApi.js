@@ -19,17 +19,17 @@ const CreateNewResume = (data) =>
 const GetUserResumes = () =>
   axiosClient.get('/resumes').then((res) => res.data);
 
-// ✅ Get a specific resume by MongoDB _id
-const GetResumeById = (id) =>
-  axiosClient.get(`/resumes/${id}`).then((res) => res.data);
+// ✅ Get a specific resume by resumeId (UUID)
+const GetResumeById = (resumeId) =>
+  axiosClient.get(`/resumes/resumeId/${resumeId}`).then((res) => res.data);
 
-// ✅ Update a resume by MongoDB _id
-const UpdateResumeDetail = (id, data) =>
-  axiosClient.put(`/resumes/${id}`, data).then((res) => res.data);
+// ✅ Update a resume by resumeId (UUID)
+const UpdateResumeDetail = (resumeId, data) =>
+  axiosClient.put(`/resumes/resumeId/${resumeId}`, data).then((res) => res.data);
 
-// ✅ Delete a resume by MongoDB _id
-const DeleteResumeById = (id) =>
-  axiosClient.delete(`/resumes/${id}`).then((res) => res.data);
+// ✅ Delete a resume by resumeId (UUID)
+const DeleteResumeById = (resumeId) =>
+  axiosClient.delete(`/resumes/resumeId/${resumeId}`).then((res) => res.data);
 
 // ✅ Export all functions
 export default {

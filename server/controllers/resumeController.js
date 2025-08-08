@@ -1,6 +1,4 @@
-// server/controllers/ResumeController.js
-
-const Resume = require('../models/Resume'); // Use model once, reuse throughout
+const Resume = require('../models/Resume');
 
 // Create new resume
 const createResume = async (req, res) => {
@@ -12,7 +10,6 @@ const createResume = async (req, res) => {
 
     console.log("✅ Resume saved to DB:", resume);
 
-    // Map resumeId to documentId in the response
     const obj = resume.toObject();
     obj.documentId = obj.resumeId;
 
@@ -30,7 +27,6 @@ const createResume = async (req, res) => {
 const getAllResumes = async (req, res) => {
   try {
     const resumes = await Resume.find();
-    // Map resumeId to documentId for each resume
     const mappedResumes = resumes.map(r => {
       const obj = r.toObject();
       obj.documentId = obj.resumeId;
@@ -42,14 +38,14 @@ const getAllResumes = async (req, res) => {
   }
 };
 
-// Get resume by ID
-const getResumeById = async (req, res) => {
+// Get resume by resumeId (UUID)
+const getResumeByResumeId = async (req, res) => {
   try {
-    const resume = await Resume.findById(req.params.id);
+    const resume = await Resume.findOne({ resumeId: req.params.resumeId });
     if (!resume) {
       return res.status(404).json({ message: 'Resume not found' });
     }
-    // Map resumeId to documentId
+
     const obj = resume.toObject();
     obj.documentId = obj.resumeId;
     res.json(obj);
@@ -58,23 +54,24 @@ const getResumeById = async (req, res) => {
   }
 };
 
-// Update resume by ID
-// Update resume by ID
-const updateResume = async (req, res) => {
+// Update resume by resumeId (UUID)
+const updateResumeByResumeId = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { resumeId } = req.params;
     const updateData = req.body;
 
-    console.log("📥 Incoming data:", req.body);
-    console.log("🪵 updateData:", updateData);
+    console.log("📥 Incoming update:", updateData);
 
-    const updatedResume = await Resume.findByIdAndUpdate(id, updateData, { new: true });
+    const updatedResume = await Resume.findOneAndUpdate(
+      { resumeId },
+      updateData,
+      { new: true }
+    );
 
     if (!updatedResume) {
       return res.status(404).json({ message: 'Resume not found' });
     }
 
-    // Map resumeId to documentId
     const obj = updatedResume.toObject();
     obj.documentId = obj.resumeId;
 
@@ -87,9 +84,29 @@ const updateResume = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+
+// Delete resume by resumeId (UUID)
+const deleteResumeByResumeId = async (req, res) => {
+  try {
+    const { resumeId } = req.params;
+
+    const deletedResume = await Resume.findOneAndDelete({ resumeId });
+
+    if (!deletedResume) {
+      return res.status(404).json({ message: 'Resume not found' });
+    }
+
+    res.json({ message: 'Resume deleted successfully' });
+  } catch (error) {
+    console.error("❌ Error deleting resume:", error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 module.exports = {
   createResume,
   getAllResumes,
-  getResumeById,
-  updateResume,
+  getResumeByResumeId,
+  updateResumeByResumeId,
+  deleteResumeByResumeId
 };

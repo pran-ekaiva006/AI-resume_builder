@@ -26,30 +26,32 @@ IMPORTANT: Respond ONLY with a JSON array in this EXACT format, no other text:
 
 function Summery({ enabledNext }) {
   const { resumeInfo, setResumeInfo } = useContext(ResumeInfoContext);
-  const [summery, setSummery] = useState('');
+  const [summery, setSummery] = useState(resumeInfo?.summery || '');
   const [loading, setLoading] = useState(false);
   const [aiGeneratedSummeryList, setAiGenerateSummeryList] = useState([]);
-  const resumeId = resumeInfo?._id;
 
   useEffect(() => {
     if (summery) {
       setResumeInfo(prev => ({ ...prev, summery }));
     }
-  }, [summery]);
+  }, [summery, setResumeInfo]);
 
   const GenerateSummeryFromAI = async () => {
     setLoading(true);
     try {
       const PROMPT = prompt.replace('{jobTitle}', resumeInfo?.jobTitle || '');
-      const result = await AIchatSession.sendMessage(PROMPT);
+      const result = await AIchatSession.sendMessage(PROMPT, { format: "json" });
       const rawText = await result.response.text();
-      
-      // Parse the JSON response
-      const parsed = JSON.parse(rawText);
-      
-      if (Array.isArray(parsed) && parsed.every(item => 
-        item.experience_level && item.summary
-      )) {
+
+      let jsonText = rawText;
+      const match = rawText.match(/\[[\s\S]*\]/);
+      if (match) {
+        jsonText = match[0];
+      }
+
+      const parsed = JSON.parse(jsonText);
+
+      if (Array.isArray(parsed) && parsed.every(item => item.experience_level && item.summary)) {
         setAiGenerateSummeryList(parsed);
         toast.success("AI suggestions generated!");
       } else {
@@ -65,25 +67,34 @@ function Summery({ enabledNext }) {
 
   const onSave = async (e) => {
     e.preventDefault();
-    if (!resumeId) {
-      toast.error("Resume ID is missing!");
+    setLoading(true);
+
+    // Debug log
+    console.log("resumeInfo before save:", resumeInfo);
+
+    const dataToSave = {
+      ...resumeInfo,
+      summery: summery || resumeInfo?.summery || '',
+      resumeId: resumeInfo?.resumeId,
+    };
+
+    if (!dataToSave.resumeId) {
+      toast.error("❌ Resume ID is missing. Cannot save.");
+      setLoading(false);
       return;
     }
-  
-    setLoading(true);
-    const data = { summery };
-  
+
     try {
-      await GlobalApi.UpdateResumeDetail(resumeId, data);
+      await GlobalApi.UpdateResumeDetail(dataToSave.resumeId, dataToSave);
+      toast.success("Summary saved!");
       enabledNext(true);
-      toast.success("Summary updated!");
-    } catch (err) {
-      toast.error("Failed to update summary");
+    } catch (error) {
+      toast.error("Failed to save summary");
     } finally {
       setLoading(false);
     }
   };
-  
+
   return (
     <div>
       <div className='p-5 shadow-lg rounded-lg border-t-primary border-t-4 mt-10'>
@@ -105,7 +116,7 @@ function Summery({ enabledNext }) {
           <Textarea
             className='mt-5'
             required
-            value={summery || resumeInfo?.summery || ''}
+            value={summery}
             onChange={(e) => setSummery(e.target.value)}
           />
           <div className='mt-2 flex justify-end'>

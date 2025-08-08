@@ -32,35 +32,43 @@ function PersonalDetail({ enabledNext }) {
   };
 
   const onSave = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
 
-    // Remove documentId before sending to backend
-    const { documentId, ...updateData } = formData;
+  const { documentId, ...updateData } = formData;
 
-    console.log('🧪 resumeId:', resumeId);
-    console.log('📤 Data being sent:', updateData);
+  try {
+    let finalResumeId = resumeId;
 
+    // If resumeId is missing or invalid, create a new resume first
     if (!resumeId || resumeId === 'undefined') {
-      toast.error('❌ Resume ID is missing or invalid. Cannot update.');
-      setLoading(false);
-      return;
+      const createResponse = await GlobalApi.CreateResume(updateData);  // You need to implement this API
+      finalResumeId = createResponse?.data?._id; // Or however your backend returns the new ID
+
+      if (!finalResumeId) {
+        toast.error('❌ Failed to create new resume');
+        setLoading(false);
+        return;
+      }
+
+      // Update context and URL if needed
+      setResumeInfo({ ...updateData, _id: finalResumeId });
+      toast.success('🆕 Resume created');
     }
 
-    try {
-      const response = await GlobalApi.UpdateResumeDetail(resumeId, updateData);
+    // Proceed to update
+    const response = await GlobalApi.UpdateResumeDetail(finalResumeId, updateData);
 
-      console.log('✅ Resume updated successfully:', response);
-      toast.success('Details updated ✅');
-      enabledNext(true);
-    } catch (error) {
-      console.error('❌ Error updating resume:', error);
-      toast.error('Failed to update resume ❌');
-    } finally {
-      setLoading(false);
-    }
-  };
-
+    console.log('✅ Resume updated successfully:', response);
+    toast.success('Details updated ✅');
+    enabledNext(true);
+  } catch (error) {
+    console.error('❌ Error saving resume:', error);
+    toast.error('Failed to save resume ❌');
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <div className='p-5 shadow-lg rounded-lg border-t-primary border-t-4 mt-10'>
       <h2 className='font-bold text-lg'>Personal Detail</h2>
