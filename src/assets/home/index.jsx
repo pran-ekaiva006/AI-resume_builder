@@ -119,7 +119,7 @@ export default function Home() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
               <a
-                href="auth/sign-in"
+                href="https://rococo-crisp-bd2a6c.netlify.app/auth/sign-in"
                 className="group bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 transform hover:-translate-y-1"
               >
                 Start Building Free
@@ -194,7 +194,7 @@ export default function Home() {
 
             <div className="text-center mt-16">
               <a
-                href="/dashboard"
+                href="https://rococo-crisp-bd2a6c.netlify.app/dashboard"
                 className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 py-4 rounded-full text-lg font-semibold hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-300 transform hover:-translate-y-1 inline-flex items-center"
               >
                 Start Building Your Resume
