@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import Footer from "@/components/custom/Footer";
 import Header from "@/components/custom/Header";
+import { Link } from "react-router-dom";
 
 export default function Home() {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
@@ -118,13 +119,13 @@ export default function Home() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-              <a
-                href="https://rococo-crisp-bd2a6c.netlify.app/auth/sign-in"
-                className="group bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 transform hover:-translate-y-1"
-              >
-                Start Building Free
-                <ArrowRight className="inline-block ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </a>
+            <Link 
+  to="/auth/sign-in" 
+  className="group bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full ..."
+>
+  Start Building Free
+  <ArrowRight className="inline-block ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+</Link>
             </div>
           </div>
         </section>
@@ -193,13 +194,14 @@ export default function Home() {
             </div>
 
             <div className="text-center mt-16">
-              <a
-                href="https://rococo-crisp-bd2a6c.netlify.app/dashboard"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 py-4 rounded-full text-lg font-semibold hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-300 transform hover:-translate-y-1 inline-flex items-center"
-              >
-                Start Building Your Resume
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </a>
+            <Link
+  to="/dashboard"
+  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 py-4 rounded-full text-lg font-semibold hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-300 transform hover:-translate-y-1 inline-flex items-center"
+>
+  Start Building Your Resume
+  <ArrowRight className="ml-2 h-5 w-5" />
+</Link>
+
             </div>
           </div>
         </section>
