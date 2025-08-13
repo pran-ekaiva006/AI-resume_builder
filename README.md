@@ -20,14 +20,14 @@
 
 ### 📋 Table of Contents
 
-- [🎯 About The Project](#-about-the-project)
-- [✨ Features](#-features)
-- [🛠️ Tech Stack](#️-tech-stack)
-- [🎪 Demo](#-demo)
-- [🔧 Installation](#-installation)
-- [📂 Project Structure](#-project-structure)
-- [🤝 Contributing](#-contributing)
-- [📄 License](#-license)
+- [🎯 About The Project](#about-the-project)
+- [✨ Features](#features)
+- [🛠️ Tech Stack](#tech-stack)
+- [🎪 Demo](#demo)
+- [🔧 Installation](#installation)
+- [📂 Folder Structure](#folder-structure)
+- [📜 Licence](#licence)
+
 
 
 ---
