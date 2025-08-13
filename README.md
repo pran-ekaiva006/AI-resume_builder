@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/pran-ekaiva006/AI-resume_builder/client/src/assets/banner.png" alt="AI Resume Builder Banner" width="800">
+  <img src="https://github.com/pran-ekaiva006/AI-resume_builder/client/src/assets/home/banner.png" alt="AI Resume Builder Banner" width="800">
 </p>
 
 
