@@ -9,16 +9,16 @@
   <a href="https://github.com/pran-ekaiva006/AI-resume_builder">
     <img src="https://img.shields.io/badge/GitHub-Repo-blue?logo=github" alt="GitHub Repo">
   </a>
- <a href="https://ai-resume-builder-6-o5vo.onrender.com" target="_blank">
-  <img src="https://img.shields.io/badge/Live-Demo-blue?logo=render&logoColor=white" alt="Live Demo on Render" width="200">
-</a>
-
-
-
+  
+  <a href="https://ai-resume-builder-6-o5vo.onrender.com" target="_blank">
+    <img src="https://img.shields.io/badge/Live-Demo-blue?logo=render&logoColor=white" alt="Live Demo on Render">
+  </a>
+  
   <a href="https://github.com/pran-ekaiva006/AI-resume_builder/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-yellow" alt="License">
   </a>
 </p>
+
 ---
 
 ### 📋 Table of Contents
