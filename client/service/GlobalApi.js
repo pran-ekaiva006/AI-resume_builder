@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // ✅ Use environment variable OR fallback to localhost
-const API_BASE = (import.meta.env.VITE_BACKEND_URL || 'https://ai-resume-builder-3-rdhw.onrender.com/api').trim();
+const API_BASE = ( 'https://ai-resume-builder-3-rdhw.onrender.com/api').trim();
 
 // ✅ Create an axios instance with default headers
 const axiosClient = axios.create({
