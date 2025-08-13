@@ -1,6 +1,6 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/pran-ekaiva006/AI-resume_builder/client/src/assets/banner.png" alt="AI Resume Builder Banner" width="800">
-</p>
+# AI-Resume-Builder
+
+![README](/public/banner.png)
 
 
 <h1 align="center">AI Resume Builder</h1>
