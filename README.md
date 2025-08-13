@@ -16,7 +16,8 @@
   </a>
 </p>
 ---
-## 📑 Table of Contents
+
+### 📑 Table of Contents
 - [About The Project](#about-the-project)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
@@ -27,7 +28,7 @@
 
 ---
 
-## **About The Project**
+### **About The Project**
 
 AI Resume Builder is a web application that generates professional resumes using AI. It allows users to create resumes dynamically with customizable sections like experience, education, skills, and projects.  
 
@@ -35,7 +36,7 @@ The project aims to simplify resume creation and make the process intelligent an
 
 ---
 
-## **Features**
+### **Features**
 - Generate professional resumes with AI assistance.
 - Store full resume data with nested sections.
 - User-friendly React frontend.
@@ -100,7 +101,7 @@ cd ../server
 npm run start
 ```
 
-##### 📂 Folder Structure
+### 📂 Folder Structure
 ```bash
 AI-resume_builder-main/
 ├── .gitignore
