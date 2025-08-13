@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/pran-ekaiva006/AI-resume_builder/raw/main/src/assets/banner.png" alt="AI Resume Builder Banner" width="800">
+  <img src="https://raw.githubusercontent.com/pran-ekaiva006/AI-resume_builder/client/src/assets/banner.png" alt="AI Resume Builder Banner" width="800">
 </p>
 
 
@@ -16,10 +16,23 @@
     <img src="https://img.shields.io/badge/License-MIT-yellow" alt="License">
   </a>
 </p>
+---
+
+### 📋 Table of Contents
+
+- [🎯 About The Project](#-about-the-project)
+- [✨ Features](#-features)
+- [🛠️ Tech Stack](#️-tech-stack)
+- [🎪 Demo](#-demo)
+- [🔧 Installation](#-installation)
+- [📂 Project Structure](#-project-structure)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+
 
 ---
 
-## **About The Project**
+### **About The Project**
 
 AI Resume Builder is a web application that generates professional resumes using AI. It allows users to create resumes dynamically with customizable sections like experience, education, skills, and projects.  
 
@@ -27,14 +40,13 @@ The project aims to simplify resume creation and make the process intelligent an
 
 ---
 
-## **Features**
+### **Features**
 - Generate professional resumes with AI assistance.
 - Store full resume data with nested sections.
 - User-friendly React frontend.
 - Secure backend with Node.js, Express, and MongoDB.
 - Download resumes in PDF format.
 - Responsive and mobile-friendly design.
-
 ---
 
 ## **Tech Stack**
@@ -65,52 +77,108 @@ GitHub repository: [AI Resume Builder GitHub](https://github.com/pran-ekaiva006/
 
 ```bash
 git clone https://github.com/pran-ekaiva006/AI-resume_builder.git
-
-Install dependencies:
+```
+### Install dependencies:
 # Frontend
+```bash
 cd AI-resume_builder/client
 npm install
+```
 
 # Backend
+```bash
 cd ../server
 npm install
+```
 
 Run the application:
+
 # Frontend
+```bash
 cd client
 npm start
+```
 
 # Backend
+```bash
 cd ../server
 npm run start
+```
 
-structured view:
-AI-Resume_Builder/
-├─ client/                  # Frontend
-│  ├─ public/
-│  │  └─ index.html
-│  ├─ src/
-│  │  ├─ api/               # API calls
-│  │  ├─ assets/            # Images, banners, icons
-│  │  ├─ auth/              # Authentication components
-│  │  ├─ components/        # Reusable React components
-│  │  ├─ context/           # React context providers
-│  │  ├─ dashboard/         # Dashboard pages
-│  │  ├─ lib/               # Utility functions
-│  │  ├─ my-resume/         # Resume builder components/pages
-│  │  ├─ App.css
-│  │  ├─ App.jsx
-│  │  ├─ index.css
-│  │  └─ main.jsx
-│  ├─ package.json
-│  ├─ tailwind.config.js
-│  └─ vite.config.js
-├─ server/                  # Backend
-│  └─ ...                   # Express backend files (routes, models, controllers)
-├─ service/                 # Any service utilities
-├─ LICENSE
-├─ README.md
-├─ package-lock.json
-├─ package.json
-└─ components.json
-
+### 📂 Folder Structure
+```bash
+AI-resume_builder-main/
+├── .gitignore
+├── LICENSE
+├── README.md
+├── client
+│   ├── .eslintrc.cjs
+│   ├── components.json
+│   ├── index.html
+│   ├── jsconfig.json
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── postcss.config.js
+│   ├── tailwind.config.js
+│   ├── vite.config.js
+│   ├── public
+│   │   ├── cv.png
+│   │   ├── logo.png
+│   │   └── vite.png
+│   ├── service
+│   │   ├── AIModal.jsx
+│   │   └── GlobalApi.js
+│   └── src
+│       ├── App.css
+│       ├── App.jsx
+│       ├── index.css
+│       ├── main.jsx
+│       ├── api
+│       │   └── ResumeService.js
+│       ├── assets
+│       │   ├── banner.png
+│       │   ├── react.svg
+│       │   └── home
+│       │       └── index.jsx
+│       ├── auth
+│       │   └── sign-in
+│       │       └── index.jsx
+│       ├── components
+│       │   ├── custom
+│       │   │   ├── Footer.jsx
+│       │   │   └── Header.jsx
+│       │   └── ui
+│       │       ├── alert-dialog.jsx
+│       │       ├── button.jsx
+│       │       ├── dialog.jsx
+│       │       ├── dropdown-menu.jsx
+│       │       ├── input.jsx
+│       │       ├── popover.jsx
+│       │       ├── sonner.jsx
+│       │       └── textarea.jsx
+│       ├── context
+│       │   └── ResumeInfoContext.jsx
+│       └── dashboard
+│           ├── index.jsx
+│           ├── components
+│           │   ├── AddResume.jsx
+│           │   ├── ResumeCardItem.jsx
+│           ├── data
+│           │   └── dummy.jsx
+│           └── resume
+│               ├── [resumeId]
+│               │   └── edit
+│               │       └── index.jsx
+│               └── components
+│                   ├── FormSection.jsx
+│                   ├── ResumePreview.jsx
+│                   └── RichTextEditor.jsx
+└── server
+    ├── controllers
+    ├── middlewares
+    ├── models
+    ├── routes
+    └── utils
+```
+### Licence
+This Project is Licensed under the MIT Licence , see [LICENCE](./LICENSE) for details
