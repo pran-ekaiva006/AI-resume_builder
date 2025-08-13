@@ -17,13 +17,13 @@
 </p>
 ---
 ## 📑 Table of Contents
-1. [About The Project](#about-the-project)
-2. [Features](#features)
-3. [Tech Stack](#tech-stack)
-4. [Demo](#demo)
-5. [Installation](#installation)
-6. [Folder Structure](#-folder-structure)
-7. [License](#license)
+- [About The Project](#about-the-project)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Demo](#demo)
+- [Installation](#installation)
+- [Folder Structure](#-folder-structure)
+- [License](#license)
 
 ---
 
