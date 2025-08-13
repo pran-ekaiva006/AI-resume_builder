@@ -25,7 +25,7 @@
 - [🛠️ Tech Stack](#tech-stack)
 - [🎪 Demo](#demo)
 - [🔧 Installation](#installation)
-- [📂 Folder Structure](#📂-folder-structure)
+- [📂 Folder Structure](#-folder-structure)
 - [📜 Licence](#licence)
 
 
