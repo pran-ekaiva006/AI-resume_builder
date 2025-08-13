@@ -1,6 +1,6 @@
 # AI-Resume-Builder
 
-![README](/public/banner.png)
+![README](/client/public/banner.png)
 
 
 <h1 align="center">AI Resume Builder</h1>
