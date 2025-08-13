@@ -10,7 +10,7 @@
     <img src="https://img.shields.io/badge/GitHub-Repo-blue?logo=github" alt="GitHub Repo">
   </a>
   <a href="https://capable-churros-e51954.netlify.app/">
-    <img src="https://img.shields.io/badge/Live-Demo-green?logo=vercel" alt="Live Demo">
+    <img src="https://ai-resume-builder-6-o5vo.onrender.com" alt="Live Demo">
   </a>
   <a href="https://github.com/pran-ekaiva006/AI-resume_builder/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-yellow" alt="License">
