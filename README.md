@@ -2,7 +2,6 @@
   <img src="https://raw.githubusercontent.com/pran-ekaiva006/AI-resume_builder/main/client/src/assets/home/banner.png" alt="AI Resume Builder Banner" width="800">
 </p>
 
-
 <h1 align="center">AI Resume Builder</h1>
 
 <p align="center">
@@ -16,6 +15,15 @@
     <img src="https://img.shields.io/badge/License-MIT-yellow" alt="License">
   </a>
 </p>
+---
+## 📑 Table of Contents
+1. [About The Project](#about-the-project)
+2. [Features](#features)
+3. [Tech Stack](#tech-stack)
+4. [Demo](#demo)
+5. [Installation](#installation)
+6. [Folder Structure](#-folder-structure)
+7. [License](#license)
 
 ---
 
@@ -34,7 +42,6 @@ The project aims to simplify resume creation and make the process intelligent an
 - Secure backend with Node.js, Express, and MongoDB.
 - Download resumes in PDF format.
 - Responsive and mobile-friendly design.
-
 ---
 
 ## **Tech Stack**
