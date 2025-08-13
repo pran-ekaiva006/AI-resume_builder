@@ -9,9 +9,11 @@
   <a href="https://github.com/pran-ekaiva006/AI-resume_builder">
     <img src="https://img.shields.io/badge/GitHub-Repo-blue?logo=github" alt="GitHub Repo">
   </a>
-  <a href="https://capable-churros-e51954.netlify.app/">
-    <img src="https://ai-resume-builder-6-o5vo.onrender.com" alt="Live Demo">
-  </a>
+ <a href="https://ai-resume-builder-6-o5vo.onrender.com" target="_blank">
+  <img src="https://x.com/render/photo" 
+       alt="AI Resume Builder Banner" width="800">
+</a>
+
   <a href="https://github.com/pran-ekaiva006/AI-resume_builder/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-yellow" alt="License">
   </a>
