@@ -1,6 +1,7 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/pran-ekaiva006/AI-resume_builder/main/client/src/assets/home/banner.png" alt="AI Resume Builder Banner" width="800">
+  <img src="https://raw.githubusercontent.com/pran-ekaiva006/AI-resume_builder/main/src/assets/home/banner.png" alt="AI Resume Builder Banner" width="800">
 </p>
+
 
 <h1 align="center">AI Resume Builder</h1>
 
@@ -17,14 +18,17 @@
 </p>
 ---
 
-### 📑 Table of Contents
-- [About The Project](#about-the-project)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Demo](#demo)
-- [Installation](#installation)
-- [Folder Structure](#-folder-structure)
-- [License](#license)
+### 📋 Table of Contents
+
+- [🎯 About The Project](#-about-the-project)
+- [✨ Features](#-features)
+- [🛠️ Tech Stack](#️-tech-stack)
+- [🎪 Demo](#-demo)
+- [🔧 Installation](#-installation)
+- [📂 Project Structure](#-project-structure)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+
 
 ---
 
