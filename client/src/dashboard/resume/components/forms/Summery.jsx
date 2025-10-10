@@ -2,9 +2,9 @@ import { Button } from 'client/src/components/ui/button';
 import { Textarea } from 'client/src/components/ui/textarea';
 import { ResumeInfoContext } from 'client/src/context/ResumeInfoContext';
 import React, { useContext, useEffect, useState } from 'react';
-import GlobalApi from '../../../../../service/GlobalApi';
 import { Brain, LoaderCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import { useApiClient } from '../../../../../service/GlobalApi'; // ✅ updated import
 import { AIchatSession } from '../../../../../service/AIModal';
 
 const prompt = `Generate 3 professional resume summaries for a {jobTitle} position at different experience levels.
@@ -30,47 +30,45 @@ function Summery({ enabledNext }) {
   const [loading, setLoading] = useState(false);
   const [aiGeneratedSummeryList, setAiGenerateSummeryList] = useState([]);
 
+  // ✅ get secured API client functions
+  const { UpdateResumeDetail } = useApiClient();
+
   useEffect(() => {
     if (summery) {
-      setResumeInfo(prev => ({ ...prev, summery }));
+      setResumeInfo((prev) => ({ ...prev, summery }));
     }
   }, [summery, setResumeInfo]);
 
+  // ✅ Generate suggestions using AI model
   const GenerateSummeryFromAI = async () => {
     setLoading(true);
     try {
       const PROMPT = prompt.replace('{jobTitle}', resumeInfo?.jobTitle || '');
-      const result = await AIchatSession.sendMessage(PROMPT, { format: "json" });
+      const result = await AIchatSession.sendMessage(PROMPT, { format: 'json' });
       const rawText = await result.response.text();
 
-      let jsonText = rawText;
       const match = rawText.match(/\[[\s\S]*\]/);
-      if (match) {
-        jsonText = match[0];
-      }
-
+      const jsonText = match ? match[0] : rawText;
       const parsed = JSON.parse(jsonText);
 
-      if (Array.isArray(parsed) && parsed.every(item => item.experience_level && item.summary)) {
+      if (Array.isArray(parsed) && parsed.every((i) => i.experience_level && i.summary)) {
         setAiGenerateSummeryList(parsed);
-        toast.success("AI suggestions generated!");
+        toast.success('✨ AI suggestions generated!');
       } else {
-        throw new Error("Invalid response format");
+        throw new Error('Invalid response format');
       }
     } catch (error) {
-      console.error("AI Error:", error);
-      toast.error("Failed to generate suggestions");
+      console.error('AI Error:', error);
+      toast.error('Failed to generate suggestions');
     } finally {
       setLoading(false);
     }
   };
 
+  // ✅ Save summary details to backend
   const onSave = async (e) => {
     e.preventDefault();
     setLoading(true);
-
-    // Debug log
-    console.log("resumeInfo before save:", resumeInfo);
 
     const dataToSave = {
       ...resumeInfo,
@@ -79,17 +77,18 @@ function Summery({ enabledNext }) {
     };
 
     if (!dataToSave.resumeId) {
-      toast.error("❌ Resume ID is missing. Cannot save.");
+      toast.error('❌ Resume ID missing. Cannot save.');
       setLoading(false);
       return;
     }
 
     try {
-      await GlobalApi.UpdateResumeDetail(dataToSave.resumeId, dataToSave);
-      toast.success("Summary saved!");
+      await UpdateResumeDetail(dataToSave.resumeId, dataToSave);
+      toast.success('✅ Summary saved!');
       enabledNext(true);
     } catch (error) {
-      toast.error("Failed to save summary");
+      console.error('❌ Failed to save summary:', error);
+      toast.error('Error saving summary ❌');
     } finally {
       setLoading(false);
     }
@@ -109,7 +108,8 @@ function Summery({ enabledNext }) {
               onClick={GenerateSummeryFromAI}
               type='button'
               size='sm'
-              className='border-primary text-primary flex gap-2'>
+              className='border-primary text-primary flex gap-2'
+            >
               <Brain className='h-4 w-4' /> Generate from AI
             </Button>
           </div>
@@ -134,7 +134,8 @@ function Summery({ enabledNext }) {
             <div
               key={index}
               onClick={() => setSummery(item?.summary)}
-              className='p-5 shadow-lg my-4 rounded-lg cursor-pointer'>
+              className='p-5 shadow-lg my-4 rounded-lg cursor-pointer'
+            >
               <h2 className='font-bold my-1 text-primary'>
                 Level: {item?.experience_level}
               </h2>

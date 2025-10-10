@@ -1,41 +1,43 @@
-import axios from 'axios';
+import axios from "axios";
+import { useAuth } from "@clerk/clerk-react";
 
-// ✅ Use environment variable OR fallback to localhost
-const API_BASE = ( 'https://ai-resume-builder-3-rdhw.onrender.com/api').trim();
+// ✅ Backend base URL
+const API_BASE = ("https://ai-resume-builder-3-rdhw.onrender.com/api").trim();
 
-// ✅ Create an axios instance with default headers
-const axiosClient = axios.create({
-  baseURL: API_BASE,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+// ✅ Factory function that creates an axios client with the Clerk token
+export const useApiClient = () => {
+  const { getToken } = useAuth();
 
-// ✅ Create a new resume
-const CreateNewResume = (data) =>
-  axiosClient.post('/resumes', data).then((res) => res.data);
+  // Returns axios instance that automatically adds Clerk JWT
+  const axiosClient = axios.create({
+    baseURL: API_BASE,
+    headers: { "Content-Type": "application/json" },
+  });
 
-// ✅ Get all resumes
-const GetUserResumes = () =>
-  axiosClient.get('/resumes').then((res) => res.data);
+  // Add interceptor to attach Authorization header
+  axiosClient.interceptors.request.use(async (config) => {
+    const token = await getToken();
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+    return config;
+  });
 
-// ✅ Get a specific resume by resumeId (UUID)
-const GetResumeById = (resumeId) =>
-  axiosClient.get(`/resumes/resumeId/${resumeId}`).then((res) => res.data);
+  return {
+    // ✅ Create a new resume
+    CreateNewResume: (data) => axiosClient.post("/resumes", data).then((res) => res.data),
 
-// ✅ Update a resume by resumeId (UUID)
-const UpdateResumeDetail = (resumeId, data) =>
-  axiosClient.put(`/resumes/resumeId/${resumeId}`, data).then((res) => res.data);
+    // ✅ Get all resumes for the current Clerk user
+    GetUserResumes: () => axiosClient.get("/resumes").then((res) => res.data),
 
-// ✅ Delete a resume by resumeId (UUID)
-const DeleteResumeById = (resumeId) =>
-  axiosClient.delete(`/resumes/resumeId/${resumeId}`).then((res) => res.data);
+    // ✅ Get specific resume by ID
+    GetResumeById: (resumeId) =>
+      axiosClient.get(`/resumes/resumeId/${resumeId}`).then((res) => res.data),
 
-// ✅ Export all functions
-export default {
-  CreateNewResume,
-  GetUserResumes,
-  GetResumeById,
-  UpdateResumeDetail,
-  DeleteResumeById,
+    // ✅ Update resume
+    UpdateResumeDetail: (resumeId, data) =>
+      axiosClient.put(`/resumes/resumeId/${resumeId}`, data).then((res) => res.data),
+
+    // ✅ Delete resume
+    DeleteResumeById: (resumeId) =>
+      axiosClient.delete(`/resumes/resumeId/${resumeId}`).then((res) => res.data),
+  };
 };

@@ -1,21 +1,20 @@
-
 const { getAuth, clerkClient } = require('@clerk/express');
 const User = require('../models/User');
 
 const attachUser = async (req, res, next) => {
   try {
-    // 1️⃣ Extract Clerk user ID
+    // Extract Clerk user ID
     const { userId } = getAuth(req);
 
     if (!userId) {
       return res.status(401).json({ message: 'Unauthorized: No Clerk user found' });
     }
 
-    // 2️⃣ Fetch full user details from Clerk directly (always latest)
+    // Fetch Clerk user details
     const clerkUser = await clerkClient.users.getUser(userId);
     const email = clerkUser.emailAddresses[0].emailAddress;
 
-    // 3️⃣ Sync with MongoDB user collection (optional, for analytics or roles)
+    // Sync with MongoDB (optional)
     let user = await User.findOne({ clerkId: userId });
     if (!user) {
       user = await User.create({
@@ -25,10 +24,10 @@ const attachUser = async (req, res, next) => {
       });
     }
 
-    // 4️⃣ Attach reliable user data to request
+    // Attach data to request (renamed clerkId to match existing controllers)
     req.user = {
-      email,       // always from Clerk
-      userId,      // unique Clerk ID
+      email,
+      clerkId: userId, // ✅ changed key name
       role: user.role || 'user',
     };
 
@@ -39,7 +38,7 @@ const attachUser = async (req, res, next) => {
   }
 };
 
-// ✅ Simple RBAC helper
+// Simple RBAC helper
 const requireRole = (roles = []) => (req, res, next) => {
   if (!req.user || !roles.includes(req.user.role)) {
     return res.status(403).json({ message: 'Forbidden: Access denied' });

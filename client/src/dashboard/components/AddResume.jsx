@@ -9,7 +9,7 @@ import {
 } from "client/src/components/ui/dialog";
 import { Button } from 'client/src/components/ui/button';
 import { Input } from 'client/src/components/ui/input';
-import GlobalApi from '../../../service/GlobalApi';
+import { useApiClient } from '../../../service/GlobalApi'; // ✅ updated import
 import { useUser } from '@clerk/clerk-react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
@@ -17,9 +17,11 @@ import { v4 as uuidv4 } from 'uuid';
 function AddResume() {
   const [openDialog, setOpenDialog] = useState(false);
   const [resumeTitle, setResumeTitle] = useState('');
-  const { user } = useUser();
   const [loading, setLoading] = useState(false);
+
+  const { user } = useUser();
   const navigate = useNavigate();
+  const { CreateNewResume } = useApiClient(); // ✅ using Clerk-secured API client
 
   const onCreate = async () => {
     if (!resumeTitle.trim()) {
@@ -28,7 +30,7 @@ function AddResume() {
     }
 
     setLoading(true);
-    const resumeId = uuidv4(); // Always generate a fresh resumeId
+    const resumeId = uuidv4(); // generate fresh resume ID
 
     const resumeData = {
       resumeId,
@@ -92,7 +94,7 @@ function AddResume() {
     };
 
     try {
-      const response = await GlobalApi.CreateNewResume(resumeData);
+      const response = await CreateNewResume(resumeData); // ✅ secured API call
       console.log("✅ New resume created:", response);
       navigate(`/dashboard/resume/${resumeId}/edit`);
     } catch (error) {

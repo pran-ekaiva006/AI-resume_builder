@@ -2,8 +2,11 @@ const express = require('express');
 const router = express.Router();
 const ResumeController = require('../controllers/resumeController');
 const { validateUUID } = require('../middlewares/validationMiddleware');
-const { requireRole } = require('../middlewares/authMiddleware');
+const { attachUser, requireRole } = require('../middlewares/authMiddleware');
 const asyncHandler = require('../utils/asyncHandler');
+
+// ✅ Attach Clerk user to every request before hitting any resume route
+router.use(attachUser);
 
 // ✅ Create new resume
 router.post('/', asyncHandler(ResumeController.createResume));

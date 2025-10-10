@@ -5,13 +5,14 @@ import { ResumeInfoContext } from 'client/src/context/ResumeInfoContext';
 import { LoaderCircle } from 'lucide-react';
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import GlobalApi from '../../../../../service/GlobalApi';
+import { useApiClient } from '../../../../../service/GlobalApi'; // ✅ updated import
 import { toast } from 'sonner';
 
 function Education() {
   const [loading, setLoading] = useState(false);
   const { resumeInfo, setResumeInfo } = useContext(ResumeInfoContext);
   const params = useParams();
+  const { UpdateResumeDetail } = useApiClient(); // ✅ using secured Clerk-based API client
 
   const [educationalList, setEducationalList] = useState([
     {
@@ -20,15 +21,15 @@ function Education() {
       major: '',
       startDate: '',
       endDate: '',
-      description: ''
-    }
+      description: '',
+    },
   ]);
 
   useEffect(() => {
     if (resumeInfo?.education?.length > 0) {
       setEducationalList(resumeInfo.education);
     }
-  }, []);
+  }, [resumeInfo]);
 
   const handleChange = (event, index) => {
     const newEntries = [...educationalList];
@@ -46,8 +47,8 @@ function Education() {
         major: '',
         startDate: '',
         endDate: '',
-        description: ''
-      }
+        description: '',
+      },
     ]);
   };
 
@@ -55,46 +56,51 @@ function Education() {
     setEducationalList((prev) => prev.slice(0, -1));
   };
 
-  const onSave = () => {
+  const onSave = async () => {
+    if (!params?.resumeId) {
+      toast.error('❌ Missing resumeId. Please try again.');
+      return;
+    }
+
     setLoading(true);
     const data = {
-      education: educationalList.map(({ id, ...rest }) => rest) // ✅ fixed key and removed `id`
+      education: educationalList.map(({ id, ...rest }) => rest),
     };
 
-    GlobalApi.UpdateResumeDetail(params.resumeId, data)
-      .then((resp) => {
-        console.log(resp);
-        setLoading(false);
-        toast('Details updated!');
-      })
-      .catch((error) => {
-        setLoading(false);
-        toast('Server Error, Please try again!');
-      });
+    try {
+      const resp = await UpdateResumeDetail(params.resumeId, data);
+      console.log('✅ Education updated:', resp);
+      toast.success('Education details updated!');
+    } catch (error) {
+      console.error('❌ Error updating education:', error);
+      toast.error('Server error, please try again!');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     setResumeInfo({
       ...resumeInfo,
-      education: educationalList
+      education: educationalList,
     });
-  }, [educationalList]);
+  }, [educationalList, setResumeInfo]);
 
   return (
-    <div className='p-5 shadow-lg rounded-lg border-t-primary border-t-4 mt-10'>
-      <h2 className='font-bold text-lg'>Education</h2>
+    <div className="p-5 shadow-lg rounded-lg border-t-primary border-t-4 mt-10">
+      <h2 className="font-bold text-lg">Education</h2>
       <p>Add your educational details</p>
 
       <div>
         {educationalList.map((item, index) => (
           <div key={index}>
-            <div className='grid grid-cols-2 gap-3 border p-3 my-5 rounded-lg'>
-              <div className='col-span-2'>
+            <div className="grid grid-cols-2 gap-3 border p-3 my-5 rounded-lg">
+              <div className="col-span-2">
                 <label>University Name</label>
                 <Input
                   name="universityName"
                   onChange={(e) => handleChange(e, index)}
-                  defaultValue={item?.universityName}
+                  value={item?.universityName || ''}
                 />
               </div>
               <div>
@@ -102,7 +108,7 @@ function Education() {
                 <Input
                   name="degree"
                   onChange={(e) => handleChange(e, index)}
-                  defaultValue={item?.degree}
+                  value={item?.degree || ''}
                 />
               </div>
               <div>
@@ -110,7 +116,7 @@ function Education() {
                 <Input
                   name="major"
                   onChange={(e) => handleChange(e, index)}
-                  defaultValue={item?.major}
+                  value={item?.major || ''}
                 />
               </div>
               <div>
@@ -119,7 +125,7 @@ function Education() {
                   type="date"
                   name="startDate"
                   onChange={(e) => handleChange(e, index)}
-                  defaultValue={item?.startDate}
+                  value={item?.startDate || ''}
                 />
               </div>
               <div>
@@ -128,15 +134,15 @@ function Education() {
                   type="date"
                   name="endDate"
                   onChange={(e) => handleChange(e, index)}
-                  defaultValue={item?.endDate}
+                  value={item?.endDate || ''}
                 />
               </div>
-              <div className='col-span-2'>
+              <div className="col-span-2">
                 <label>Description</label>
                 <Textarea
                   name="description"
                   onChange={(e) => handleChange(e, index)}
-                  defaultValue={item?.description}
+                  value={item?.description || ''}
                 />
               </div>
             </div>
@@ -144,13 +150,25 @@ function Education() {
         ))}
       </div>
 
-      <div className='flex justify-between'>
-        <div className='flex gap-2'>
-          <Button variant="outline" onClick={AddNewEducation} className="text-primary">+ Add More Education</Button>
-          <Button variant="outline" onClick={RemoveEducation} className="text-primary">- Remove</Button>
+      <div className="flex justify-between">
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={AddNewEducation}
+            className="text-primary"
+          >
+            + Add More Education
+          </Button>
+          <Button
+            variant="outline"
+            onClick={RemoveEducation}
+            className="text-primary"
+          >
+            - Remove
+          </Button>
         </div>
         <Button disabled={loading} onClick={onSave}>
-          {loading ? <LoaderCircle className='animate-spin' /> : 'Save'}
+          {loading ? <LoaderCircle className="animate-spin" /> : 'Save'}
         </Button>
       </div>
     </div>

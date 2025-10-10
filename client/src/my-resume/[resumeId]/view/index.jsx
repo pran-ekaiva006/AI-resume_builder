@@ -4,33 +4,39 @@ import { ResumeInfoContext } from 'client/src/context/ResumeInfoContext';
 import ResumePreview from 'client/src/dashboard/resume/components/ResumePreview';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import GlobalApi from '../../../../service/GlobalApi';
+import { useApiClient } from '../../../../service/GlobalApi'; // ✅ updated import
 import { RWebShare } from 'react-web-share';
+import { toast } from 'sonner';
 
 function ViewResume() {
   const [resumeInfo, setResumeInfo] = useState(null);
   const { resumeId } = useParams();
+  const { GetResumeById } = useApiClient(); // ✅ new secured API client
 
   useEffect(() => {
-    if (resumeId) {
+    if (resumeId && resumeId !== 'undefined') {
       GetResumeInfo();
+    } else {
+      console.warn('⚠️ Invalid resumeId, skipping fetch');
     }
   }, [resumeId]);
 
-  const GetResumeInfo = () => {
-    GlobalApi.GetResumeById(resumeId)
-      .then((data) => {
-        console.log('Resume data:', data);
-        setResumeInfo(data); // no resp.data.data, just data
-      })
-      .catch((error) => {
-        console.error('Error fetching resume:', error);
-      });
+  const GetResumeInfo = async () => {
+    try {
+      const data = await GetResumeById(resumeId);
+      console.log('✅ Resume data fetched:', data);
+      setResumeInfo(data);
+    } catch (error) {
+      console.error('❌ Error fetching resume:', error);
+      toast.error('Failed to load resume details.');
+    }
   };
 
   const HandleDownload = () => {
     window.print();
   };
+
+  const shareUrl = `${import.meta.env.VITE_BASE_URL}/my-resume/${resumeId}/view`;
 
   return (
     <ResumeInfoContext.Provider value={{ resumeInfo, setResumeInfo }}>
@@ -39,24 +45,24 @@ function ViewResume() {
 
         <div className="my-10 mx-10 md:mx-20 lg:mx-36">
           <h2 className="text-center text-2xl font-medium">
-            Congrats! Your Ultimate AI generated Resume is ready!
+            Congrats! Your Ultimate AI-generated Resume is ready!
           </h2>
           <p className="text-center text-gray-400">
-            Now you are ready to download your resume and you can share unique
-            resume url with your friends and family
+            Now you can download or share your unique resume link with anyone.
           </p>
+
           <div className="flex justify-between px-44 my-10">
             <Button onClick={HandleDownload}>Download</Button>
 
             <RWebShare
               data={{
-                text: "Hello Everyone, This is my resume please open url to see it",
-                url: `${import.meta.env.VITE_BASE_URL}/my-resume/${resumeId}/view`,
+                text: 'Check out my resume!',
+                url: shareUrl,
                 title: resumeInfo
-                  ? `${resumeInfo.firstName} ${resumeInfo.lastName} resume`
-                  : "My Resume",
+                  ? `${resumeInfo.firstName} ${resumeInfo.lastName}'s Resume`
+                  : 'My Resume',
               }}
-              onClick={() => console.log("shared successfully!")}
+              onClick={() => toast.success('Shared successfully!')}
             >
               <Button>Share</Button>
             </RWebShare>
