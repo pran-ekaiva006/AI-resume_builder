@@ -5,10 +5,10 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
-const { clerkMiddleware } = require('@clerk/express');
+const { clerkMiddleware } = require('@clerk/express'); // ✅ Import Clerk middleware
 
 const resumeRoutes = require('./routes/resumeRoutes');
-const { attachUser } = require('./middlewares/authMiddleware');
+const { attachUser } = require('./middlewares/authMiddleware'); // ✅ Import your attachUser middleware
 
 // ====== Load Environment Variables ======
 dotenv.config();
@@ -17,71 +17,51 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 const MONGO_URI = process.env.MONGO_URI;
 
-// ====== Register Clerk Middleware FIRST ======
-if (process.env.CLERK_SECRET_KEY && process.env.CLERK_PUBLISHABLE_KEY) {
-  app.use(clerkMiddleware());
-} else {
-  console.warn('⚠️ Clerk keys missing — skipping clerkMiddleware. Set CLERK_SECRET_KEY and CLERK_PUBLISHABLE_KEY in environment.');
-}
-
 // ====== Middleware ======
 app.use(cors({
-  origin: process.env.CLIENT_URL || '*',
+  origin: [
+    'http://localhost:5173',
+    'https://ai-resume-builder-6-o5vo.onrender.com'
+  ],
   credentials: true,
 }));
 app.use(express.json());
 app.use(cookieParser());
 
-// ====== Attach Clerk User to Request ======
-app.use(attachUser); // this now works because clerkMiddleware ran first
+// ✅ Clerk middleware MUST be before any getAuth/attachUser usage
+app.use(clerkMiddleware());
 
-// ====== Dev Logging Middleware ======
-if (process.env.NODE_ENV !== 'production') {
-  app.use((req, res, next) => {
-    console.log(`[${req.method}] ${req.url}`);
-    next();
-  });
-}
+// ✅ Then attach user info (depends on Clerk)
+app.use(attachUser);
 
 // ====== API Routes ======
 app.use('/api/resumes', resumeRoutes);
 
 // ====== Health Check ======
 app.get('/', (req, res) => {
-  res.send('🚀 AI Resume Builder API is running');
+  res.send('🚀 AI Resume Builder API is running successfully');
 });
 
-// ====== Fallback 404 ======
+// ====== 404 Handler ======
 app.use((req, res) => {
   res.status(404).json({ message: '❌ Route not found' });
 });
 
-// ====== Optional Debug Route ======
-app.get('/debug-db', async (req, res) => {
-  try {
-    const db = mongoose.connection.db;
-    const collections = await db.listCollections().toArray();
-    res.json({
-      dbName: db.databaseName,
-      collections: collections.map(c => c.name),
-    });
-  } catch (err) {
-    res.status(500).json({ error: 'Unable to fetch DB info' });
-  }
-});
-
-// ====== Connect to MongoDB and Start Server ======
+// ====== MongoDB Connection + Start Server ======
 (async () => {
   try {
     const safeUri = MONGO_URI.replace(/:(.*)@/, ':*****@');
     console.log('Connecting to MongoDB with URI:', safeUri);
 
-    await mongoose.connect(MONGO_URI);
+    await mongoose.connect(MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
 
-    console.log('✅ MongoDB connected');
+    console.log('✅ MongoDB connected successfully');
 
     app.listen(PORT, () => {
-      console.log(`🚀 Server running at http://localhost:${PORT}`);
+      console.log(`🚀 Server running on port ${PORT}`);
     });
   } catch (err) {
     console.error('❌ MongoDB connection error:', err.message);
