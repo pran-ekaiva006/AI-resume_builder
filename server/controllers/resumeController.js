@@ -5,13 +5,13 @@ const Resume = require('../models/Resume');
  */
 const createResume = async (req, res) => {
   try {
-    const { clerkId, email } = req.user; // From Clerk middleware
+    const { userId, email } = req.user;
 
     console.log("📥 Received resume data from:", email);
 
     const resume = new Resume({
       ...req.body,
-      userId: clerkId,
+      userId, // ✅ userId from Clerk middleware
       userEmail: email,
     });
 
@@ -42,7 +42,7 @@ const createResume = async (req, res) => {
  */
 const getAllResumes = async (req, res) => {
   try {
-    const resumes = await Resume.find({ userId: req.user.clerkId });
+    const resumes = await Resume.find({ userId: req.user.userId }); // ✅ fixed
     const mappedResumes = resumes.map(r => {
       const obj = r.toObject();
       obj.documentId = obj.resumeId;
@@ -71,7 +71,7 @@ const getResumeByResumeId = async (req, res) => {
   try {
     const resume = await Resume.findOne({
       resumeId: req.params.resumeId,
-      userId: req.user.clerkId,
+      userId: req.user.userId, // ✅ fixed
     });
 
     if (!resume) {
@@ -105,9 +105,8 @@ const updateResumeByResumeId = async (req, res) => {
   try {
     const query = { resumeId: req.params.resumeId };
 
-    // Only admin can edit anyone’s resume
     if (req.user.role !== 'admin') {
-      query.userId = req.user.clerkId;
+      query.userId = req.user.userId; // ✅ fixed
     }
 
     const updatedResume = await Resume.findOneAndUpdate(query, req.body, { new: true });
@@ -145,7 +144,7 @@ const deleteResumeByResumeId = async (req, res) => {
     const query = { resumeId: req.params.resumeId };
 
     if (req.user.role !== 'admin') {
-      query.userId = req.user.clerkId;
+      query.userId = req.user.userId; // ✅ fixed
     }
 
     const deletedResume = await Resume.findOneAndDelete(query);
