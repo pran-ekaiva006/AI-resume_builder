@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from 'sonner';
 
-function AddResume({ refreshData }) { // ✅ accept refreshData from Dashboard
+function AddResume({ refreshData }) {
   const [openDialog, setOpenDialog] = useState(false);
   const [resumeTitle, setResumeTitle] = useState('');
   const [loading, setLoading] = useState(false);
@@ -81,14 +81,16 @@ function AddResume({ refreshData }) { // ✅ accept refreshData from Dashboard
     };
 
     try {
+      console.log("📤 Sending resumeData:", resumeData); // ✅ Debug log to verify title
       const response = await CreateNewResume(resumeData);
       console.log("✅ New resume created:", response);
 
-      // ✅ Immediately refresh dashboard data (so title appears)
+      // Refresh Dashboard data so the title shows immediately
       if (refreshData) await refreshData();
 
       toast.success("Resume created successfully!");
       setOpenDialog(false);
+      setResumeTitle(''); // Reset input
       navigate(`/dashboard/resume/${resumeId}/edit`);
     } catch (error) {
       console.error("❌ Failed to create resume:", error);
@@ -113,16 +115,21 @@ function AddResume({ refreshData }) { // ✅ accept refreshData from Dashboard
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create New Resume</DialogTitle>
+            <DialogDescription>
+              Add a title for your new resume
+            </DialogDescription>
           </DialogHeader>
-          <DialogDescription>
-            Add a title for your new resume
-          </DialogDescription>
+
           <Input
             className="my-2"
-            placeholder="Ex. Frontend Resume"
+            placeholder="Ex. Frontend Developer Resume"
             value={resumeTitle}
-            onChange={(e) => setResumeTitle(e.target.value)}
+            onChange={(e) => {
+              console.log("✏️ Input changed:", e.target.value); // ✅ Debug input tracking
+              setResumeTitle(e.target.value);
+            }}
           />
+
           <div className="flex justify-end gap-5 mt-4">
             <Button onClick={() => setOpenDialog(false)} variant="ghost">
               Cancel
