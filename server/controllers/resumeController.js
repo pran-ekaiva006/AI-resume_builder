@@ -5,6 +5,10 @@ const Resume = require('../models/Resume');
  */
 const createResume = async (req, res) => {
   try {
+    if (!req.user || !req.user.clerkId) {
+      return res.status(401).json({ success: false, message: 'Unauthorized: missing user' });
+    }
+
     const { clerkId, email } = req.user;
 
     console.log("📥 Received resume data from:", email);
@@ -42,7 +46,13 @@ const createResume = async (req, res) => {
  */
 const getAllResumes = async (req, res) => {
   try {
-    const resumes = await Resume.find({ userId: req.user.clerkId }); // ✅ fixed
+    console.log('getAllResumes - req.user:', req.user);
+    if (!req.user || !req.user.clerkId) {
+      console.log('getAllResumes: missing req.user -> returning 401');
+      return res.status(401).json({ success: false, message: 'Unauthorized: missing user' });
+    }
+
+    const resumes = await Resume.find({ userId: req.user.clerkId });
     const mappedResumes = resumes.map(r => {
       const obj = r.toObject();
       obj.documentId = obj.resumeId;
@@ -69,6 +79,10 @@ const getAllResumes = async (req, res) => {
  */
 const getResumeByResumeId = async (req, res) => {
   try {
+    if (!req.user || !req.user.clerkId) {
+      return res.status(401).json({ success: false, message: 'Unauthorized: missing user' });
+    }
+
     const resume = await Resume.findOne({
       resumeId: req.params.resumeId,
       userId: req.user.clerkId, // ✅ fixed
@@ -103,6 +117,10 @@ const getResumeByResumeId = async (req, res) => {
  */
 const updateResumeByResumeId = async (req, res) => {
   try {
+    if (!req.user || !req.user.clerkId) {
+      return res.status(401).json({ success: false, message: 'Unauthorized: missing user' });
+    }
+
     const query = { resumeId: req.params.resumeId };
 
     if (req.user.role !== 'admin') {
@@ -141,6 +159,10 @@ const updateResumeByResumeId = async (req, res) => {
  */
 const deleteResumeByResumeId = async (req, res) => {
   try {
+    if (!req.user || !req.user.clerkId) {
+      return res.status(401).json({ success: false, message: 'Unauthorized: missing user' });
+    }
+
     const query = { resumeId: req.params.resumeId };
 
     if (req.user.role !== 'admin') {
@@ -170,10 +192,4 @@ const deleteResumeByResumeId = async (req, res) => {
   }
 };
 
-module.exports = {
-  createResume,
-  getAllResumes,
-  getResumeByResumeId,
-  updateResumeByResumeId,
-  deleteResumeByResumeId,
-};
+module.exports = { createResume, getAllResumes, getResumeByResumeId, updateResumeByResumeId, deleteResumeByResumeId };

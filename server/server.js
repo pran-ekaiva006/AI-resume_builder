@@ -4,7 +4,11 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const cookieParser = require('cookie-parser');
+const { clerkMiddleware } = require('@clerk/express');
+
 const resumeRoutes = require('./routes/resumeRoutes');
+const { attachUser } = require('./middlewares/authMiddleware');
 
 // ====== Load Environment Variables ======
 dotenv.config();
@@ -13,9 +17,19 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 const MONGO_URI = process.env.MONGO_URI;
 
+// ====== Register Clerk Middleware FIRST ======
+app.use(clerkMiddleware()); // 🧩 MUST come before getAuth() usage
+
 // ====== Middleware ======
-app.use(cors());
+app.use(cors({
+  origin: process.env.CLIENT_URL || '*',
+  credentials: true,
+}));
 app.use(express.json());
+app.use(cookieParser());
+
+// ====== Attach Clerk User to Request ======
+app.use(attachUser); // this now works because clerkMiddleware ran first
 
 // ====== Dev Logging Middleware ======
 if (process.env.NODE_ENV !== 'production') {
@@ -38,7 +52,7 @@ app.use((req, res) => {
   res.status(404).json({ message: '❌ Route not found' });
 });
 
-// ====== Optional Debug Route: Shows DB Name + Collections ======
+// ====== Optional Debug Route ======
 app.get('/debug-db', async (req, res) => {
   try {
     const db = mongoose.connection.db;
@@ -58,10 +72,7 @@ app.get('/debug-db', async (req, res) => {
     const safeUri = MONGO_URI.replace(/:(.*)@/, ':*****@');
     console.log('Connecting to MongoDB with URI:', safeUri);
 
-    await mongoose.connect(MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect(MONGO_URI);
 
     console.log('✅ MongoDB connected');
 
