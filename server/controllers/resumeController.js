@@ -1,105 +1,173 @@
 const Resume = require('../models/Resume');
 
-// Create new resume
+/**
+ * 🧠 Create a new resume (for logged-in Clerk user)
+ */
 const createResume = async (req, res) => {
   try {
-    console.log("📥 Received resume data:", req.body);
+    const { clerkId, email } = req.user; // From Clerk middleware
 
-    const resume = new Resume(req.body);
+    console.log("📥 Received resume data from:", email);
+
+    const resume = new Resume({
+      ...req.body,
+      userId: clerkId,
+      userEmail: email,
+    });
+
     await resume.save();
 
-    console.log("✅ Resume saved to DB:", resume);
+    console.log("✅ Resume saved for user:", email);
 
     const obj = resume.toObject();
     obj.documentId = obj.resumeId;
 
     res.status(201).json({
+      success: true,
       message: "Resume created successfully",
       resume: obj,
     });
   } catch (error) {
     console.error("❌ Error creating resume:", error);
-    res.status(500).json({ message: "Failed to create resume", error: error.message });
+    res.status(500).json({
+      success: false,
+      message: "Failed to create resume",
+      error: error.message,
+    });
   }
 };
 
-// Get all resumes
+/**
+ * 📋 Get all resumes for logged-in user
+ */
 const getAllResumes = async (req, res) => {
   try {
-    const resumes = await Resume.find();
+    const resumes = await Resume.find({ userId: req.user.clerkId });
     const mappedResumes = resumes.map(r => {
       const obj = r.toObject();
       obj.documentId = obj.resumeId;
       return obj;
     });
-    res.json(mappedResumes);
+
+    res.status(200).json({
+      success: true,
+      count: mappedResumes.length,
+      data: mappedResumes,
+    });
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching resumes', error: error.message });
+    console.error("❌ Error fetching resumes:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching resumes",
+      error: error.message,
+    });
   }
 };
 
-// Get resume by resumeId (UUID)
+/**
+ * 🔍 Get a single resume by resumeId
+ */
 const getResumeByResumeId = async (req, res) => {
   try {
-    const resume = await Resume.findOne({ resumeId: req.params.resumeId });
+    const resume = await Resume.findOne({
+      resumeId: req.params.resumeId,
+      userId: req.user.clerkId,
+    });
+
     if (!resume) {
-      return res.status(404).json({ message: 'Resume not found' });
+      return res.status(404).json({
+        success: false,
+        message: "Resume not found or unauthorized",
+      });
     }
 
     const obj = resume.toObject();
     obj.documentId = obj.resumeId;
-    res.json(obj);
+
+    res.status(200).json({
+      success: true,
+      data: obj,
+    });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    console.error("❌ Error fetching resume:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch resume",
+      error: error.message,
+    });
   }
 };
 
-// Update resume by resumeId (UUID)
+/**
+ * ✏️ Update a resume by resumeId (only owner or admin)
+ */
 const updateResumeByResumeId = async (req, res) => {
   try {
-    const { resumeId } = req.params;
-    const updateData = req.body;
+    const query = { resumeId: req.params.resumeId };
 
-    console.log("📥 Incoming update:", updateData);
+    // Only admin can edit anyone’s resume
+    if (req.user.role !== 'admin') {
+      query.userId = req.user.clerkId;
+    }
 
-    const updatedResume = await Resume.findOneAndUpdate(
-      { resumeId },
-      updateData,
-      { new: true }
-    );
+    const updatedResume = await Resume.findOneAndUpdate(query, req.body, { new: true });
 
     if (!updatedResume) {
-      return res.status(404).json({ message: 'Resume not found' });
+      return res.status(404).json({
+        success: false,
+        message: "Resume not found or unauthorized",
+      });
     }
 
     const obj = updatedResume.toObject();
     obj.documentId = obj.resumeId;
 
-    res.json({
-      message: 'Resume updated successfully',
-      updatedResume: obj
+    res.status(200).json({
+      success: true,
+      message: "Resume updated successfully",
+      updatedResume: obj,
     });
   } catch (error) {
     console.error("❌ Error updating resume:", error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({
+      success: false,
+      message: "Failed to update resume",
+      error: error.message,
+    });
   }
 };
 
-// Delete resume by resumeId (UUID)
+/**
+ * 🗑️ Delete a resume by resumeId (only owner or admin)
+ */
 const deleteResumeByResumeId = async (req, res) => {
   try {
-    const { resumeId } = req.params;
+    const query = { resumeId: req.params.resumeId };
 
-    const deletedResume = await Resume.findOneAndDelete({ resumeId });
-
-    if (!deletedResume) {
-      return res.status(404).json({ message: 'Resume not found' });
+    if (req.user.role !== 'admin') {
+      query.userId = req.user.clerkId;
     }
 
-    res.json({ message: 'Resume deleted successfully' });
+    const deletedResume = await Resume.findOneAndDelete(query);
+
+    if (!deletedResume) {
+      return res.status(404).json({
+        success: false,
+        message: "Resume not found or unauthorized",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Resume deleted successfully",
+    });
   } catch (error) {
     console.error("❌ Error deleting resume:", error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete resume",
+      error: error.message,
+    });
   }
 };
 
@@ -108,5 +176,5 @@ module.exports = {
   getAllResumes,
   getResumeByResumeId,
   updateResumeByResumeId,
-  deleteResumeByResumeId
+  deleteResumeByResumeId,
 };

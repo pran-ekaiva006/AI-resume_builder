@@ -1,12 +1,20 @@
 const mongoose = require('mongoose');
+const { v4: uuidv4 } = require('uuid');
 
 const resumeSchema = new mongoose.Schema({
   resumeId: {
     type: String,
-    required: true,
+    default: uuidv4, // auto-generate unique resume ID
     unique: true,
   },
-  title: String,
+
+  // 🔗 Linked to Clerk user (instead of email-based ownership)
+  userId: {
+    type: String, // Clerk userId from req.user.clerkId
+    required: true,
+  },
+
+  // Basic Info
   userEmail: {
     type: String,
     required: true,
@@ -31,6 +39,7 @@ const resumeSchema = new mongoose.Schema({
   address: String,
   summery: String,
 
+  // Experience Section
   experience: [
     {
       id: Number,
@@ -45,6 +54,7 @@ const resumeSchema = new mongoose.Schema({
     },
   ],
 
+  // Education Section
   education: [
     {
       id: Number,
@@ -57,6 +67,7 @@ const resumeSchema = new mongoose.Schema({
     },
   ],
 
+  // Skills Section
   skills: [
     {
       id: Number,

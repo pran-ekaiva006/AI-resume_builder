@@ -1,23 +1,23 @@
-// routes/resumeRoutes.js
 const express = require('express');
 const router = express.Router();
 const ResumeController = require('../controllers/resumeController');
 const { validateUUID } = require('../middlewares/validationMiddleware');
+const { requireRole } = require('../middlewares/authMiddleware');
 const asyncHandler = require('../utils/asyncHandler');
 
-// ✅ Create a new resume
+// ✅ Create new resume
 router.post('/', asyncHandler(ResumeController.createResume));
 
-// ✅ Get all resumes
+// ✅ Get all resumes for logged-in user
 router.get('/', asyncHandler(ResumeController.getAllResumes));
 
-// ✅ Get a resume by resumeId (UUID)
+// ✅ Get single resume by ID
 router.get('/resumeId/:resumeId', validateUUID, asyncHandler(ResumeController.getResumeByResumeId));
 
-// ✅ Update a resume by resumeId (UUID)
+// ✅ Update resume by ID
 router.put('/resumeId/:resumeId', validateUUID, asyncHandler(ResumeController.updateResumeByResumeId));
 
-// ✅ Delete a resume by resumeId (UUID)  <-- MISSING BEFORE
-router.delete('/resumeId/:resumeId', validateUUID, asyncHandler(ResumeController.deleteResumeByResumeId));
+// ✅ Delete resume by ID (admin only)
+router.delete('/resumeId/:resumeId', validateUUID, requireRole(['admin']), asyncHandler(ResumeController.deleteResumeByResumeId));
 
 module.exports = router;
