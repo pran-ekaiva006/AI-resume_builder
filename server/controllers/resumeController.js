@@ -12,16 +12,18 @@ const createResume = async (req, res) => {
     const { clerkId, email } = req.user;
 
     console.log("📥 Received resume data from:", email);
+    console.log("🧾 Incoming request body:", req.body);
 
     const resume = new Resume({
       ...req.body,
-      userId: clerkId, // ✅ store Clerk ID in DB
+      title: req.body.title?.trim() || "Untitled Resume", // ✅ ensure title always set
+      userId: clerkId,
       userEmail: email,
     });
 
     await resume.save();
 
-    console.log("✅ Resume saved for user:", email);
+    console.log(`✅ Resume created for ${email} | Title: ${resume.title}`);
 
     const obj = resume.toObject();
     obj.documentId = obj.resumeId;
@@ -46,16 +48,18 @@ const createResume = async (req, res) => {
  */
 const getAllResumes = async (req, res) => {
   try {
-    console.log('getAllResumes - req.user:', req.user);
     if (!req.user || !req.user.clerkId) {
-      console.log('getAllResumes: missing req.user -> returning 401');
       return res.status(401).json({ success: false, message: 'Unauthorized: missing user' });
     }
 
-    const resumes = await Resume.find({ userId: req.user.clerkId });
+    console.log("📄 Fetching resumes for user:", req.user.emailAddress);
+
+    const resumes = await Resume.find({ userId: req.user.clerkId }).sort({ createdAt: -1 });
+
     const mappedResumes = resumes.map(r => {
       const obj = r.toObject();
       obj.documentId = obj.resumeId;
+      obj.title = obj.title?.trim() || "Untitled Resume"; // ✅ fallback
       return obj;
     });
 
@@ -85,7 +89,7 @@ const getResumeByResumeId = async (req, res) => {
 
     const resume = await Resume.findOne({
       resumeId: req.params.resumeId,
-      userId: req.user.clerkId, // ✅ fixed
+      userId: req.user.clerkId,
     });
 
     if (!resume) {
@@ -97,6 +101,7 @@ const getResumeByResumeId = async (req, res) => {
 
     const obj = resume.toObject();
     obj.documentId = obj.resumeId;
+    obj.title = obj.title?.trim() || "Untitled Resume";
 
     res.status(200).json({
       success: true,
@@ -122,12 +127,13 @@ const updateResumeByResumeId = async (req, res) => {
     }
 
     const query = { resumeId: req.params.resumeId };
+    if (req.user.role !== 'admin') query.userId = req.user.clerkId;
 
-    if (req.user.role !== 'admin') {
-      query.userId = req.user.clerkId; // ✅ fixed
-    }
-
-    const updatedResume = await Resume.findOneAndUpdate(query, req.body, { new: true });
+    const updatedResume = await Resume.findOneAndUpdate(
+      query,
+      { ...req.body, title: req.body.title?.trim() || "Untitled Resume" },
+      { new: true }
+    );
 
     if (!updatedResume) {
       return res.status(404).json({
@@ -164,10 +170,7 @@ const deleteResumeByResumeId = async (req, res) => {
     }
 
     const query = { resumeId: req.params.resumeId };
-
-    if (req.user.role !== 'admin') {
-      query.userId = req.user.clerkId; // ✅ fixed
-    }
+    if (req.user.role !== 'admin') query.userId = req.user.clerkId;
 
     const deletedResume = await Resume.findOneAndDelete(query);
 
@@ -192,4 +195,10 @@ const deleteResumeByResumeId = async (req, res) => {
   }
 };
 
-module.exports = { createResume, getAllResumes, getResumeByResumeId, updateResumeByResumeId, deleteResumeByResumeId };
+module.exports = {
+  createResume,
+  getAllResumes,
+  getResumeByResumeId,
+  updateResumeByResumeId,
+  deleteResumeByResumeId,
+};

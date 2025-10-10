@@ -4,13 +4,13 @@ import FormSection from '../../components/FormSection';
 import ResumePreview from '../../components/ResumePreview';
 import { ResumeInfoContext } from 'client/src/context/ResumeInfoContext';
 import dummy from 'client/src/dashboard/data/dummy';
-import { useApiClient } from '../../../../../service/GlobalApi'; // ✅ updated import
+import { useApiClient } from '../../../../../service/GlobalApi';
 import { toast } from 'sonner';
 
 function EditResume() {
   const { resumeId } = useParams();
-  const [resumeInfo, setResumeInfo] = useState(null);
-  const { GetResumeById } = useApiClient(); // ✅ use the Clerk-secured API
+  const [resumeInfo, setResumeInfo] = useState(dummy); // ✅ start with dummy immediately
+  const { GetResumeById } = useApiClient();
 
   useEffect(() => {
     if (resumeId && resumeId !== 'undefined') {
@@ -23,30 +23,34 @@ function EditResume() {
 
   const GetResumeInfoWithRetry = async (retries = 3, delay = 500) => {
     try {
-      const data = await GetResumeById(resumeId);
+      const response = await GetResumeById(resumeId);
+      const data = response?.data || response; // ✅ handle both {data: {...}} or plain {...}
 
-      if (!data) {
-        throw new Error('Resume not found or unauthorized');
+      if (!data || Object.keys(data).length === 0) {
+        throw new Error('Resume not found or empty');
       }
 
-      // ✅ Normalize ID fields (for consistent handling)
-      if (!data.resumeId && data.documentId) {
-        data.resumeId = data.documentId;
-      }
+      // ✅ Normalize structure — if backend sends only partial data, merge with dummy
+      const mergedData = {
+        ...dummy,
+        ...data,
+        experience: data.experience?.length ? data.experience : dummy.experience,
+        education: data.education?.length ? data.education : dummy.education,
+        skills: data.skills?.length ? data.skills : dummy.skills,
+      };
 
-      console.log('✅ Resume data fetched:', data);
-      setResumeInfo(data);
+      console.log('✅ Resume data fetched:', mergedData);
+      setResumeInfo(mergedData);
     } catch (error) {
       console.error('❌ Error fetching resume:', error);
 
       if (retries > 0) {
         console.warn(`🔁 Retrying fetch... attempts left: ${retries - 1}`);
         setTimeout(() => {
-          GetResumeInfoWithRetry(retries - 1, delay * 2); // exponential backoff
+          GetResumeInfoWithRetry(retries - 1, delay * 2);
         }, delay);
       } else {
-        toast.error('Failed to fetch resume. Using dummy data.');
-        console.warn('⚠️ Failed to fetch resume after retries. Using dummy data.');
+        toast.error('Failed to fetch resume. Showing dummy data.');
         setResumeInfo(dummy);
       }
     }

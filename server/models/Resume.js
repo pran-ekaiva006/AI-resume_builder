@@ -8,7 +8,15 @@ const resumeSchema = new mongoose.Schema({
     unique: true,
   },
 
-  // 🔗 Linked to Clerk user (instead of email-based ownership)
+  // 🧾 Resume Title
+  title: {
+    type: String,
+    required: false,
+    default: "Untitled Resume",
+    trim: true, // ✅ removes accidental spaces
+  },
+
+  // 🔗 Linked to Clerk user
   userId: {
     type: String, // Clerk userId from req.user.clerkId
     required: true,
@@ -18,19 +26,13 @@ const resumeSchema = new mongoose.Schema({
   userEmail: {
     type: String,
     required: true,
+    lowercase: true,
+    trim: true,
   },
-  firstName: {
-    type: String,
-    required: true,
-  },
-  lastName: {
-    type: String,
-    required: true,
-  },
-  jobTitle: {
-    type: String,
-    required: true,
-  },
+
+  firstName: String,
+  lastName: String,
+  jobTitle: String,
   themeColor: {
     type: String,
     default: '#ff6666',

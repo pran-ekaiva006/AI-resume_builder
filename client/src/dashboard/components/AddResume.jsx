@@ -9,28 +9,29 @@ import {
 } from "client/src/components/ui/dialog";
 import { Button } from 'client/src/components/ui/button';
 import { Input } from 'client/src/components/ui/input';
-import { useApiClient } from '../../../service/GlobalApi'; // ✅ updated import
+import { useApiClient } from '../../../service/GlobalApi';
 import { useUser } from '@clerk/clerk-react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
+import { toast } from 'sonner';
 
-function AddResume() {
+function AddResume({ refreshData }) { // ✅ accept refreshData from Dashboard
   const [openDialog, setOpenDialog] = useState(false);
   const [resumeTitle, setResumeTitle] = useState('');
   const [loading, setLoading] = useState(false);
 
   const { user } = useUser();
   const navigate = useNavigate();
-  const { CreateNewResume } = useApiClient(); // ✅ using Clerk-secured API client
+  const { CreateNewResume } = useApiClient();
 
   const onCreate = async () => {
     if (!resumeTitle.trim()) {
-      alert("Please enter a resume title.");
+      toast.error("Please enter a resume title.");
       return;
     }
 
     setLoading(true);
-    const resumeId = uuidv4(); // generate fresh resume ID
+    const resumeId = uuidv4();
 
     const resumeData = {
       resumeId,
@@ -59,20 +60,6 @@ function AddResume() {
             '• Created REST APIs and responsive UIs.\n' +
             '• Maintained React Native in-house apps.',
         },
-        {
-          id: 2,
-          title: 'Frontend Developer',
-          companyName: 'Google',
-          city: 'Charlotte',
-          state: 'NC',
-          startDate: 'May 2019',
-          endDate: 'Jan 2021',
-          currentlyWorking: false,
-          workSummery:
-            '• Built modern interfaces with React.\n' +
-            '• Worked on cross-device compatibility.\n' +
-            '• Collaborated on design systems.',
-        },
       ],
       education: [
         {
@@ -94,12 +81,18 @@ function AddResume() {
     };
 
     try {
-      const response = await CreateNewResume(resumeData); // ✅ secured API call
+      const response = await CreateNewResume(resumeData);
       console.log("✅ New resume created:", response);
+
+      // ✅ Immediately refresh dashboard data (so title appears)
+      if (refreshData) await refreshData();
+
+      toast.success("Resume created successfully!");
+      setOpenDialog(false);
       navigate(`/dashboard/resume/${resumeId}/edit`);
     } catch (error) {
       console.error("❌ Failed to create resume:", error);
-      alert("Resume creation failed. Check console for details.");
+      toast.error("Resume creation failed. Check console for details.");
     } finally {
       setLoading(false);
     }
@@ -126,7 +119,7 @@ function AddResume() {
           </DialogDescription>
           <Input
             className="my-2"
-            placeholder="Ex. Full Stack Resume"
+            placeholder="Ex. Frontend Resume"
             value={resumeTitle}
             onChange={(e) => setResumeTitle(e.target.value)}
           />

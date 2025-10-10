@@ -17,7 +17,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "client/src/components/ui/alert-dialog";
-import { useApiClient } from '../../../service/GlobalApi';  // ✅ updated import
+import { useApiClient } from '../../../service/GlobalApi';
 import { toast } from 'sonner';
 
 function ResumeCardItem({ resume, refreshData }) {
@@ -25,12 +25,12 @@ function ResumeCardItem({ resume, refreshData }) {
   const [openAlert, setOpenAlert] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { DeleteResumeById } = useApiClient();  // ✅ get API functions with token
+  const { DeleteResumeById } = useApiClient();
 
   const onDelete = async () => {
     try {
       setLoading(true);
-      await DeleteResumeById(resume.documentId);  // ✅ secured API call
+      await DeleteResumeById(resume.documentId || resume.resumeId);
       toast.success('Resume deleted successfully!');
       refreshData();
     } catch (error) {
@@ -42,39 +42,60 @@ function ResumeCardItem({ resume, refreshData }) {
     }
   };
 
+  // ✅ Safe data handling
+  const resumeTitle = resume?.title?.trim() || "Untitled Resume";
+  const themeColor = resume?.themeColor || "#ff6666";
+  const createdAt = resume?.createdAt
+    ? new Date(resume.createdAt).toLocaleDateString('en-IN', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      })
+    : "Recently Created";
+
+  const resumeId = resume?.documentId || resume?.resumeId;
+
   return (
-    <div>
-      <Link to={`/dashboard/resume/${resume.documentId}/edit`}>
+    <div className="group relative transition-all hover:scale-[1.03] hover:shadow-md">
+      <Link to={`/dashboard/resume/${resumeId}/edit`}>
         <div
-          className="p-14 bg-gradient-to-b from-pink-100 via-purple-200 to-blue-200
-            h-[280px] rounded-t-lg border-t-4"
-          style={{ borderColor: resume?.themeColor }}
+          className="p-14 bg-gradient-to-b from-pink-100 via-purple-200 to-blue-200 h-[260px] rounded-t-lg border-t-4 flex items-center justify-center"
+          style={{ borderColor: themeColor }}
         >
-          <div className="flex items-center justify-center h-[180px]">
-            <img src="/cv.png" width={80} height={80} alt="Resume Icon" />
-          </div>
+          <img src="/cv.png" width={70} height={70} alt="Resume Icon" />
         </div>
       </Link>
 
       <div
-        className="border p-3 flex justify-between text-white rounded-b-lg shadow-lg"
-        style={{ background: resume?.themeColor }}
+        className="border p-3 flex justify-between items-center text-white rounded-b-lg"
+        style={{ background: themeColor }}
       >
-        <h2 className="text-sm">{resume.title}</h2>
+        <div>
+          <h2 className="text-sm font-semibold truncate w-[110px]">
+            {resumeTitle}
+          </h2>
+          <p className="text-[11px] opacity-90">{createdAt}</p>
+        </div>
 
         <DropdownMenu>
           <DropdownMenuTrigger>
-            <MoreVertical className="h-4 w-4 cursor-pointer" />
+            <MoreVertical className="h-4 w-4 cursor-pointer hover:opacity-80" />
           </DropdownMenuTrigger>
 
           <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => navigate(`/dashboard/resume/${resume.documentId}/edit`)}>Edit</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => navigate(`/my-resume/${resume.documentId}/view`)}>View</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => navigate(`/my-resume/${resume.documentId}/view`)}>Download</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setOpenAlert(true)}>Delete</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate(`/dashboard/resume/${resumeId}/edit`)}>
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate(`/my-resume/${resumeId}/view`)}>
+              View
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setOpenAlert(true)}>
+              Delete
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
+        {/* Delete Confirmation Dialog */}
         <AlertDialog open={openAlert}>
           <AlertDialogContent>
             <AlertDialogHeader>

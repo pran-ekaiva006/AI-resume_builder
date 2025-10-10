@@ -1,32 +1,44 @@
 import React from 'react';
 
 function ExperiencePreview({ resumeInfo }) {
-  return (
-    <div className='my-6'>
-      <h2
-        className='text-center font-bold text-sm mb-2'
-        style={{ color: resumeInfo?.themeColor }}
-      >
-        Professional Experience
-      </h2>
-      <hr style={{ borderColor: resumeInfo?.themeColor }} />
+  const experienceList = Array.isArray(resumeInfo?.experience)
+    ? resumeInfo.experience
+    : [];
+  const themeColor = resumeInfo?.themeColor || '#000';
 
-      {resumeInfo?.experience.map((experience, index) => (
-        <div key={index}>
-          <h2 className='text-sm font-bold'>{experience?.title}</h2>
-          <h2 className='text-xs flex justify-between'>
-            {experience?.companyName}, {experience?.city}, {experience?.state}
-            <span>
-              {experience?.startDate} To{' '}
-              {experience?.currentWorking ? 'Present' : experience.endDate}
-            </span>
-          </h2>
-          <div
-            className='text-xs my-2'
-            dangerouslySetInnerHTML={{ __html: experience?.workSummery }}
-          />
-        </div>
-      ))}
+  return (
+    <div className="my-6">
+      <h2
+        className="text-center font-bold text-sm mb-2"
+        style={{ color: themeColor }}
+      >
+        Experience
+      </h2>
+      <hr style={{ borderColor: themeColor }} />
+
+      {experienceList.length > 0 ? (
+        experienceList.map((exp, index) => (
+          <div key={index} className="my-5">
+            <h2 className="text-sm font-bold" style={{ color: themeColor }}>
+              {exp?.title || 'Job Title'}
+            </h2>
+            <h2 className="text-xs flex justify-between">
+              {exp?.companyName || 'Company Name'}, {exp?.city || 'City'}{' '}
+              {exp?.state || ''}
+              <span>
+                {exp?.startDate || '—'} - {exp?.endDate || 'Present'}
+              </span>
+            </h2>
+            <p className="text-xs my-2 whitespace-pre-line">
+              {exp?.workSummery || 'No work summary available.'}
+            </p>
+          </div>
+        ))
+      ) : (
+        <p className="text-xs text-gray-400 italic mt-2 text-center">
+          No experience data available.
+        </p>
+      )}
     </div>
   );
 }
