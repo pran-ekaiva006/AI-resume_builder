@@ -18,7 +18,11 @@ const PORT = process.env.PORT || 5001;
 const MONGO_URI = process.env.MONGO_URI;
 
 // ====== Register Clerk Middleware FIRST ======
-app.use(clerkMiddleware()); // 🧩 MUST come before getAuth() usage
+if (process.env.CLERK_SECRET_KEY && process.env.CLERK_PUBLISHABLE_KEY) {
+  app.use(clerkMiddleware());
+} else {
+  console.warn('⚠️ Clerk keys missing — skipping clerkMiddleware. Set CLERK_SECRET_KEY and CLERK_PUBLISHABLE_KEY in environment.');
+}
 
 // ====== Middleware ======
 app.use(cors({
