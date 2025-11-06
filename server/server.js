@@ -17,7 +17,7 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 const MONGO_URI = process.env.MONGO_URI;
 
-// ✅ CORS
+// ✅ CORS config
 app.use(
   cors({
     origin: [
@@ -33,35 +33,36 @@ app.use(
 app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser());
 
-// ✅ Clerk middleware (with JWT key)
+
+// ✅ APPLY CLERK PROTECTION ONLY TO RESUME ROUTES
 app.use(
-  clerkMiddleware({
-    jwtKey: process.env.CLERK_JWT_KEY,
-  })
+  "/api/resumes",
+  clerkMiddleware({ jwtKey: process.env.CLERK_JWT_KEY }),
+  attachUser,
+  resumeRoutes
 );
 
-// ✅ Attach req.user (maps Clerk → Mongo user)
-app.use(attachUser);
-
-// ✅ API routes
-app.use("/api/resumes", resumeRoutes);
+// ✅ AI ROUTES DO NOT REQUIRE AUTH
 app.use("/api/ai", aiRoutes);
 
-// Health check
+
+// 🔥 Health check
 app.get("/", (_, res) => {
   res.send("🚀 API Running Successfully");
 });
 
-// 404
+// 🚨 404 handler
 app.use((_, res) => res.status(404).json({ message: "❌ Route not found" }));
 
-// ✅ Connect DB + start server
+// ✅ DB Connection & Server start
 (async () => {
   try {
     await mongoose.connect(MONGO_URI);
     console.log("✅ MongoDB connected successfully");
 
-    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+    app.listen(PORT, () =>
+      console.log(`🚀 Server running on port ${PORT}`)
+    );
   } catch (error) {
     console.error("❌ MongoDB error:", error.message);
     process.exit(1);

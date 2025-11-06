@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { LoaderCircle } from "lucide-react";
 import axios from "axios";
 
-const formField = {
+const EMPTY_EXPERIENCE = {
   title: "",
   companyName: "",
   city: "",
@@ -20,58 +20,54 @@ const formField = {
 };
 
 function Experience() {
-  const [experinceList, setExperinceList] = useState([]);
+  const [experienceList, setExperienceList] = useState([]);
   const { resumeInfo, setResumeInfo } = useContext(ResumeInfoContext);
   const params = useParams();
+  const { UpdateResumeDetail } = useApiClient();
   const [loading, setLoading] = useState(false);
 
-  const { UpdateResumeDetail } = useApiClient();
-
-  // ✅ Load from resumeInfo only once
+  /** ✅ Load initial data */
   useEffect(() => {
-    if (resumeInfo?.experience?.length > 0) {
-      setExperinceList(resumeInfo.experience);
+    if (Array.isArray(resumeInfo?.experience)) {
+      setExperienceList(resumeInfo.experience);
     }
   }, [resumeInfo]);
 
+  /** ✅ Update ctx only when list changes */
+  useEffect(() => {
+    setResumeInfo((prev) => ({ ...prev, experience: experienceList }));
+  }, [experienceList]);
+
   const handleChange = (index, event) => {
-    const newEntries = [...experinceList];
-    newEntries[index][event.target.name] = event.target.value;
-    setExperinceList(newEntries);
-  };
-
-  const AddNewExperience = () => {
-    setExperinceList([...experinceList, { ...formField }]);
-  };
-
-  const RemoveExperience = () => {
-    setExperinceList((prev) => prev.slice(0, -1));
+    const updated = [...experienceList];
+    updated[index][event.target.name] = event.target.value;
+    setExperienceList(updated);
   };
 
   const handleRichTextEditor = (value, name, index) => {
-    const newEntries = [...experinceList];
-    newEntries[index][name] = value;
-    setExperinceList(newEntries);
+    const updated = [...experienceList];
+    updated[index][name] = value;
+    setExperienceList(updated);
   };
 
-  // ✅ Fix infinite re-render (important)
-  useEffect(() => {
-    if (resumeInfo?.experience !== experinceList) {
-      setResumeInfo((prev) => ({
-        ...prev,
-        experience: experinceList,
-      }));
-    }
-  }, [experinceList]);
+  const AddNewExperience = () => {
+    setExperienceList([...experienceList, { ...EMPTY_EXPERIENCE }]);
+  };
 
-  // ✅ AI Bullet Points Generation
+  const RemoveExperience = () => {
+    if (experienceList.length > 1) {
+      setExperienceList((prev) => prev.slice(0, -1));
+    }
+  };
+
+  /** ✅ AI Bullet Generation */
   const GenerateAIforExperience = async (index) => {
-    const jobTitle = experinceList[index]?.title;
-    if (!jobTitle) return toast.error("Enter the Position Title first!");
+    const jobTitle = experienceList[index]?.title;
+    if (!jobTitle) return toast.error("⚠️ Enter Job Title before generating.");
 
     setLoading(true);
     try {
-      const prompt = `Generate 6 resume bullet points for the role "${jobTitle}". Use strong action verbs and quantifiable achievements. Return only <ul><li> HTML.`;
+      const prompt = `Generate 6 resume bullet points for the role "${jobTitle}". Use strong verbs & measurable achievements. Return only <ul><li> HTML.`;
 
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/ai/generate`,
@@ -79,30 +75,31 @@ function Experience() {
         { withCredentials: true }
       );
 
-      const newEntries = [...experinceList];
-      newEntries[index].workSummery = response.data.content;
-      setExperinceList(newEntries);
+      const updated = [...experienceList];
+      updated[index].workSummery = response.data.content;
+      setExperienceList(updated);
 
-      toast.success("✅ AI Work Summary Generated!");
+      toast.success("✨ AI Work Summary Generated!");
     } catch (error) {
-      toast.error("❌ Failed to generate from AI");
+      toast.error("❌ Failed to generate summary from AI");
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ Save Experience to DB
+  /** ✅ Save to database */
   const onSave = async () => {
-    setLoading(true);
+    if (!params.resumeId) return toast.error("Resume ID missing ❌");
 
+    setLoading(true);
     try {
       await UpdateResumeDetail(params.resumeId, {
-        experience: experinceList.map(({ id, ...rest }) => rest),
+        experience: experienceList.map(({ id, ...rest }) => rest),
       });
 
-      toast.success("✅ Experience details updated!");
+      toast.success("✅ Experience saved successfully!");
     } catch (error) {
-      toast.error("❌ Failed to update experience");
+      toast.error("❌ Failed to save Experience");
     } finally {
       setLoading(false);
     }
@@ -111,9 +108,9 @@ function Experience() {
   return (
     <div className="p-5 shadow-lg rounded-lg border-t-primary border-t-4 mt-10">
       <h2 className="font-bold text-lg">Professional Experience</h2>
-      <p>Add work experience details</p>
+      <p>Add your relevant work experience.</p>
 
-      {experinceList.map((item, index) => (
+      {experienceList.map((item, index) => (
         <div key={index} className="grid grid-cols-2 gap-3 border p-3 my-5 rounded-lg">
 
           <Input
@@ -144,7 +141,7 @@ function Experience() {
             placeholder="State"
           />
 
-          {/* ✅ FIX DATE FORMAT */}
+          {/* ✅ Fix HTML date format */}
           <Input
             type="date"
             name="startDate"
@@ -160,16 +157,16 @@ function Experience() {
           />
 
           <Button
-            onClick={() => GenerateAIforExperience(index)}
-            className="text-primary border-primary"
             variant="outline"
+            className="text-primary border-primary"
+            onClick={() => GenerateAIforExperience(index)}
             disabled={loading}
           >
-            ✨ Generate from AI
+            {loading ? <LoaderCircle className="animate-spin" /> : "✨ Generate from AI"}
           </Button>
 
           <RichTextEditor
-            defaultValue={item.workSummery || ""}
+            defaultValue={item.workSummery}
             onRichTextEditorChange={(value) =>
               handleRichTextEditor(value, "workSummery", index)
             }

@@ -1,3 +1,5 @@
+// client/src/dashboard/resume/components/forms/Summery.jsx
+
 import { Button } from 'client/src/components/ui/button';
 import { Textarea } from 'client/src/components/ui/textarea';
 import { ResumeInfoContext } from 'client/src/context/ResumeInfoContext';
@@ -7,7 +9,7 @@ import { toast } from 'sonner';
 import axios from "axios";
 import { useApiClient } from '../../../../../service/GlobalApi';
 
-const prompt = `Generate 3 professional resume summaries for a {jobTitle} position at different experience levels.
+const PROMPT = `Generate 3 professional resume summaries for a {jobTitle} position at different experience levels.
 IMPORTANT: Respond ONLY with a JSON array in this EXACT format:
 [
   {
@@ -33,25 +35,25 @@ function Summery({ enabledNext }) {
 
   const { UpdateResumeDetail } = useApiClient();
 
-  // ✅ Automatically update context while typing
+  // ✅ Update ResumeInfo every time user types
   useEffect(() => {
     setResumeInfo((prev) => ({ ...prev, summery }));
   }, [summery, setResumeInfo]);
 
+  // ✅ Generate summary using Backend AI API
   const GenerateSummeryFromAI = async () => {
     setLoading(true);
     try {
-      const PROMPT = prompt.replace("{jobTitle}", resumeInfo?.jobTitle || "");
+      const finalPrompt = PROMPT.replace("{jobTitle}", resumeInfo?.jobTitle || "");
 
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/ai/generate`,
-        { prompt: PROMPT, format: "json" },
+        { prompt: finalPrompt, format: "json" },
         { withCredentials: true }
       );
 
       const raw = response.data.content;
-      const match = raw.match(/\[[\s\S]*\]/);
-      const parsed = JSON.parse(match ? match[0] : raw);
+      const parsed = JSON.parse(raw.match(/\[[\s\S]*\]/)?.[0] || raw);
 
       setAiGenerateSummeryList(parsed);
       toast.success("✨ AI Summary generated!");
@@ -62,15 +64,19 @@ function Summery({ enabledNext }) {
     }
   };
 
+  // ✅ Save to backend
   const SaveSummary = async () => {
-    if (!resumeInfo?.documentId) {
-      toast.error("Resume ID missing — cannot save ❌");
+    const id = resumeInfo.resumeId || resumeInfo.documentId;
+
+    if (!id) {
+      toast.error("❌ Resume ID missing — cannot save summary");
       return;
     }
 
     setSaveLoading(true);
+
     try {
-      await UpdateResumeDetail(resumeInfo.documentId, { summery });
+      await UpdateResumeDetail(id, { summery });
       toast.success("✅ Summary saved successfully!");
     } catch (error) {
       toast.error("Server error — Failed to save summary ❌");
@@ -83,18 +89,19 @@ function Summery({ enabledNext }) {
     <div>
       <div className="p-5 shadow-lg rounded-lg border-t-primary border-t-4 mt-10">
         <h2 className="font-bold text-lg">Summary</h2>
-        <p>Add summary for your job title</p>
+        <p>Add a summary for your job title</p>
 
         <form className="mt-7">
           <div className="flex justify-between items-end">
             <label>Add Summary</label>
+
             <Button
               variant="outline"
-              onClick={GenerateSummeryFromAI}
               type="button"
               size="sm"
-              className="border-primary text-primary flex gap-2"
+              onClick={GenerateSummeryFromAI}
               disabled={loading}
+              className="border-primary text-primary flex gap-2"
             >
               {loading ? <LoaderCircle className="animate-spin h-4 w-4" /> : <Brain className="h-4 w-4" />}
               Generate from AI
@@ -109,7 +116,6 @@ function Summery({ enabledNext }) {
           />
         </form>
 
-        {/* ✅ Save button */}
         <div className="flex justify-end mt-4">
           <Button onClick={SaveSummary} disabled={saveLoading}>
             {saveLoading ? <LoaderCircle className="animate-spin" /> : "Save"}
@@ -117,7 +123,7 @@ function Summery({ enabledNext }) {
         </div>
       </div>
 
-      {/* ✅ Display AI options */}
+      {/* ✅ Show AI generated summaries */}
       {aiGeneratedSummeryList.map((item, index) => (
         <div
           key={index}
