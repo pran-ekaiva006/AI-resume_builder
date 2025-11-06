@@ -31,14 +31,22 @@ function PersonalDetail({ enabledNext }) {
     e.preventDefault();
     setLoading(true);
 
-    const { documentId, ...updateData } = formData;
+    // ✅ Create a specific payload with only personal detail fields
+    const updateData = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      jobTitle: formData.jobTitle,
+      address: formData.address,
+      phone: formData.phone,
+      email: formData.email,
+    };
 
     try {
       let finalResumeId = resumeId;
 
       // If resumeId is missing, create a new resume
       if (!resumeId || resumeId === 'undefined') {
-        const createResponse = await CreateNewResume(updateData);
+        const createResponse = await CreateNewResume(formData); // Create can use full formData
         finalResumeId = createResponse?.resume?.resumeId;
 
         if (!finalResumeId) {
@@ -47,11 +55,11 @@ function PersonalDetail({ enabledNext }) {
           return;
         }
 
-        setResumeInfo({ ...updateData, resumeId: finalResumeId });
+        setResumeInfo({ ...formData, resumeId: finalResumeId });
         toast.success('🆕 Resume created');
       }
 
-      // Update existing resume
+      // Update existing resume with the specific payload
       const response = await UpdateResumeDetail(finalResumeId, updateData);
       console.log('✅ Resume updated successfully:', response);
       toast.success('Details updated ✅');
