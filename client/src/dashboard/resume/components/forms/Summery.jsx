@@ -86,6 +86,24 @@ function Summery({ enabledNext }) {
     }
   };
 
+  const onSave = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const data = {
+      summery: summery,
+    };
+    try {
+      const resp = await UpdateResumeDetail(params?.resumeId, data);
+      toast.success('Summary updated successfully ✅');
+      enabledNext(true);
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to update summary ❌'); 
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div>
       <div className="p-5 shadow-lg rounded-lg border-t-primary border-t-4 mt-10">
