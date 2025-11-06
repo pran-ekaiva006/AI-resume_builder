@@ -122,6 +122,7 @@ const updateResumeByResumeId = async (req, res) => {
     }
 
     const query = { resumeId: req.params.resumeId, userId: req.user.clerkId };
+    // Add { new: true } to return the updated document
     const updatedResume = await Resume.findOneAndUpdate(query, req.body, { new: true });
 
     if (!updatedResume) {

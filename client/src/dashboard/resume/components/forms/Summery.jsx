@@ -32,6 +32,7 @@ function Summery({ enabledNext }) {
   const [loading, setLoading] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
   const [aiGeneratedSummeryList, setAiGenerateSummeryList] = useState([]);
+  const [selectedSummaryIndex, setSelectedSummaryIndex] = useState(null); // New state for selection
 
   const { UpdateResumeDetail } = useApiClient();
 
@@ -128,11 +129,21 @@ function Summery({ enabledNext }) {
       {aiGeneratedSummeryList.map((item, index) => (
         <div
           key={index}
-          onClick={() => setSummery(item.summary)}
-          className="p-5 shadow-lg my-4 rounded-lg cursor-pointer hover:bg-gray-50"
+          onClick={() => {
+            setSummery(item.summary);
+            setSelectedSummaryIndex(index); // Set selected index
+            setTimeout(() => setSelectedSummaryIndex(null), 500); // Reset after a short delay
+          }}
+          className="p-5 shadow-lg my-4 rounded-lg cursor-pointer hover:bg-gray-50 flex items-center gap-3"
         >
-          <h2 className="font-bold text-primary">Level: {item.experience_level}</h2>
-          <p>{item.summary}</p>
+          {selectedSummaryIndex === index ? (
+            <LoaderCircle className="animate-spin h-5 w-5 text-primary" />
+          ) : (
+            <div>
+              <h2 className="font-bold text-primary">Level: {item.experience_level}</h2>
+              <p>{item.summary}</p>
+            </div>
+          )}
         </div>
       ))}
     </div>
