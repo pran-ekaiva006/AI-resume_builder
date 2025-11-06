@@ -1,70 +1,69 @@
 // server/server.js
 
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const dotenv = require('dotenv');
-const cookieParser = require('cookie-parser');
-const { clerkMiddleware } = require('@clerk/express'); // ✅ Import Clerk middleware
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const dotenv = require("dotenv");
+const cookieParser = require("cookie-parser");
+const { clerkMiddleware } = require("@clerk/express");
 
-const resumeRoutes = require('./routes/resumeRoutes');
-const { attachUser } = require('./middlewares/authMiddleware'); // ✅ Import your attachUser middleware
+const resumeRoutes = require("./routes/resumeRoutes");
+const aiRoutes = require("./routes/aiRoutes");
+const { attachUser } = require("./middlewares/authMiddleware");
 
-// ====== Load Environment Variables ======
 dotenv.config();
-
 const app = express();
+
 const PORT = process.env.PORT || 5001;
 const MONGO_URI = process.env.MONGO_URI;
 
-// ====== Middleware ======
-app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'https://ai-resume-builder-6-o5vo.onrender.com'
-  ],
-  credentials: true,
-}));
-app.use(express.json());
+// ✅ CORS
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://ai-resume-builder-6-o5vo.onrender.com",
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
+app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser());
 
-// ✅ Clerk middleware MUST be before any getAuth/attachUser usage
-app.use(clerkMiddleware());
+// ✅ Clerk middleware (with JWT key)
+app.use(
+  clerkMiddleware({
+    jwtKey: process.env.CLERK_JWT_KEY,
+  })
+);
 
-// ✅ Then attach user info (depends on Clerk)
+// ✅ Attach req.user (maps Clerk → Mongo user)
 app.use(attachUser);
 
-// ====== API Routes ======
-app.use('/api/resumes', resumeRoutes);
+// ✅ API routes
+app.use("/api/resumes", resumeRoutes);
+app.use("/api/ai", aiRoutes);
 
-// ====== Health Check ======
-app.get('/', (req, res) => {
-  res.send('🚀 AI Resume Builder API is running successfully');
+// Health check
+app.get("/", (_, res) => {
+  res.send("🚀 API Running Successfully");
 });
 
-// ====== 404 Handler ======
-app.use((req, res) => {
-  res.status(404).json({ message: '❌ Route not found' });
-});
+// 404
+app.use((_, res) => res.status(404).json({ message: "❌ Route not found" }));
 
-// ====== MongoDB Connection + Start Server ======
+// ✅ Connect DB + start server
 (async () => {
   try {
-    const safeUri = MONGO_URI.replace(/:(.*)@/, ':*****@');
-    console.log('Connecting to MongoDB with URI:', safeUri);
+    await mongoose.connect(MONGO_URI);
+    console.log("✅ MongoDB connected successfully");
 
-    await mongoose.connect(MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-
-    console.log('✅ MongoDB connected successfully');
-
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
-    });
-  } catch (err) {
-    console.error('❌ MongoDB connection error:', err.message);
+    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+  } catch (error) {
+    console.error("❌ MongoDB error:", error.message);
     process.exit(1);
   }
 })();

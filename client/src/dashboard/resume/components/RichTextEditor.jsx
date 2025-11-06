@@ -1,55 +1,60 @@
 import { Button } from 'client/src/components/ui/button';
 import { ResumeInfoContext } from 'client/src/context/ResumeInfoContext';
 import { Brain, LoaderCircle } from 'lucide-react';
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState } from 'react';
 import {
   BtnBold,
   BtnBulletList,
-  BtnClearFormatting,
   BtnItalic,
   BtnLink,
   BtnNumberedList,
   BtnStrikeThrough,
-  BtnStyles,
   BtnUnderline,
   Editor,
   EditorProvider,
-  HtmlButton,
   Separator,
   Toolbar
 } from 'react-simple-wysiwyg';
-import { AIchatSession } from '../../../../service/AIModal';
+import axios from "axios";
 import { toast } from 'sonner';
 
-const PROMPT = 'position title: {positionTitle}, based on this title give me 5-7 bullet points for my experience in resume. Do NOT include experience level. Do NOT return JSON. Give the result in valid HTML <ul><li> format only.';
+const PROMPT = `
+Based on this job role: "{positionTitle}", generate 5-7 resume bullet points.
+Return ONLY HTML <ul><li>...</li></ul>. No markdown. No JSON.
+`;
 
 function RichTextEditor({ onRichTextEditorChange, index, defaultValue }) {
-  const [value, setValue] = useState(defaultValue);
-  const { resumeInfo, setResumeInfo } = useContext(ResumeInfoContext);
+  const [value, setValue] = useState(defaultValue || "");
+  const { resumeInfo } = useContext(ResumeInfoContext);
   const [loading, setLoading] = useState(false);
 
   const GenerateSummeryFromAI = async () => {
+    const positionTitle = resumeInfo?.experience[index]?.title;
+
+    if (!positionTitle) {
+      toast.error("Please enter Position Title first ⚠️");
+      return;
+    }
+
+    setLoading(true);
     try {
-      const positionTitle = resumeInfo?.experience[index]?.title;
+      const finalPrompt = PROMPT.replace("{positionTitle}", positionTitle);
 
-      if (!positionTitle) {
-        toast.error('Please add Position Title first');
-        return;
-      }
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/ai/generate`,
+        { prompt: finalPrompt, format: "html" },
+        { withCredentials: true }
+      );
 
-      setLoading(true);
-      const prompt = PROMPT.replace('{positionTitle}', positionTitle);
-
-      // Pass format explicitly as 'html'
-      const result = await AIchatSession.sendMessage(prompt, { format: "html" });
-      const content = await result.response.text();
+      const content = response.data.content;
 
       setValue(content);
-      onRichTextEditorChange({ target: { value: content } });
-      toast.success('Content generated successfully!');
+      onRichTextEditorChange(content);   // ✅ send string ONLY
+
+      toast.success("✨ AI content generated!");
     } catch (error) {
-      console.error("AI Generation Error:", error);
-      toast.error(error.message || "Failed to generate content");
+      console.error("AI Error:", error);
+      toast.error("Failed to generate content ❌");
     } finally {
       setLoading(false);
     }
@@ -58,7 +63,8 @@ function RichTextEditor({ onRichTextEditorChange, index, defaultValue }) {
   return (
     <div>
       <div className='flex justify-between my-2'>
-        <label className='text-xs'>Summary</label>
+        <label className='text-xs'>Work Summary</label>
+
         <Button
           variant="outline"
           size="sm"
@@ -66,21 +72,20 @@ function RichTextEditor({ onRichTextEditorChange, index, defaultValue }) {
           disabled={loading}
           className="flex gap-2 border-primary text-primary"
         >
-          {loading ? (
-            <LoaderCircle className='animate-spin' />
-          ) : (
+          {loading ? <LoaderCircle className='animate-spin' /> :
             <>
               <Brain className='h-4 w-4' /> Generate from AI
             </>
-          )}
+          }
         </Button>
       </div>
+
       <EditorProvider>
         <Editor
           value={value}
           onChange={(e) => {
             setValue(e.target.value);
-            onRichTextEditorChange(e);
+            onRichTextEditorChange(e.target.value);  // ✅ send string ONLY
           }}
         >
           <Toolbar>

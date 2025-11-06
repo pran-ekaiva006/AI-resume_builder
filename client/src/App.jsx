@@ -1,30 +1,28 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.png'
-import './App.css'
-import { Button } from './components/ui/button'
-import { Navigate, Outlet } from 'react-router-dom'
-import { useUser } from '@clerk/clerk-react'
-import Header from './components/custom/Header'
-import { Toaster } from './components/ui/sonner'
-
-
+import { Navigate, Outlet } from "react-router-dom";
+import { SignedIn, SignedOut, useUser } from "@clerk/clerk-react";
+import Header from "./components/custom/Header";
+import { Toaster } from "./components/ui/sonner";
 
 function App() {
-  const [count, setCount] = useState(0)
-  const{user,isLoaded,isSignedIn}=useUser();
-  if(!isSignedIn && isLoaded){
+  const { isLoaded, isSignedIn } = useUser();
 
-    return <Navigate to={'/auth/sign-in'}/>
-  }
+  if (!isLoaded) return null; // wait until Clerk is ready
+
   return (
     <>
-    <Header/>
-     <Outlet/>
-     <Toaster/>
-  
+      {/* ✅ Only show Dashboard + content when user is signed in */}
+      <SignedIn>
+        <Header />
+        <Outlet />
+        <Toaster />
+      </SignedIn>
+
+      
+      <SignedOut>
+        <Navigate to="/auth/sign-in" />
+      </SignedOut>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

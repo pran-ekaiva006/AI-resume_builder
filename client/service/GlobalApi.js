@@ -1,98 +1,62 @@
+// client/service/GlobalApi.js
+
 import axios from "axios";
 import { useAuth } from "@clerk/clerk-react";
 
-// ✅ Backend Base URL (deployed Render API)
-const API_BASE = "https://ai-resume-builder-3-rdhw.onrender.com/api";
+// ✅ Backend URL from .env (should NOT include /api)
+const API_BASE = import.meta.env.VITE_BACKEND_URL;
 
-// ✅ Secure API client hook
 export const useApiClient = () => {
   const { getToken } = useAuth();
 
-  // Create axios instance
   const axiosClient = axios.create({
-    baseURL: API_BASE,
+    baseURL: API_BASE, // "/api" will be added below
+    withCredentials: true,
     headers: { "Content-Type": "application/json" },
   });
 
-  // 🔐 Attach Clerk JWT to all requests
+  // ✅ Attach Clerk JWT
   axiosClient.interceptors.request.use(async (config) => {
-    const token = await getToken();
-    if (token) config.headers.Authorization = `Bearer ${token}`;
+    const token = await getToken({ template: "default" });
+
+    if (token) {
+      console.log("✅ Token attached");
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
     return config;
   });
 
-  // 🔎 Centralized response handler
   const handleResponse = (res) => res.data;
   const handleError = (error, action) => {
     console.error(`❌ ${action} failed:`, error.response?.data || error.message);
-    throw error;
+    throw error.response?.data || error;
   };
 
   return {
-    /**
-     * 🧠 Create new resume
-     */
     CreateNewResume: async (data) => {
-      try {
-        console.log("📤 Sending resume creation request:", data);
-        const res = await axiosClient.post("/resumes", data);
-        console.log("✅ Resume created:", res.data);
-        return handleResponse(res);
-      } catch (error) {
-        handleError(error, "CreateNewResume");
-      }
+      const res = await axiosClient.post(`/api/resumes`, data);
+      return handleResponse(res);
     },
 
-    /**
-     * 📋 Get all resumes for current Clerk user
-     */
     GetUserResumes: async () => {
-      try {
-        const res = await axiosClient.get("/resumes");
-        console.log("📥 Fetched all resumes:", res.data);
-        return handleResponse(res);
-      } catch (error) {
-        handleError(error, "GetUserResumes");
-      }
+      const res = await axiosClient.get(`/api/resumes`);
+      return handleResponse(res);
     },
 
-    /**
-     * 🔍 Get specific resume by ID
-     */
     GetResumeById: async (resumeId) => {
-      try {
-        const res = await axiosClient.get(`/resumes/resumeId/${resumeId}`);
-        console.log("📄 Fetched resume:", res.data);
-        return handleResponse(res);
-      } catch (error) {
-        handleError(error, "GetResumeById");
-      }
+      const res = await axiosClient.get(`/api/resumes/${resumeId}`);
+      return handleResponse(res);
     },
 
-    /**
-     * ✏️ Update resume details
-     */
     UpdateResumeDetail: async (resumeId, data) => {
-      try {
-        const res = await axiosClient.put(`/resumes/resumeId/${resumeId}`, data);
-        console.log("📝 Resume updated:", res.data);
-        return handleResponse(res);
-      } catch (error) {
-        handleError(error, "UpdateResumeDetail");
-      }
+      const res = await axiosClient.put(`/api/resumes/${resumeId}`, data);
+      return handleResponse(res);
     },
 
-    /**
-     * 🗑️ Delete resume by ID
-     */
     DeleteResumeById: async (resumeId) => {
-      try {
-        const res = await axiosClient.delete(`/resumes/resumeId/${resumeId}`);
-        console.log("🗑️ Resume deleted:", res.data);
-        return handleResponse(res);
-      } catch (error) {
-        handleError(error, "DeleteResumeById");
-      }
+      const res = await axiosClient.delete(`/api/resumes/${resumeId}`);
+      return handleResponse(res);
     },
   };
 };

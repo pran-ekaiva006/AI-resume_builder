@@ -22,16 +22,21 @@ function ExperiencePreview({ resumeInfo }) {
             <h2 className="text-sm font-bold" style={{ color: themeColor }}>
               {exp?.title || 'Job Title'}
             </h2>
+
             <h2 className="text-xs flex justify-between">
-              {exp?.companyName || 'Company Name'}, {exp?.city || 'City'}{' '}
-              {exp?.state || ''}
+              {exp?.companyName || 'Company Name'}, {exp?.city || 'City'} {exp?.state || ''}
               <span>
                 {exp?.startDate || '—'} - {exp?.endDate || 'Present'}
               </span>
             </h2>
-            <p className="text-xs my-2 whitespace-pre-line">
-              {exp?.workSummery || 'No work summary available.'}
-            </p>
+
+            {/* ✅ Render AI generated HTML bullet points */}
+            <div
+              className="text-xs my-2"
+              dangerouslySetInnerHTML={{
+                __html: exp?.workSummery || "<p>No work summary available.</p>",
+              }}
+            ></div>
           </div>
         ))
       ) : (
