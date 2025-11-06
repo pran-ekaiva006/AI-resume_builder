@@ -72,8 +72,9 @@ function PersonalDetail({ enabledNext }) {
       <form onSubmit={onSave}>
         <div className='grid grid-cols-2 mt-5 gap-3'>
           <div>
-            <label className='text-sm'>First Name</label>
+            <label htmlFor="firstName" className='text-sm'>First Name</label>
             <Input
+              id="firstName"
               name='firstName'
               value={formData.firstName || ''}
               onChange={handleInputChange}
@@ -81,8 +82,9 @@ function PersonalDetail({ enabledNext }) {
             />
           </div>
           <div>
-            <label className='text-sm'>Last Name</label>
+            <label htmlFor="lastName" className='text-sm'>Last Name</label>
             <Input
+              id="lastName"
               name='lastName'
               value={formData.lastName || ''}
               onChange={handleInputChange}
@@ -90,8 +92,9 @@ function PersonalDetail({ enabledNext }) {
             />
           </div>
           <div className='col-span-2'>
-            <label className='text-sm'>Job Title</label>
+            <label htmlFor="jobTitle" className='text-sm'>Job Title</label>
             <Input
+              id="jobTitle"
               name='jobTitle'
               value={formData.jobTitle || ''}
               onChange={handleInputChange}
@@ -99,8 +102,9 @@ function PersonalDetail({ enabledNext }) {
             />
           </div>
           <div className='col-span-2'>
-            <label className='text-sm'>Address</label>
+            <label htmlFor="address" className='text-sm'>Address</label>
             <Input
+              id="address"
               name='address'
               value={formData.address || ''}
               onChange={handleInputChange}
@@ -108,8 +112,9 @@ function PersonalDetail({ enabledNext }) {
             />
           </div>
           <div>
-            <label className='text-sm'>Phone</label>
+            <label htmlFor="phone" className='text-sm'>Phone</label>
             <Input
+              id="phone"
               name='phone'
               value={formData.phone || ''}
               onChange={handleInputChange}
@@ -117,8 +122,9 @@ function PersonalDetail({ enabledNext }) {
             />
           </div>
           <div>
-            <label className='text-sm'>Email</label>
+            <label htmlFor="email" className='text-sm'>Email</label>
             <Input
+              id="email"
               name='email'
               value={formData.email || ''}
               onChange={handleInputChange}

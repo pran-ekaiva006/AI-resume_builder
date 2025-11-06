@@ -81,8 +81,9 @@ function Education() {
         <div key={index} className="grid grid-cols-2 gap-3 border p-3 my-5 rounded-lg">
 
           <div className="col-span-2">
-            <label>University Name</label>
+            <label htmlFor={`universityName-${index}`}>University Name</label>
             <Input
+              id={`universityName-${index}`}
               name="universityName"
               value={item.universityName}
               onChange={(e) => handleChange(e, index)}
@@ -91,8 +92,9 @@ function Education() {
           </div>
 
           <div>
-            <label>Degree</label>
+            <label htmlFor={`degree-${index}`}>Degree</label>
             <Input
+              id={`degree-${index}`}
               name="degree"
               value={item.degree}
               onChange={(e) => handleChange(e, index)}
@@ -101,8 +103,9 @@ function Education() {
           </div>
 
           <div>
-            <label>Major</label>
+            <label htmlFor={`major-${index}`}>Major</label>
             <Input
+              id={`major-${index}`}
               name="major"
               value={item.major}
               onChange={(e) => handleChange(e, index)}
@@ -111,9 +114,10 @@ function Education() {
           </div>
 
           <div>
-            <label>Start Date</label>
+            <label htmlFor={`startDate-${index}`}>Start Date</label>
             <Input
               type="date"
+              id={`startDate-${index}`}
               name="startDate"
               value={item.startDate?.slice(0, 10) || ""}
               onChange={(e) => handleChange(e, index)}
@@ -121,9 +125,10 @@ function Education() {
           </div>
 
           <div>
-            <label>End Date</label>
+            <label htmlFor={`endDate-${index}`}>End Date</label>
             <Input
               type="date"
+              id={`endDate-${index}`}
               name="endDate"
               value={item.endDate?.slice(0, 10) || ""}
               onChange={(e) => handleChange(e, index)}
@@ -131,8 +136,9 @@ function Education() {
           </div>
 
           <div className="col-span-2">
-            <label>Description</label>
+            <label htmlFor={`description-${index}`}>Description</label>
             <Textarea
+              id={`description-${index}`}
               name="description"
               value={item.description}
               onChange={(e) => handleChange(e, index)}

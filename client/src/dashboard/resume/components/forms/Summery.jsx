@@ -93,7 +93,7 @@ function Summery({ enabledNext }) {
 
         <form className="mt-7">
           <div className="flex justify-between items-end">
-            <label>Add Summary</label>
+            <label htmlFor="summary-textarea">Add Summary</label>
 
             <Button
               variant="outline"
@@ -109,6 +109,7 @@ function Summery({ enabledNext }) {
           </div>
 
           <Textarea
+            id="summary-textarea"
             className="mt-5"
             required
             value={summery}
