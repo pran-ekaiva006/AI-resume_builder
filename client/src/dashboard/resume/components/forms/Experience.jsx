@@ -26,17 +26,17 @@ function Experience() {
   const { UpdateResumeDetail } = useApiClient();
   const [loading, setLoading] = useState(false);
 
-  /** ✅ Load initial data */
+  /** ✅ Load initial data only once */
   useEffect(() => {
-    if (Array.isArray(resumeInfo?.experience)) {
+    if (resumeInfo?.experience && experienceList.length === 0) {
       setExperienceList(resumeInfo.experience);
     }
   }, [resumeInfo]);
 
-  /** ✅ Update ctx only when list changes */
+  /** ✅ Update context only when list changes */
   useEffect(() => {
     setResumeInfo((prev) => ({ ...prev, experience: experienceList }));
-  }, [experienceList]);
+  }, [experienceList, setResumeInfo]);
 
   const handleChange = (index, event) => {
     const updated = [...experienceList];
