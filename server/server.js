@@ -5,12 +5,11 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
-const { clerkMiddleware, getAuth, clerkClient } = require("@clerk/express");
-const User = require("./models/User");
+const { clerkMiddleware } = require("@clerk/express");
 
 const resumeRoutes = require("./routes/resumeRoutes");
 const aiRoutes = require("./routes/aiRoutes");
-const { attachUser } = require("./middlewares/authMiddleware");
+const { attachUser } = require("./middlewares/authMiddleware"); // ✅ Import only
 
 dotenv.config();
 const app = express();
@@ -24,7 +23,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://ai-resume-builder-6-o5vo.onrender.com",
-      "https://capable-churros-e51954.netlify.app", // Add your frontend domain
+      "https://capable-churros-e51954.netlify.app",
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
@@ -70,6 +69,7 @@ app.use((req, res) => {
   console.log(`❌ 404 - Route not found: ${req.method} ${req.url}`);
   res.status(404).json({ message: "❌ Route not found" });
 });
+
 
 // ✅ DB Connection & Server start
 (async () => {
