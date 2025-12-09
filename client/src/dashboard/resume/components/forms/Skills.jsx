@@ -16,10 +16,14 @@ function Skills() {
   const { resumeId } = useParams();
   const [loading, setLoading] = useState(false);
 
-  // ✅ Load initial skills only once
+  // ✅ Load initial skills - convert percentage to stars for display
   useEffect(() => {
     if (resumeInfo?.skills?.length > 0) {
-      setSkillsList(resumeInfo.skills);
+      const convertedSkills = resumeInfo.skills.map((skill) => ({
+        ...skill,
+        rating: skill.rating / 20, // Convert 0-100 to 0-5 for star display
+      }));
+      setSkillsList(convertedSkills);
     }
   }, [resumeInfo]);
 
@@ -46,19 +50,24 @@ function Skills() {
 
     setLoading(true);
     try {
+      // ✅ Convert star rating (0-5) to percentage (0-100) before saving
+      const skillsToSave = skillsList.map(({ id, rating, ...rest }) => ({
+        ...rest,
+        rating: Math.round(rating * 20), // Convert 0-5 stars to 0-100%
+      }));
+
       const resp = await UpdateResumeDetail(resumeId, {
-        skills: skillsList.map(({ id, ...rest }) => rest),
+        skills: skillsToSave,
       });
 
-      // ✅ Update stored resumeInfo ONLY on save
+      // ✅ Update context with percentage values
       setResumeInfo((prev) => ({
         ...prev,
-        skills: skillsList,
+        skills: skillsToSave,
       }));
 
       console.log('✅ Skills updated:', resp);
       toast.success('✅ Skills updated successfully!');
-
     } catch (error) {
       console.error('❌ Error updating skills:', error);
       toast.error('Server error — please try again.');
@@ -75,20 +84,25 @@ function Skills() {
       {skillsList.map((item, index) => (
         <div
           key={index}
-          className="flex items-center justify-between mb-3 border rounded-lg p-3"
+          className="flex items-center justify-between mb-3 border rounded-lg p-3 gap-3"
         >
           <Input
-            className="w-1/2"
+            className="flex-1"
             placeholder="Skill Name"
             value={item.name}
             onChange={(e) => handleChange(index, 'name', e.target.value)}
           />
 
-          <Rating
-            style={{ maxWidth: 120 }}
-            value={item.rating}
-            onChange={(v) => handleChange(index, 'rating', v)}
-          />
+          <div className="flex items-center gap-2">
+            <Rating
+              style={{ maxWidth: 120 }}
+              value={item.rating} // 0-5 scale for stars
+              onChange={(v) => handleChange(index, 'rating', v)}
+            />
+            <span className="text-xs text-gray-500 w-12 text-right">
+              {Math.round(item.rating * 20)}%
+            </span>
+          </div>
         </div>
       ))}
 
