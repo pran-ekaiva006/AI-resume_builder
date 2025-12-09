@@ -13,19 +13,20 @@ function SkillsPreview({ resumeInfo }) {
       </h2>
       <hr style={{ borderColor: themeColor }} />
 
-      <div className="grid grid-cols-2 gap-3 my-4">
+      <div className="grid grid-cols-2 gap-4 my-4">
         {skills.length > 0 ? (
           skills.map((skill, index) => (
-            <div key={index} className="flex items-center justify-between">
-              <h2 className="text-xs">{skill?.name || "Skill"}</h2>
+            <div key={index} className="flex flex-col gap-1">
+              {/* Skill name on top */}
+              <h2 className="text-xs font-medium">{skill?.name || "Skill"}</h2>
 
-              {/* Progress bar */}
-              <div className="h-2 bg-gray-200 w-[120px] rounded">
+              {/* Progress bar below */}
+              <div className="h-2 bg-gray-200 w-full rounded overflow-hidden">
                 <div
-                  className="h-2 rounded"
+                  className="h-2 rounded transition-all duration-300"
                   style={{
                     backgroundColor: themeColor,
-                    width: `${skill?.rating || 0}%`, // ✅ rating is already 0-100
+                    width: `${skill?.rating || 0}%`,
                   }}
                 />
               </div>
