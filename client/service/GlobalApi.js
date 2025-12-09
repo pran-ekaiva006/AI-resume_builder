@@ -8,7 +8,7 @@ export const useApiClient = () => {
   const { getToken } = useAuth();
 
   const axiosClient = axios.create({
-    baseURL: `${API_BASE}/api`, //  add /api ONLY here
+    baseURL: `${API_BASE}/api`, // ✅ /api is added here
     withCredentials: true,
     headers: { "Content-Type": "application/json" },
   });

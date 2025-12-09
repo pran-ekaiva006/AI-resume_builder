@@ -3,41 +3,46 @@ const Resume = require('../models/Resume');
 /**
  * 🧠 Create a new resume (for logged-in Clerk user)
  */
-const createResume = async (req, res) => {
+exports.createResume = async (req, res) => {
   try {
+    console.log("🔍 Create Resume Request Body:", req.body);
+    console.log("🔍 Clerk User from req.user:", req.user);
+
     if (!req.user || !req.user.clerkId) {
-      return res.status(401).json({ success: false, message: 'Unauthorized: missing user' });
+      console.error("❌ Missing req.user or clerkId");
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized: Missing Clerk user",
+      });
     }
 
-    const { clerkId, email } = req.user;
+    const { title, ...rest } = req.body;
+    
+    const resumeData = {
+      title: title || "Untitled Resume",
+      userId: req.user.clerkId,
+      userEmail: req.user.email || req.body.userEmail,
+      ...rest,
+    };
 
-    console.log("📥 Incoming resume creation request:", req.body);
+    console.log("✅ Creating resume with data:", resumeData);
 
-    // ✅ Preserve the frontend title — only set default if missing
-    const resume = new Resume({
-      ...req.body,
-      title: req.body.title?.trim() || "Untitled Resume",
-      userId: clerkId,
-      userEmail: email,
-    });
+    const newResume = await Resume.create(resumeData);
+    
+    console.log("✅ Resume created successfully:", newResume.resumeId);
 
-    await resume.save();
-    console.log("✅ Resume saved successfully for:", email);
-
-    const obj = resume.toObject();
-    obj.documentId = obj.resumeId;
-
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
-      message: "Resume created successfully",
-      resume: obj,
+      resume: newResume,
     });
   } catch (error) {
-    console.error("❌ Error creating resume:", error);
+    console.error("❌ Create Resume Error:", error);
+    console.error("Error stack:", error.stack);
+    
     res.status(500).json({
       success: false,
-      message: "Failed to create resume",
-      error: error.message,
+      message: error.message,
+      ...(process.env.NODE_ENV === "development" && { stack: error.stack }),
     });
   }
 };

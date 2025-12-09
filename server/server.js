@@ -51,6 +51,16 @@ app.get("/", (_, res) => {
   res.send("🚀 API Running Successfully");
 });
 
+// 🚨 Global error handler (add before the 404 handler)
+app.use((err, req, res, next) => {
+  console.error("🔥 Server Error:", err);
+  res.status(500).json({
+    success: false,
+    message: err.message || "Internal Server Error",
+    stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
+  });
+});
+
 // 🚨 404 handler
 app.use((_, res) => res.status(404).json({ message: "❌ Route not found" }));
 
@@ -68,3 +78,42 @@ app.use((_, res) => res.status(404).json({ message: "❌ Route not found" }));
     process.exit(1);
   }
 })();
+
+const attachUser = async (req, res, next) => {
+  try {
+    const { userId } = getAuth(req);
+
+    if (!userId) {
+      console.error("❌ No Clerk userId found in request");
+      return res.status(401).json({ message: "Unauthorized: No Clerk user found" });
+    }
+
+    console.log("✅ Clerk userId:", userId);
+
+    let email = null;
+    try {
+      const clerkUser = await clerkClient.users.getUser(userId);
+      email = clerkUser?.emailAddresses?.[0]?.emailAddress || null;
+    } catch (clerkErr) {
+      console.error("⚠️ Failed to fetch Clerk user details:", clerkErr.message);
+    }
+
+    let user = await User.findOne({ clerkId: userId });
+    if (!user) {
+      console.log("🆕 Creating new user in DB");
+      user = await User.create({ clerkId: userId, email, role: "user" });
+    }
+
+    req.user = {
+      clerkId: userId,
+      email,
+      role: user.role || "user",
+    };
+
+    console.log("✅ User attached to req:", req.user);
+    return next();
+  } catch (err) {
+    console.error("🔥 Auth Middleware Error:", err);
+    return res.status(401).json({ message: "Unauthorized: auth failed" });
+  }
+};
