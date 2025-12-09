@@ -3,7 +3,7 @@ const Resume = require('../models/Resume');
 /**
  * 🧠 Create a new resume (for logged-in Clerk user)
  */
-exports.createResume = async (req, res) => {
+const createResume = async (req, res) => {
   try {
     console.log("🔍 Create Resume Request Body:", req.body);
     console.log("🔍 Clerk User from req.user:", req.user);
@@ -127,7 +127,6 @@ const updateResumeByResumeId = async (req, res) => {
     }
 
     const query = { resumeId: req.params.resumeId, userId: req.user.clerkId };
-    // Add { new: true } to return the updated document
     const updatedResume = await Resume.findOneAndUpdate(query, req.body, { new: true });
 
     if (!updatedResume) {
@@ -188,6 +187,7 @@ const deleteResumeByResumeId = async (req, res) => {
   }
 };
 
+// ✅ Export all functions at once
 module.exports = {
   createResume,
   getAllResumes,
