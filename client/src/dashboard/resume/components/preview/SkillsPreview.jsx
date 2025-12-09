@@ -25,7 +25,7 @@ function SkillsPreview({ resumeInfo }) {
                   className="h-2 rounded"
                   style={{
                     backgroundColor: themeColor,
-                    width: `${(skill?.rating || 0) * 20}%`, // ✅ convert 1–5 rating → percentage
+                    width: `${skill?.rating || 0}%`, // ✅ rating is already 0-100
                   }}
                 />
               </div>
