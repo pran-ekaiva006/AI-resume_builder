@@ -1,3 +1,4 @@
+
 // server/middlewares/authMiddleware.js
 
 const { getAuth, clerkClient } = require("@clerk/express");
