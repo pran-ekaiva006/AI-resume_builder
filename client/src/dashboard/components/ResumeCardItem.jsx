@@ -30,12 +30,20 @@ function ResumeCardItem({ resume, refreshData }) {
   const onDelete = async () => {
     try {
       setLoading(true);
+      toast.loading('Deleting resume...', { id: 'delete-toast' }); // ✅ Show loading toast
+      
       await DeleteResumeById(resume.documentId || resume.resumeId);
-      toast.success('Resume deleted successfully!');
+      
+      toast.success('Resume deleted successfully!', { id: 'delete-toast' });
       refreshData();
     } catch (error) {
       console.error("❌ Failed to delete resume:", error);
-      toast.error('Failed to delete resume');
+      toast.error(
+        error.response?.status === 403 
+          ? 'Permission denied' 
+          : 'Failed to delete resume',
+        { id: 'delete-toast' }
+      );
     } finally {
       setLoading(false);
       setOpenAlert(false);

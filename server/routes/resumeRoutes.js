@@ -21,7 +21,7 @@ router.get("/:resumeId", validateUUID, asyncHandler(ResumeController.getResumeBy
 // ✅ Update resume by ID  <-- FIXED
 router.put("/:resumeId", validateUUID, asyncHandler(ResumeController.updateResumeByResumeId));
 
-// ✅ Delete resume by ID (ADMIN)
-router.delete("/:resumeId", validateUUID, requireRole(["admin"]), asyncHandler(ResumeController.deleteResumeByResumeId));
+// ✅ Delete resume by ID (allow user to delete their own resume)
+router.delete("/:resumeId", validateUUID, asyncHandler(ResumeController.deleteResumeByResumeId));
 
 module.exports = router;

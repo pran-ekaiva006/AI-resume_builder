@@ -6,6 +6,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 const { clerkMiddleware } = require("@clerk/express");
+const axios = require("axios");
 
 const resumeRoutes = require("./routes/resumeRoutes");
 const aiRoutes = require("./routes/aiRoutes");
@@ -70,6 +71,17 @@ app.use((req, res) => {
   res.status(404).json({ message: "❌ Route not found" });
 });
 
+// ✅ Keep server awake on Render free tier
+if (process.env.NODE_ENV === "production") {
+  setInterval(async () => {
+    try {
+      await axios.get(`${process.env.RENDER_EXTERNAL_URL || 'http://localhost:5001'}/`);
+      console.log("⏰ Keep-alive ping sent");
+    } catch (err) {
+      console.error("Keep-alive ping failed:", err.message);
+    }
+  }, 14 * 60 * 1000); // Every 14 minutes
+}
 
 // ✅ DB Connection & Server start
 (async () => {
