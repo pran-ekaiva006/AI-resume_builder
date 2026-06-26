@@ -44,7 +44,8 @@ function EducationalPreview({ resumeInfo }) {
               {education?.description || "No description available."}
             </p>
           </div>
-        ))
+        );
+      })
       ) : (
         <p className="text-xs text-gray-400 italic mt-2 text-center">
           No education added yet.

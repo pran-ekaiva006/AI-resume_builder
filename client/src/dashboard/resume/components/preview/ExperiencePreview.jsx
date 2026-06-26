@@ -46,7 +46,8 @@ function ExperiencePreview({ resumeInfo }) {
               }}
             ></div>
           </div>
-        ))
+        );
+      })
       ) : (
         <p className="text-xs text-gray-400 italic mt-2 text-center">
           No experience data available.
