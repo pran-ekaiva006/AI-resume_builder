@@ -2,11 +2,16 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import Header from "./components/custom/Header";
 import { Toaster } from "./components/ui/sonner";
+import { LoaderCircle } from "lucide-react";
 
 function App() {
   const { user, loading } = useAuth();
 
-  if (loading) return <div>Loading...</div>; // wait until Auth is ready
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <LoaderCircle className="animate-spin h-8 w-8 text-primary" />
+    </div>
+  );
 
   return (
     <>

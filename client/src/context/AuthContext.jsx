@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { setLogoutCallback } from '../../service/GlobalApi';
 
 const AuthContext = createContext(null);
 
@@ -23,6 +24,12 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     checkSession();
+  }, []);
+
+  // Register logout callback so the GlobalApi 401 interceptor can clear user state
+  useEffect(() => {
+    setLogoutCallback(() => setUser(null));
+    return () => setLogoutCallback(null);
   }, []);
 
   const login = async (email, password) => {
