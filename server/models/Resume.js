@@ -38,6 +38,7 @@ const resumeSchema = new mongoose.Schema({
   themeColor: {
     type: String,
     default: '#ff6666',
+    match: [/^#([0-9A-F]{3}){1,2}$/i, "Invalid theme color"],
   },
   phone: String,
   address: String,
@@ -47,8 +48,8 @@ const resumeSchema = new mongoose.Schema({
   experience: [
     {
       id: Number,
-      title: String,
-      companyName: String,
+      title: { type: String, required: true },
+      companyName: { type: String, required: true },
       city: String,
       state: String,
       startDate: String,
@@ -62,7 +63,7 @@ const resumeSchema = new mongoose.Schema({
   education: [
     {
       id: Number,
-      universityName: String,
+      universityName: { type: String, required: true },
       degree: String,
       major: String,
       description: String,
@@ -75,8 +76,8 @@ const resumeSchema = new mongoose.Schema({
   skills: [
     {
       id: Number,
-      name: String,
-      rating: Number,
+      name: { type: String, required: true },
+      rating: { type: Number, min: 0, max: 100 },
     },
   ],
 }, {

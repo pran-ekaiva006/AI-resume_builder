@@ -206,6 +206,7 @@ const getPublicResume = async (req, res) => {
 
     // Strip sensitive fields before sending publicly
     delete obj.userId;
+    delete obj.userEmail;
     delete obj.__v;
 
     return res.status(200).json({

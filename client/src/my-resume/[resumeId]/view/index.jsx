@@ -8,11 +8,11 @@ import { useApiClient } from '../../../../service/GlobalApi';
 import { RWebShare } from 'react-web-share';
 import { toast } from 'sonner';
 import dummy from 'client/src/dashboard/data/dummy';
+import axios from 'axios';
 
 function ViewResume() {
   const [resumeInfo, setResumeInfo] = useState(dummy);  // ✅ load dummy initially
   const { resumeId } = useParams();
-  const { GetResumeById } = useApiClient();
 
   useEffect(() => {
     if (resumeId && resumeId !== 'undefined') {
@@ -22,8 +22,10 @@ function ViewResume() {
 
   const GetResumeInfo = async () => {
     try {
-      const response = await GetResumeById(resumeId);
-      const data = response?.data || response;   // ✅ extract actual data
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/resumes/public/${resumeId}`
+      );
+      const data = response.data?.data;   // ✅ extract actual data
 
       if (!data || typeof data !== 'object') {
         throw new Error("Invalid resume data");
