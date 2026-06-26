@@ -52,8 +52,8 @@ function AddResume({ refreshData }) {
           companyName: 'Amazon',
           city: 'New York',
           state: 'NY',
-          startDate: 'Jan 2021',
-          endDate: 'June 2025',
+          startDate: '2021-01-01',
+          endDate: '2025-06-01',
           currentlyWorking: true,
           workSummery:
             '• Developed full-stack apps using React & Node.js.\n' +
@@ -65,8 +65,8 @@ function AddResume({ refreshData }) {
         {
           id: 1,
           universityName: 'Western Illinois University',
-          startDate: 'Aug 2018',
-          endDate: 'Dec 2019',
+          startDate: '2018-08-01',
+          endDate: '2019-12-01',
           degree: 'Master',
           major: 'Computer Science',
           description: 'Graduated with distinction in software engineering.',

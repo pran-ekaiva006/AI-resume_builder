@@ -51,8 +51,8 @@ const resumeSchema = new mongoose.Schema({
       companyName: { type: String, required: true },
       city: String,
       state: String,
-      startDate: String,
-      endDate: String,
+      startDate: String, // Format: YYYY-MM-DD
+      endDate: String, // Format: YYYY-MM-DD
       currentlyWorking: Boolean,
       workSummery: String,
     },
@@ -65,8 +65,8 @@ const resumeSchema = new mongoose.Schema({
       degree: String,
       major: String,
       description: String,
-      startDate: String,
-      endDate: String,
+      startDate: String, // Format: YYYY-MM-DD
+      endDate: String, // Format: YYYY-MM-DD
     },
   ],
 

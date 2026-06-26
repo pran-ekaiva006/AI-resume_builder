@@ -16,7 +16,7 @@ export default{
             companyName:'Amazon',
             city:'New York',
             state:'NY',
-            startDate:'Jan 2021',
+            startDate:'2021-01-01',
             endDate:'',
             currentlyWorking:true,
             workSummery:' Designed, developed, and maintained full-stack applications using React and Node.js.\n'+
@@ -32,8 +32,8 @@ export default{
             companyName:'Google',
             city:'Charlotte',
             state:'NC',
-            startDate:'May 2019',
-            endDate:'Jan 2021',
+            startDate:'2019-05-01',
+            endDate:'2021-01-01',
             currentlyWorking:false,
             workSummery:' Designed, developed, and maintained full-stack applications using React and Node.js.'+
             '• Implemented responsive user interfaces with React, ensuring seamless user experiences across'+
@@ -47,8 +47,8 @@ export default{
         {
             id:1,
             universityName:'Western Illinois University',
-            startDate:'Aug 2018',
-            endDate:'Dec:2019',
+            startDate:'2018-08-01',
+            endDate:'2019-12-01',
             degree:'Master',
             major:'Computer Science',
             description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud'
@@ -56,8 +56,8 @@ export default{
         {
             id:2,
             universityName:'Western Illinois University',
-            startDate:'Aug 2018',
-            endDate:'Dec:2019',
+            startDate:'2018-08-01',
+            endDate:'2019-12-01',
             degree:'Master',
             major:'Computer Science',
             description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud'

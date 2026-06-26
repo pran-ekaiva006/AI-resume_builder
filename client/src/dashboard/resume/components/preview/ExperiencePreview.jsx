@@ -17,18 +17,26 @@ function ExperiencePreview({ resumeInfo }) {
       <hr style={{ borderColor: themeColor }} />
 
       {experienceList.length > 0 ? (
-        experienceList.map((exp, index) => (
-          <div key={index} className="my-5">
-            <h2 className="text-sm font-bold" style={{ color: themeColor }}>
-              {exp?.title || 'Job Title'}
-            </h2>
+        experienceList.map((exp, index) => {
+          const formatDate = (dateStr) => {
+            if (!dateStr) return "—";
+            const date = new Date(dateStr);
+            if (isNaN(date.getTime())) return dateStr;
+            return date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+          };
 
-            <h2 className="text-xs flex justify-between">
-              {exp?.companyName || 'Company Name'}, {exp?.city || 'City'} {exp?.state || ''}
-              <span>
-                {exp?.startDate || '—'} - {exp?.endDate || 'Present'}
-              </span>
-            </h2>
+          return (
+            <div key={index} className="my-5">
+              <h2 className="text-sm font-bold" style={{ color: themeColor }}>
+                {exp?.title || 'Job Title'}
+              </h2>
+
+              <h2 className="text-xs flex justify-between">
+                {exp?.companyName || 'Company Name'}, {exp?.city || 'City'} {exp?.state || ''}
+                <span>
+                  {formatDate(exp?.startDate)} - {exp?.currentlyWorking ? 'Present' : formatDate(exp?.endDate)}
+                </span>
+              </h2>
 
             {/* ✅ Render AI generated HTML bullet points */}
             <div

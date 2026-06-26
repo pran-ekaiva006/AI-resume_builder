@@ -16,21 +16,29 @@ function EducationalPreview({ resumeInfo }) {
       <hr style={{ borderColor: themeColor }} />
 
       {educationList.length > 0 ? (
-        educationList.map((education, index) => (
-          <div key={index} className="my-5">
-            <h2 className="text-sm font-bold" style={{ color: themeColor }}>
-              {education?.universityName || "University Name"}
-            </h2>
+        educationList.map((education, index) => {
+          const formatDate = (dateStr) => {
+            if (!dateStr) return "—";
+            const date = new Date(dateStr);
+            if (isNaN(date.getTime())) return dateStr;
+            return date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+          };
 
-            <h2 className="text-xs flex justify-between">
-              {(education?.degree || "Degree") +
-                (education?.major ? ` in ${education?.major}` : "")}
+          return (
+            <div key={index} className="my-5">
+              <h2 className="text-sm font-bold" style={{ color: themeColor }}>
+                {education?.universityName || "University Name"}
+              </h2>
 
-              <span>
-                {(education?.startDate?.slice(0, 7) || "—")} -{" "}
-                {(education?.endDate?.slice(0, 7) || "—")}
-              </span>
-            </h2>
+              <h2 className="text-xs flex justify-between">
+                {(education?.degree || "Degree") +
+                  (education?.major ? ` in ${education?.major}` : "")}
+
+                <span>
+                  {formatDate(education?.startDate)} -{" "}
+                  {formatDate(education?.endDate)}
+                </span>
+              </h2>
 
             <p className="text-xs my-2 whitespace-pre-line">
               {education?.description || "No description available."}
