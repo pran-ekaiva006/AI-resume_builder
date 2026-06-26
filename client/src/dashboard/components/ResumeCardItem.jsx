@@ -32,7 +32,7 @@ function ResumeCardItem({ resume, refreshData }) {
       setLoading(true);
       toast.loading('Deleting resume...', { id: 'delete-toast' }); // ✅ Show loading toast
       
-      await DeleteResumeById(resume.documentId || resume.resumeId);
+      await DeleteResumeById(resume.resumeId);
       
       toast.success('Resume deleted successfully!', { id: 'delete-toast' });
       refreshData();
@@ -61,7 +61,7 @@ function ResumeCardItem({ resume, refreshData }) {
       })
     : "Recently Created";
 
-  const resumeId = resume?.documentId || resume?.resumeId;
+  const resumeId = resume?.resumeId;
 
   return (
     <div className="group relative transition-all hover:scale-[1.03] hover:shadow-md">

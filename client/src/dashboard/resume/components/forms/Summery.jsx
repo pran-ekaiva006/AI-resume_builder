@@ -67,7 +67,7 @@ function Summery({ enabledNext }) {
 
   // ✅ Save to backend
   const SaveSummary = async () => {
-    const id = resumeInfo.resumeId || resumeInfo.documentId;
+    const id = resumeInfo.resumeId;
 
     if (!id) {
       toast.error("❌ Resume ID missing — cannot save summary");

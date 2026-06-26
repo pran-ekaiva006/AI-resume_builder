@@ -60,7 +60,6 @@ const getAllResumes = async (req, res) => {
 
     const mappedResumes = resumes.map((r) => {
       const obj = r.toObject();
-      obj.documentId = obj.resumeId;
       return obj;
     });
 
@@ -101,7 +100,6 @@ const getResumeByResumeId = async (req, res) => {
     }
 
     const obj = resume.toObject();
-    obj.documentId = obj.resumeId;
 
     return res.status(200).json({
       success: true,
@@ -137,7 +135,6 @@ const updateResumeByResumeId = async (req, res) => {
     }
 
     const obj = updatedResume.toObject();
-    obj.documentId = obj.resumeId;
 
     return res.status(200).json({
       success: true,
@@ -202,7 +199,6 @@ const getPublicResume = async (req, res) => {
     }
 
     const obj = resume.toObject();
-    obj.documentId = obj.resumeId;
 
     // Strip sensitive fields before sending publicly
     delete obj.userId;
