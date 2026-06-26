@@ -13,6 +13,10 @@ import ViewResume from './my-resume/[resumeId]/view/index.jsx';
 import ForgotPassword from './auth/forgot-password/index.jsx';
 import ResetPassword from './auth/reset-password/index.jsx';
 import SignUpPage from './auth/sign-up/index.jsx';
+import PublicResumeView from './my-resume/[resumeId]/public/index.jsx';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
 const router=createBrowserRouter([
   {
@@ -54,12 +58,18 @@ children:[
   {
     path:'/my-resume/:resumeId/view',
     element:<ViewResume/>
+  },
+  {
+    path:'/resume/:resumeId/public',
+    element:<PublicResumeView/>
   }
 ])
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
+    </GoogleOAuthProvider>
   </React.StrictMode>,
 )

@@ -187,6 +187,41 @@ const deleteResumeByResumeId = async (req, res) => {
   }
 };
 
+/**
+ * 🌐 Get a resume publicly (no auth required — for recruiter sharing)
+ */
+const getPublicResume = async (req, res) => {
+  try {
+    const resume = await Resume.findOne({ resumeId: req.params.resumeId });
+
+    if (!resume) {
+      return res.status(404).json({
+        success: false,
+        message: "Resume not found",
+      });
+    }
+
+    const obj = resume.toObject();
+    obj.documentId = obj.resumeId;
+
+    // Strip sensitive fields before sending publicly
+    delete obj.userId;
+    delete obj.__v;
+
+    return res.status(200).json({
+      success: true,
+      data: obj,
+    });
+  } catch (error) {
+    console.error("❌ Error fetching public resume:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch resume",
+      error: error.message,
+    });
+  }
+};
+
 // ✅ Export all functions at once
 module.exports = {
   createResume,
@@ -194,4 +229,5 @@ module.exports = {
   getResumeByResumeId,
   updateResumeByResumeId,
   deleteResumeByResumeId,
+  getPublicResume,
 };

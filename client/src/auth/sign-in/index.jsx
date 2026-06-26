@@ -4,9 +4,10 @@ import { useAuth } from '../../context/AuthContext';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Loader2 } from 'lucide-react';
+import { GoogleLogin } from '@react-oauth/google';
 
 function SignInpage() {
-  const { login } = useAuth();
+  const { login, googleLogin } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,6 +23,19 @@ function SignInpage() {
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setError(null);
+    setLoading(true);
+    try {
+      await googleLogin(credentialResponse.credential);
+      navigate('/dashboard');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Google sign-in failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -64,6 +78,25 @@ function SignInpage() {
             {loading ? 'Signing in...' : 'Sign In'}
           </Button>
         </form>
+
+        {/* Divider */}
+        <div className='flex items-center my-6'>
+          <div className='flex-1 border-t border-gray-300'></div>
+          <span className='px-3 text-sm text-gray-500'>or continue with</span>
+          <div className='flex-1 border-t border-gray-300'></div>
+        </div>
+
+        {/* Google Sign-In */}
+        <div className='flex justify-center'>
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => setError('Google sign-in failed')}
+            theme="outline"
+            size="large"
+            width="100%"
+            text="signin_with"
+          />
+        </div>
 
         <div className='mt-6 text-center space-y-2 text-sm'>
           <div>

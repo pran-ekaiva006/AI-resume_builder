@@ -35,6 +35,10 @@ app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser());
 
 
+// ✅ PUBLIC RESUME ROUTE (no auth required — for recruiter sharing)
+const { getPublicResume } = require("./controllers/resumeController");
+app.get("/api/resumes/public/:resumeId", getPublicResume);
+
 // ✅ APPLY AUTH PROTECTION TO RESUME ROUTES
 app.use(
   "/api/resumes",

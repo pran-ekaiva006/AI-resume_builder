@@ -4,9 +4,10 @@ import { useAuth } from '../../context/AuthContext';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Loader2 } from 'lucide-react';
+import { GoogleLogin } from '@react-oauth/google';
 
 function SignUpPage() {
-  const { signup } = useAuth();
+  const { signup, googleLogin } = useAuth();
   const navigate = useNavigate();
   
   const [firstName, setFirstName] = useState('');
@@ -38,6 +39,19 @@ function SignUpPage() {
     }
   };
 
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setError(null);
+    setLoading(true);
+    try {
+      await googleLogin(credentialResponse.credential);
+      navigate('/dashboard');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Google sign-up failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className='flex justify-center my-20 items-center flex-col'>
       <div className='w-full max-w-md p-8 bg-white shadow-md rounded-lg border border-gray-200'>
@@ -48,6 +62,25 @@ function SignUpPage() {
             {error}
           </div>
         )}
+
+        {/* Google Sign-Up first */}
+        <div className='flex justify-center mb-4'>
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => setError('Google sign-up failed')}
+            theme="outline"
+            size="large"
+            width="100%"
+            text="signup_with"
+          />
+        </div>
+
+        {/* Divider */}
+        <div className='flex items-center my-4'>
+          <div className='flex-1 border-t border-gray-300'></div>
+          <span className='px-3 text-sm text-gray-500'>or sign up with email</span>
+          <div className='flex-1 border-t border-gray-300'></div>
+        </div>
 
         <form onSubmit={handleSubmit} className='space-y-4'>
           <div className='grid grid-cols-2 gap-4'>

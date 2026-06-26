@@ -54,8 +54,14 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const googleLogin = async (credential) => {
+    const response = await axios.post(`${API_URL}/google`, { credential }, { withCredentials: true });
+    setUser(response.data.user);
+    return response.data;
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout, checkSession }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, logout, googleLogin, checkSession }}>
       {children}
     </AuthContext.Provider>
   );

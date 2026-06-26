@@ -207,4 +207,66 @@ const resetPassword = async (req, res) => {
   }
 };
 
-module.exports = { signup, login, logout, refresh, me, forgotPassword, resetPassword };
+const { OAuth2Client } = require('google-auth-library');
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+const googleLogin = async (req, res) => {
+  try {
+    const { credential } = req.body;
+    if (!credential) {
+      return res.status(400).json({ message: 'Google credential is required' });
+    }
+
+    // Verify the Google ID token
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    const { sub: googleId, email, given_name, family_name } = payload;
+
+    // Find existing user by googleId or email
+    let user = await User.findOne({ $or: [{ googleId }, { email }] });
+
+    if (user) {
+      // Link Google ID if user exists by email but hasn't linked Google yet
+      if (!user.googleId) {
+        user.googleId = googleId;
+      }
+    } else {
+      // Create a new user (no password needed for Google accounts)
+      user = new User({
+        firstName: given_name || 'User',
+        lastName: family_name || '',
+        email,
+        googleId,
+      });
+    }
+
+    // Issue tokens (same flow as regular login)
+    const accessToken = signAccessToken(user._id);
+    const refreshToken = signRefreshToken(user._id);
+    user.refreshTokenHash = await bcrypt.hash(refreshToken, 12);
+    await user.save();
+
+    res.cookie('accessToken', accessToken, getCookieOptions('access'));
+    res.cookie('refreshToken', refreshToken, getCookieOptions('refresh'));
+
+    return res.status(200).json({
+      success: true,
+      user: {
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (err) {
+    console.error('Google login error:', err);
+    res.status(500).json({ message: 'Server error during Google login' });
+  }
+};
+
+module.exports = { signup, login, logout, refresh, me, forgotPassword, resetPassword, googleLogin };
+
