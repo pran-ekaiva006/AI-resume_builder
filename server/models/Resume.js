@@ -16,10 +16,12 @@ const resumeSchema = new mongoose.Schema({
     trim: true, // ✅ removes accidental spaces
   },
 
-  // 🔗 Linked to Clerk user
+  // 🔗 Linked to MongoDB User
   userId: {
-    type: String, // Clerk userId from req.user.clerkId
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
     required: true,
+    index: true,
   },
 
   // Basic Info
