@@ -1,18 +1,18 @@
 const Resume = require('../models/Resume');
 
 /**
- * 🧠 Create a new resume (for logged-in Clerk user)
+ * 🧠 Create a new resume (for logged-in user)
  */
 const createResume = async (req, res) => {
   try {
     console.log("🔍 Create Resume Request Body:", req.body);
-    console.log("🔍 Clerk User from req.user:", req.user);
+    console.log("🔍 User from req.user:", req.user);
 
-    if (!req.user || !req.user.clerkId) {
-      console.error("❌ Missing req.user or clerkId");
+    if (!req.user || !req.user.id) {
+      console.error("❌ Missing req.user or id");
       return res.status(401).json({
         success: false,
-        message: "Unauthorized: Missing Clerk user",
+        message: "Unauthorized: Missing user",
       });
     }
 
@@ -20,7 +20,7 @@ const createResume = async (req, res) => {
     
     const resumeData = {
       title: title || "Untitled Resume",
-      userId: req.user.clerkId,
+      userId: req.user.id,
       userEmail: req.user.email || req.body.userEmail,
       ...rest,
     };
@@ -52,11 +52,11 @@ const createResume = async (req, res) => {
  */
 const getAllResumes = async (req, res) => {
   try {
-    if (!req.user || !req.user.clerkId) {
+    if (!req.user || !req.user.id) {
       return res.status(401).json({ success: false, message: 'Unauthorized: missing user' });
     }
 
-    const resumes = await Resume.find({ userId: req.user.clerkId }).sort({ createdAt: -1 });
+    const resumes = await Resume.find({ userId: req.user.id }).sort({ createdAt: -1 });
 
     const mappedResumes = resumes.map((r) => {
       const obj = r.toObject();
@@ -84,13 +84,13 @@ const getAllResumes = async (req, res) => {
  */
 const getResumeByResumeId = async (req, res) => {
   try {
-    if (!req.user || !req.user.clerkId) {
+    if (!req.user || !req.user.id) {
       return res.status(401).json({ success: false, message: 'Unauthorized: missing user' });
     }
 
     const resume = await Resume.findOne({
       resumeId: req.params.resumeId,
-      userId: req.user.clerkId,
+      userId: req.user.id,
     });
 
     if (!resume) {
@@ -122,11 +122,11 @@ const getResumeByResumeId = async (req, res) => {
  */
 const updateResumeByResumeId = async (req, res) => {
   try {
-    if (!req.user || !req.user.clerkId) {
+    if (!req.user || !req.user.id) {
       return res.status(401).json({ success: false, message: 'Unauthorized: missing user' });
     }
 
-    const query = { resumeId: req.params.resumeId, userId: req.user.clerkId };
+    const query = { resumeId: req.params.resumeId, userId: req.user.id };
     const updatedResume = await Resume.findOneAndUpdate(query, req.body, { new: true });
 
     if (!updatedResume) {
@@ -159,11 +159,11 @@ const updateResumeByResumeId = async (req, res) => {
  */
 const deleteResumeByResumeId = async (req, res) => {
   try {
-    if (!req.user || !req.user.clerkId) {
+    if (!req.user || !req.user.id) {
       return res.status(401).json({ success: false, message: 'Unauthorized: missing user' });
     }
 
-    const query = { resumeId: req.params.resumeId, userId: req.user.clerkId };
+    const query = { resumeId: req.params.resumeId, userId: req.user.id };
     const deletedResume = await Resume.findOneAndDelete(query);
 
     if (!deletedResume) {

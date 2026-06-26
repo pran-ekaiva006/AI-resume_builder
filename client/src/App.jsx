@@ -1,26 +1,25 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { SignedIn, SignedOut, useUser } from "@clerk/clerk-react";
+import { useAuth } from "./context/AuthContext";
 import Header from "./components/custom/Header";
 import { Toaster } from "./components/ui/sonner";
 
 function App() {
-  const { isLoaded, isSignedIn } = useUser();
+  const { user, loading } = useAuth();
 
-  if (!isLoaded) return null; // wait until Clerk is ready
+  if (loading) return <div>Loading...</div>; // wait until Auth is ready
 
   return (
     <>
       {/* ✅ Only show Dashboard + content when user is signed in */}
-      <SignedIn>
-        <Header />
-        <Outlet />
-        <Toaster />
-      </SignedIn>
-
-      
-      <SignedOut>
+      {user ? (
+        <>
+          <Header />
+          <Outlet />
+          <Toaster />
+        </>
+      ) : (
         <Navigate to="/auth/sign-in" />
-      </SignedOut>
+      )}
     </>
   );
 }

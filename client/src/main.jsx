@@ -7,13 +7,13 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import SignInpage from './auth/sign-in/index.jsx';
 import Home from './assets/home/index.jsx';
 import Dashboard from './dashboard/index.jsx';
-import { ClerkProvider } from '@clerk/clerk-react';
+import { AuthProvider } from './context/AuthContext.jsx';
 import EditResume from './dashboard/resume/[resumeId]/edit/index.jsx';
-import ViewResume from './my-resume/[resumeId]/view/index.jsx'
+import ViewResume from './my-resume/[resumeId]/view/index.jsx';
+import ForgotPassword from './auth/forgot-password/index.jsx';
+import ResetPassword from './auth/reset-password/index.jsx';
+import SignUpPage from './auth/sign-up/index.jsx';
 
-
-
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 const router=createBrowserRouter([
   {
 
@@ -40,18 +40,26 @@ children:[
     element:<SignInpage/>
   },
   {
+    path:'/auth/sign-up',
+    element:<SignUpPage/>
+  },
+  {
+    path:'/auth/forgot-password',
+    element:<ForgotPassword/>
+  },
+  {
+    path:'/auth/reset-password/:token',
+    element:<ResetPassword/>
+  },
+  {
     path:'/my-resume/:resumeId/view',
     element:<ViewResume/>
   }
 ])
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    
-   <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
-   <RouterProvider router={router} />
-
-   </ClerkProvider>
-
-
-    </React.StrictMode>,
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  </React.StrictMode>,
 )

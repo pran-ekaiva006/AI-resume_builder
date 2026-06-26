@@ -10,6 +10,12 @@ export default defineConfig({
       "client/src": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    watch: {
+      usePolling: true,
+      useFsEvents: false
+    }
+  },
   build: {
     outDir: "dist", // ✅ Output folder for Render publish
     chunkSizeWarningLimit: 1000, // Increase limit to avoid warning

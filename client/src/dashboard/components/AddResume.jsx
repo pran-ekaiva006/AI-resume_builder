@@ -10,7 +10,7 @@ import {
 import { Button } from 'client/src/components/ui/button';
 import { Input } from 'client/src/components/ui/input';
 import { useApiClient } from '../../../service/GlobalApi';
-import { useUser } from '@clerk/clerk-react';
+import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from 'sonner';
@@ -20,7 +20,7 @@ function AddResume({ refreshData }) {
   const [resumeTitle, setResumeTitle] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { user } = useUser();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const { CreateNewResume } = useApiClient();
 
@@ -36,7 +36,7 @@ function AddResume({ refreshData }) {
     const resumeData = {
       resumeId,
       title: resumeTitle.trim(),
-      userEmail: user?.primaryEmailAddress?.emailAddress || 'no-email@example.com',
+      userEmail: user?.email || 'no-email@example.com',
       firstName: user?.firstName || 'First',
       lastName: user?.lastName || 'Last',
       jobTitle: 'Full Stack Developer',

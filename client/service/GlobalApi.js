@@ -1,25 +1,14 @@
 import axios from "axios";
-import { useAuth } from "@clerk/clerk-react";
+
 
 // ✅ Backend URL from .env (should NOT include /api at the end)
 const API_BASE = import.meta.env.VITE_BACKEND_URL;
 
 export const useApiClient = () => {
-  const { getToken } = useAuth();
-
   const axiosClient = axios.create({
     baseURL: `${API_BASE}/api`, // ✅ /api is added here
     withCredentials: true,
     headers: { "Content-Type": "application/json" },
-  });
-
-  axiosClient.interceptors.request.use(async (config) => {
-    const token = await getToken({ template: "default" });
-    if (token) {
-      console.log("✅ Token attached");
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
   });
 
   const handleResponse = (res) => res.data;

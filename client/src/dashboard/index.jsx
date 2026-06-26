@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from "react";
 import AddResume from "./components/AddResume";
 import ResumeCardItem from "./components/ResumeCardItem";
-import { useUser, useAuth } from "@clerk/clerk-react";
+import { useAuth } from "../context/AuthContext";
 import { useApiClient } from "../../service/GlobalApi"; // ✅ correct import
 
 function Dashboard() {
-  const { user } = useUser();
-  const { isLoaded } = useAuth();
+  const { user, loading } = useAuth();
   const { GetUserResumes } = useApiClient();
 
   const [resumeList, setResumeList] = useState([]);
 
   useEffect(() => {
-    if (user && isLoaded) {
-      console.log("👤 Fetching resumes for:", user.primaryEmailAddress?.emailAddress);
+    if (user && !loading) {
+      console.log("👤 Fetching resumes for:", user.email);
       fetchResumes();
     }
-  }, [user, isLoaded]);
+  }, [user, loading]);
 
   // ✅ Fetch resumes from backend
   const fetchResumes = async () => {

@@ -5,23 +5,34 @@ import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Loader2 } from 'lucide-react';
 
-function SignInpage() {
-  const { login } = useAuth();
+function SignUpPage() {
+  const { signup } = useAuth();
   const navigate = useNavigate();
+  
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+
+    if (password !== confirmPassword) {
+      setError("Passwords don't match");
+      return;
+    }
+
     setLoading(true);
     try {
-      await login(email, password);
+      await signup(firstName, lastName, email, password);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+      setError(err.response?.data?.message || 'Sign up failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -30,7 +41,7 @@ function SignInpage() {
   return (
     <div className='flex justify-center my-20 items-center flex-col'>
       <div className='w-full max-w-md p-8 bg-white shadow-md rounded-lg border border-gray-200'>
-        <h2 className='text-2xl font-bold text-center mb-6'>Sign In to Resume Builder</h2>
+        <h2 className='text-2xl font-bold text-center mb-6'>Create an Account</h2>
         
         {error && (
           <div className='mb-4 p-3 bg-red-100 text-red-700 rounded-md text-sm'>
@@ -39,6 +50,26 @@ function SignInpage() {
         )}
 
         <form onSubmit={handleSubmit} className='space-y-4'>
+          <div className='grid grid-cols-2 gap-4'>
+            <div>
+              <label className='block text-sm font-medium mb-1'>First Name</label>
+              <Input 
+                required
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                placeholder='John'
+              />
+            </div>
+            <div>
+              <label className='block text-sm font-medium mb-1'>Last Name</label>
+              <Input 
+                required
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                placeholder='Doe'
+              />
+            </div>
+          </div>
           <div>
             <label className='block text-sm font-medium mb-1'>Email</label>
             <Input 
@@ -56,31 +87,34 @@ function SignInpage() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder='Enter your password'
+              placeholder='Create a password'
+            />
+          </div>
+          <div>
+            <label className='block text-sm font-medium mb-1'>Confirm Password</label>
+            <Input 
+              type='password' 
+              required
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder='Confirm your password'
             />
           </div>
           <Button type='submit' className='w-full' disabled={loading}>
             {loading ? <Loader2 className='animate-spin h-4 w-4 mr-2' /> : null}
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? 'Creating account...' : 'Sign Up'}
           </Button>
         </form>
 
-        <div className='mt-6 text-center space-y-2 text-sm'>
-          <div>
-            <Link to="/auth/forgot-password" className='text-primary hover:underline'>
-              Forgot password?
-            </Link>
-          </div>
-          <div>
-            Don't have an account?{' '}
-            <Link to="/auth/sign-up" className='text-primary font-medium hover:underline'>
-              Sign up
-            </Link>
-          </div>
+        <div className='mt-6 text-center text-sm'>
+          Already have an account?{' '}
+          <Link to="/auth/sign-in" className='text-primary font-medium hover:underline'>
+            Sign in
+          </Link>
         </div>
       </div>
     </div>
   );
 }
 
-export default SignInpage;
+export default SignUpPage;

@@ -5,12 +5,11 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
-const { clerkMiddleware } = require("@clerk/express");
 const axios = require("axios");
 
 const resumeRoutes = require("./routes/resumeRoutes");
 const aiRoutes = require("./routes/aiRoutes");
-const { attachUser } = require("./middlewares/authMiddleware"); // ✅ Import only
+const { requireAuth } = require("./middlewares/authMiddleware");
 
 dotenv.config();
 const app = express();
@@ -36,13 +35,15 @@ app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser());
 
 
-// ✅ APPLY CLERK PROTECTION ONLY TO RESUME ROUTES
+// ✅ APPLY AUTH PROTECTION TO RESUME ROUTES
 app.use(
   "/api/resumes",
-  clerkMiddleware({ jwtKey: process.env.CLERK_JWT_KEY }),
-  attachUser,
+  requireAuth,
   resumeRoutes
 );
+
+const authRoutes = require("./routes/authRoutes");
+app.use("/api/auth", authRoutes);
 
 // ✅ AI ROUTES DO NOT REQUIRE AUTH
 app.use("/api/ai", aiRoutes);

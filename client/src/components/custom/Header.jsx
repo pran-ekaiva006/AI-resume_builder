@@ -1,11 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { UserButton, useUser } from '@clerk/clerk-react';
+import { useAuth } from '../../context/AuthContext';
 import { Button } from '../ui/button';
 import { FileText, ArrowRight } from 'lucide-react';
 
 function Header() {
-  const { isSignedIn } = useUser();
+  const { user, logout } = useAuth();
+  const isSignedIn = !!user;
 
   return (
     <header className="relative z-50 bg-white/80 backdrop-blur-md border-b border-gray-200/50">
@@ -45,7 +46,9 @@ function Header() {
                   Dashboard
                 </Button>
               </Link>
-              <UserButton afterSignOutUrl="/" />
+              <Button onClick={() => { logout(); window.location.href='/'; }} variant="outline" className="rounded-full px-4 py-2 text-sm text-red-600 border-red-200 hover:bg-red-50">
+                Logout
+              </Button>
             </div>
           ) : (
             <Link to="/auth/sign-in">
