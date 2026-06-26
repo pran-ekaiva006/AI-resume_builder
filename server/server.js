@@ -49,8 +49,8 @@ app.use(
 const authRoutes = require("./routes/authRoutes");
 app.use("/api/auth", authRoutes);
 
-// ✅ AI ROUTES DO NOT REQUIRE AUTH
-app.use("/api/ai", aiRoutes);
+// ✅ AI ROUTES NOW REQUIRE AUTH
+app.use("/api/ai", requireAuth, aiRoutes);
 
 
 // 🔥 Health check

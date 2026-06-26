@@ -29,10 +29,10 @@ function PersonalDetailPreview({resumeInfo}) {
             </div>
 
             <div>
-                <hr className='boader-[1.5px] my-2'
+                <hr className='border-[1.5px] my-2'
                 
                 style={{
-                    boaderColor:resumeInfo?.themeColor
+                    borderColor:resumeInfo?.themeColor
                 }}
                 />
             </div>
