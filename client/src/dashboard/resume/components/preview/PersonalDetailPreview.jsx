@@ -25,7 +25,7 @@ function PersonalDetailPreview({resumeInfo}) {
                 style={{
                     color:resumeInfo?.themeColor
                 }}
-                >{resumeInfo?.email}</h2>
+                >{resumeInfo?.userEmail}</h2>
             </div>
 
             <div>

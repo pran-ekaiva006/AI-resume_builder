@@ -38,7 +38,7 @@ function PersonalDetail({ enabledNext }) {
       jobTitle: formData.jobTitle,
       address: formData.address,
       phone: formData.phone,
-      email: formData.email,
+      userEmail: formData.userEmail,
     };
 
     try {
@@ -130,11 +130,11 @@ function PersonalDetail({ enabledNext }) {
             />
           </div>
           <div>
-            <label htmlFor="email" className='text-sm'>Email</label>
+            <label htmlFor="userEmail" className='text-sm'>Email</label>
             <Input
-              id="email"
-              name='email'
-              value={formData.email || ''}
+              id="userEmail"
+              name='userEmail'
+              value={formData.userEmail || ''}
               onChange={handleInputChange}
               required
             />

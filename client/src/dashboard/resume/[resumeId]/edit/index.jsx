@@ -30,13 +30,13 @@ function EditResume() {
         throw new Error('Resume not found or empty');
       }
 
-      // ✅ FIXED — backend values overwrite dummy
+      // ✅ FIXED — dummy only fills missing fields
       const mergedData = {
-         ...data,         // 📌 backend data FIRST
-  ...dummy,        // 📌 dummy only fills missing fields
-        experience: data.experience ?? dummy.experience,
-        education: data.education ?? dummy.education,
-        skills: data.skills ?? dummy.skills,
+        ...dummy,
+        ...data,
+        experience: data.experience?.length ? data.experience : dummy.experience,
+        education: data.education?.length ? data.education : dummy.education,
+        skills: data.skills?.length ? data.skills : dummy.skills,
       };
 
       console.log('✅ Resume data fetched:', mergedData);
