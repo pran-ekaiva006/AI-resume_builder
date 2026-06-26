@@ -51,7 +51,7 @@ function Skills() {
     setLoading(true);
     try {
       // ✅ Convert star rating (0-5) to percentage (0-100) before saving
-      const skillsToSave = skillsList.map(({ id, rating, ...rest }) => ({
+      const skillsToSave = skillsList.map(({ rating, ...rest }) => ({
         ...rest,
         rating: Math.round(rating * 20), // Convert 0-5 stars to 0-100%
       }));

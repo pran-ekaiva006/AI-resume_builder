@@ -94,7 +94,7 @@ function Experience() {
     setLoading(true);
     try {
       await UpdateResumeDetail(params.resumeId, {
-        experience: experienceList.map(({ id, ...rest }) => rest),
+        experience: experienceList,
       });
 
       toast.success("✅ Experience saved successfully!");

@@ -53,7 +53,7 @@ function Education() {
     setLoading(true);
     try {
       const resp = await UpdateResumeDetail(params.resumeId, {
-        education: educationalList.map(({ id, ...rest }) => rest),
+        education: educationalList,
       });
 
       // ✅ Update global context ONLY after successful save

@@ -47,7 +47,6 @@ const resumeSchema = new mongoose.Schema({
   // Experience Section
   experience: [
     {
-      id: Number,
       title: { type: String, required: true },
       companyName: { type: String, required: true },
       city: String,
@@ -62,7 +61,6 @@ const resumeSchema = new mongoose.Schema({
   // Education Section
   education: [
     {
-      id: Number,
       universityName: { type: String, required: true },
       degree: String,
       major: String,
@@ -75,7 +73,6 @@ const resumeSchema = new mongoose.Schema({
   // Skills Section
   skills: [
     {
-      id: Number,
       name: { type: String, required: true },
       rating: { type: Number, min: 0, max: 100 },
     },
