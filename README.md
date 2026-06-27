@@ -81,7 +81,16 @@ GitHub repository: [AI Resume Builder GitHub](https://github.com/pran-ekaiva006/
 ```bash
 git clone https://github.com/pran-ekaiva006/AI-resume_builder.git
 ```
-### Install dependencies:
+### 2. Configure Environment Variables
+
+Copy the `.env.example` files to `.env` in both the `client` and `server` directories and fill in your real values.
+
+```bash
+cp client/.env.example client/.env
+cp server/.env.example server/.env
+```
+
+### 3. Install dependencies:
 # Frontend
 ```bash
 cd AI-resume_builder/client
@@ -129,15 +138,12 @@ AI-resume_builder-main/
 │   │   ├── logo.png
 │   │   └── vite.png
 │   ├── service
-│   │   ├── AIModal.jsx
 │   │   └── GlobalApi.js
 │   └── src
 │       ├── App.css
 │       ├── App.jsx
 │       ├── index.css
 │       ├── main.jsx
-│       ├── api
-│       │   └── ResumeService.js
 │       ├── assets
 │       │   ├── banner.png
 │       │   ├── react.svg
