@@ -39,7 +39,7 @@ function EditResume() {
         skills: data.skills?.length ? data.skills : dummy.skills,
       };
 
-      console.log('✅ Resume data fetched:', mergedData);
+
       setResumeInfo(mergedData);
 
     } catch (error) {

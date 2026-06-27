@@ -81,9 +81,9 @@ function AddResume({ refreshData }) {
     };
 
     try {
-      console.log("📤 Sending resumeData:", resumeData); // ✅ Debug log to verify title
+
       const response = await CreateNewResume(resumeData);
-      console.log("✅ New resume created:", response);
+
 
       // Refresh Dashboard data so the title shows immediately
       if (refreshData) await refreshData();
@@ -125,7 +125,7 @@ function AddResume({ refreshData }) {
             placeholder="Ex. Frontend Developer Resume"
             value={resumeTitle}
             onChange={(e) => {
-              console.log("✏️ Input changed:", e.target.value); // ✅ Debug input tracking
+
               setResumeTitle(e.target.value);
             }}
           />

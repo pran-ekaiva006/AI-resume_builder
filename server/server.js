@@ -72,7 +72,7 @@ app.use((err, req, res, next) => {
 
 // 🚨 404 handler
 app.use((req, res) => {
-  console.log(`❌ 404 - Route not found: ${req.method} ${req.url}`);
+  if (process.env.NODE_ENV !== "production") console.log(`❌ 404 - Route not found: ${req.method} ${req.url}`);
   res.status(404).json({ message: "❌ Route not found" });
 });
 
@@ -81,7 +81,7 @@ if (process.env.NODE_ENV === "production") {
   setInterval(async () => {
     try {
       await axios.get(`${process.env.RENDER_EXTERNAL_URL || 'http://localhost:5001'}/`);
-      console.log("⏰ Keep-alive ping sent");
+      if (process.env.NODE_ENV !== "production") console.log("⏰ Keep-alive ping sent");
     } catch (err) {
       console.error("Keep-alive ping failed:", err.message);
     }

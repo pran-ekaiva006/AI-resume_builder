@@ -63,7 +63,7 @@ function Education() {
       }));
 
       toast.success("✅ Education details saved!");
-      console.log("✅ Updated education on backend:", resp);
+
     } catch (error) {
       toast.error("❌ Failed to save education");
       console.error(error);

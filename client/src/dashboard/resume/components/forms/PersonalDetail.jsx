@@ -61,7 +61,7 @@ function PersonalDetail({ enabledNext }) {
 
       // Update existing resume with the specific payload
       const response = await UpdateResumeDetail(finalResumeId, updateData);
-      console.log('✅ Resume updated successfully:', response);
+
       toast.success('Details updated ✅');
       enabledNext(true);
     } catch (error) {

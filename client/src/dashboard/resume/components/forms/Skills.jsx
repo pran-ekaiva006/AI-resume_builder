@@ -66,7 +66,7 @@ function Skills() {
         skills: skillsToSave,
       }));
 
-      console.log('✅ Skills updated:', resp);
+
       toast.success('✅ Skills updated successfully!');
     } catch (error) {
       console.error('❌ Error updating skills:', error);

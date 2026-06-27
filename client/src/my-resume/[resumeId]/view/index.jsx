@@ -40,7 +40,7 @@ function ViewResume() {
         skills: data.skills?.length ? data.skills : dummy.skills,
       };
 
-      console.log("🔥 FINAL MERGED DATA FOR PREVIEW:", mergedData);
+
       setResumeInfo(mergedData);
     } catch (error) {
       console.error("❌ Error loading resume in View page:", error);

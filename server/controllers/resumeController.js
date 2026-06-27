@@ -5,8 +5,7 @@ const Resume = require('../models/Resume');
  */
 const createResume = async (req, res) => {
   try {
-    console.log("🔍 Create Resume Request Body:", req.body);
-    console.log("🔍 User from req.user:", req.user);
+
 
     if (!req.user || !req.user.id) {
       console.error("❌ Missing req.user or id");
@@ -25,11 +24,11 @@ const createResume = async (req, res) => {
       ...rest,
     };
 
-    console.log("✅ Creating resume with data:", resumeData);
+
 
     const newResume = await Resume.create(resumeData);
     
-    console.log("✅ Resume created successfully:", newResume.resumeId);
+
 
     res.status(201).json({
       success: true,

@@ -35,9 +35,9 @@ const sendEmail = async (options) => {
 
   const info = await transporter.sendMail(mailOptions);
   
-  console.log('Message sent: %s', info.messageId);
+  if (process.env.NODE_ENV !== "production") console.log('Message sent: %s', info.messageId);
   if (!process.env.SMTP_HOST) {
-    console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+    if (process.env.NODE_ENV !== "production") console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
   }
 };
 

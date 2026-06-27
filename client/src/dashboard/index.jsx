@@ -12,7 +12,7 @@ function Dashboard() {
 
   useEffect(() => {
     if (user && !loading) {
-      console.log("👤 Fetching resumes for:", user.email);
+
       fetchResumes();
     }
   }, [user, loading]);
@@ -21,7 +21,7 @@ function Dashboard() {
   const fetchResumes = async () => {
     try {
       const data = await GetUserResumes();
-      console.log("✅ Response data:", data);
+
       setResumeList(Array.isArray(data.data) ? data.data : []);
     } catch (error) {
       console.error("❌ Error fetching resumes:", error);
