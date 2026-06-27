@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom";
 import { useApiClient } from "../../../../../service/GlobalApi";
 import { toast } from "sonner";
 import { LoaderCircle } from "lucide-react";
-import { useGenerateAI } from '../../../hooks/useGenerateAI';
+import { useGenerateAI } from '../../../../hooks/useGenerateAI';
 const EMPTY_EXPERIENCE = {
   title: "",
   companyName: "",

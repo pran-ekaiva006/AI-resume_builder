@@ -21,6 +21,10 @@ function Footer() {
             </p>
           </div>
 
+          {/* Contact Info */}
+          <div>
+            <h4 className="font-semibold mb-4">Contact Us</h4>
+            <ul className="space-y-2 text-gray-400">
               <li>
                 <a href="https://github.com/pran-ekaiva006" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
                   GitHub Profile

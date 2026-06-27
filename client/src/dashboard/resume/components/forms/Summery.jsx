@@ -6,7 +6,7 @@ import { ResumeInfoContext } from 'client/src/context/ResumeInfoContext';
 import React, { useContext, useEffect, useState } from 'react';
 import { Brain, LoaderCircle } from 'lucide-react';
 import { toast } from 'sonner';
-import { useGenerateAI } from '../../../hooks/useGenerateAI';
+import { useGenerateAI } from '../../../../hooks/useGenerateAI';
 import { useApiClient } from '../../../../../service/GlobalApi';
 
 const PROMPT = `Generate 3 professional resume summaries for a {jobTitle} position at different experience levels.
