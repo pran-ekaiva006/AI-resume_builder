@@ -6,7 +6,7 @@ import { ResumeInfoContext } from 'client/src/context/ResumeInfoContext';
 import React, { useContext, useEffect, useState } from 'react';
 import { Brain, LoaderCircle } from 'lucide-react';
 import { toast } from 'sonner';
-import axios from "axios";
+import { useGenerateAI } from '../../../hooks/useGenerateAI';
 import { useApiClient } from '../../../../../service/GlobalApi';
 
 const PROMPT = `Generate 3 professional resume summaries for a {jobTitle} position at different experience levels.
@@ -29,7 +29,7 @@ IMPORTANT: Respond ONLY with a JSON array in this EXACT format:
 function Summery({ enabledNext }) {
   const { resumeInfo, setResumeInfo } = useContext(ResumeInfoContext);
   const [summery, setSummery] = useState(resumeInfo?.summery || '');
-  const [loading, setLoading] = useState(false);
+  const { generate, loading } = useGenerateAI();
   const [saveLoading, setSaveLoading] = useState(false);
   const [aiGeneratedSummeryList, setAiGenerateSummeryList] = useState([]);
   const [selectedSummaryIndex, setSelectedSummaryIndex] = useState(null); // New state for selection
@@ -43,25 +43,22 @@ function Summery({ enabledNext }) {
 
   // ✅ Generate summary using Backend AI API
   const GenerateSummeryFromAI = async () => {
-    setLoading(true);
     try {
       const finalPrompt = PROMPT.replace("{jobTitle}", resumeInfo?.jobTitle || "");
+      const raw = await generate(finalPrompt, { format: "json" });
 
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/ai/generate`,
-        { prompt: finalPrompt, format: "json" },
-        { withCredentials: true }
-      );
-
-      const raw = response.data.content;
-      const parsed = JSON.parse(raw.match(/\[[\s\S]*\]/)?.[0] || raw);
+      let parsed;
+      try {
+        parsed = JSON.parse(raw.match(/\[[\s\S]*\]/)?.[0] || raw);
+      } catch (e) {
+        toast.error("AI returned invalid format, please try again");
+        return;
+      }
 
       setAiGenerateSummeryList(parsed);
       toast.success("✨ AI Summary generated!");
     } catch (error) {
       toast.error("Failed to generate summary ❌");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -88,7 +85,7 @@ function Summery({ enabledNext }) {
 
   const onSave = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setSaveLoading(true);
     const data = {
       summery: summery,
     };
@@ -100,7 +97,7 @@ function Summery({ enabledNext }) {
       console.error(error);
       toast.error('Failed to update summary ❌'); 
     } finally {
-      setLoading(false);
+      setSaveLoading(false);
     }
   };
 

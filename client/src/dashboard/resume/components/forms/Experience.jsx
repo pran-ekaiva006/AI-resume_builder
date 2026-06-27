@@ -7,8 +7,7 @@ import { useParams } from "react-router-dom";
 import { useApiClient } from "../../../../../service/GlobalApi";
 import { toast } from "sonner";
 import { LoaderCircle } from "lucide-react";
-import axios from "axios";
-
+import { useGenerateAI } from '../../../hooks/useGenerateAI';
 const EMPTY_EXPERIENCE = {
   title: "",
   companyName: "",
@@ -24,7 +23,8 @@ function Experience() {
   const { resumeInfo, setResumeInfo } = useContext(ResumeInfoContext);
   const params = useParams();
   const { UpdateResumeDetail } = useApiClient();
-  const [loading, setLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const { generate, loading: aiLoading } = useGenerateAI();
 
   /** ✅ Load initial data only once */
   useEffect(() => {
@@ -65,25 +65,17 @@ function Experience() {
     const jobTitle = experienceList[index]?.title;
     if (!jobTitle) return toast.error("⚠️ Enter Job Title before generating.");
 
-    setLoading(true);
     try {
       const prompt = `Generate 6 resume bullet points for the role "${jobTitle}". Use strong verbs & measurable achievements. Return only <ul><li> HTML.`;
-
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/ai/generate`,
-        { prompt, format: "html" },
-        { withCredentials: true }
-      );
+      const content = await generate(prompt, { format: "html" });
 
       const updated = [...experienceList];
-      updated[index].workSummery = response.data.content;
+      updated[index].workSummery = content;
       setExperienceList(updated);
 
       toast.success("✨ AI Work Summary Generated!");
     } catch (error) {
       toast.error("❌ Failed to generate summary from AI");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -91,7 +83,7 @@ function Experience() {
   const onSave = async () => {
     if (!params.resumeId) return toast.error("Resume ID missing ❌");
 
-    setLoading(true);
+    setIsSaving(true);
     try {
       await UpdateResumeDetail(params.resumeId, {
         experience: experienceList,
@@ -101,7 +93,7 @@ function Experience() {
     } catch (error) {
       toast.error("❌ Failed to save Experience");
     } finally {
-      setLoading(false);
+      setIsSaving(false);
     }
   };
 
@@ -160,9 +152,9 @@ function Experience() {
             variant="outline"
             className="text-primary border-primary"
             onClick={() => GenerateAIforExperience(index)}
-            disabled={loading}
+            disabled={aiLoading}
           >
-            {loading ? <LoaderCircle className="animate-spin" /> : "✨ Generate from AI"}
+            {aiLoading ? <LoaderCircle className="animate-spin" /> : "✨ Generate from AI"}
           </Button>
 
           <RichTextEditor
@@ -181,8 +173,8 @@ function Experience() {
         <Button variant="outline" onClick={RemoveExperience} className="text-primary">
           - Remove
         </Button>
-        <Button disabled={loading} onClick={onSave}>
-          {loading ? <LoaderCircle className="animate-spin" /> : "Save"}
+        <Button disabled={isSaving} onClick={onSave}>
+          {isSaving ? <LoaderCircle className="animate-spin" /> : "Save"}
         </Button>
       </div>
     </div>

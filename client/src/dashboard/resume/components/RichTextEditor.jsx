@@ -15,7 +15,7 @@ import {
   Separator,
   Toolbar
 } from 'react-simple-wysiwyg';
-import axios from "axios";
+import { useGenerateAI } from '../../../hooks/useGenerateAI';
 import { toast } from 'sonner';
 
 const PROMPT = `
@@ -26,7 +26,7 @@ Return ONLY HTML <ul><li>...</li></ul>. No markdown. No JSON.
 function RichTextEditor({ onRichTextEditorChange, index, defaultValue }) {
   const [value, setValue] = useState(defaultValue || "");
   const { resumeInfo } = useContext(ResumeInfoContext);
-  const [loading, setLoading] = useState(false);
+  const { generate, loading } = useGenerateAI();
 
   const GenerateSummeryFromAI = async () => {
     const positionTitle = resumeInfo?.experience[index]?.title;
@@ -36,17 +36,9 @@ function RichTextEditor({ onRichTextEditorChange, index, defaultValue }) {
       return;
     }
 
-    setLoading(true);
     try {
       const finalPrompt = PROMPT.replace("{positionTitle}", positionTitle);
-
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/ai/generate`,
-        { prompt: finalPrompt, format: "html" },
-        { withCredentials: true }
-      );
-
-      const content = response.data.content;
+      const content = await generate(finalPrompt, { format: "html" });
 
       setValue(content);
       onRichTextEditorChange(content);   // ✅ send string ONLY
@@ -55,8 +47,6 @@ function RichTextEditor({ onRichTextEditorChange, index, defaultValue }) {
     } catch (error) {
       console.error("AI Error:", error);
       toast.error("Failed to generate content ❌");
-    } finally {
-      setLoading(false);
     }
   };
 
