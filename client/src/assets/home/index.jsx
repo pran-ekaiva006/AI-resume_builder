@@ -13,25 +13,8 @@ import Header from "client/src/components/custom/Header";
 import { Link } from "react-router-dom";
 
 export default function Home() {
-  const [currentTestimonial, setCurrentTestimonial] = useState(0);
 
-  const testimonials = [
-    {
-      text: "This AI resume builder helped me land my dream job at a Fortune 500 company!",
-      author: "DhruvMohan Shukla",
-      role: "Software Engineer",
-    },
-    {
-      text: "The AI suggestions were spot-on. My resume looks incredibly professional now.",
-      author: "Krishn Kumar",
-      role: "Marketing Manager",
-    },
-    {
-      text: "I got 3x more interview calls after using this platform. Highly recommended!",
-      author: "Rahul Singh",
-      role: "Data Scientist",
-    },
-  ];
+
 
   const features = [
     {
@@ -78,12 +61,7 @@ export default function Home() {
     },
   ];
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
-    }, 4000);
-    return () => clearInterval(timer);
-  }, []);
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
@@ -121,7 +99,7 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
             <Link 
   to="/auth/sign-in" 
-  className="group bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full ..."
+  className="group bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-300 transform hover:-translate-y-1"
 >
   Start Building Free
   <ArrowRight className="inline-block ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -206,54 +184,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Testimonials Section */}
-        <section className="py-24 bg-white overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                Success Stories
-              </h2>
-              <p className="text-xl text-gray-600">
-                Join thousands who've transformed their careers
-              </p>
-            </div>
-
-            <div className="relative max-w-4xl mx-auto">
-              <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl p-12 text-center border border-blue-200/50">
-                <div className="flex justify-center mb-6">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-8 w-8 text-yellow-400 fill-current" />
-                  ))}
-                </div>
-                <blockquote className="text-2xl md:text-3xl font-medium text-gray-900 mb-8 leading-relaxed">
-                  "{testimonials[currentTestimonial].text}"
-                </blockquote>
-                <div>
-                  <div className="font-bold text-gray-900 text-lg">
-                    {testimonials[currentTestimonial].author}
-                  </div>
-                  <div className="text-gray-600">
-                    {testimonials[currentTestimonial].role}
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex justify-center space-x-2 mt-8">
-                {testimonials.map((_, index) => (
-                  <button
-                    key={index}
-                    className={`w-3 h-3 rounded-full transition-all ${
-                      index === currentTestimonial
-                        ? "bg-blue-600 w-8"
-                        : "bg-gray-300 hover:bg-gray-400"
-                    }`}
-                    onClick={() => setCurrentTestimonial(index)}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* CTA Section */}
         <section className="py-24 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 relative overflow-hidden">

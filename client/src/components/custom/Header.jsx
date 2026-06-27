@@ -42,7 +42,7 @@ function Header() {
               <FileText className="h-6 w-6 text-white" />
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              AI Resume Pro
+              AI Resume Builder
             </span>
           </Link>
 
@@ -53,9 +53,6 @@ function Header() {
             </a>
             <a href="#how-it-works" className="text-gray-600 hover:text-blue-600 transition-colors">
               How it Works
-            </a>
-            <a href="#pricing" className="text-gray-600 hover:text-blue-600 transition-colors">
-              Pricing
             </a>
           </nav>
 
