@@ -1,17 +1,17 @@
 // server/server.js
 
+const dotenv = require("dotenv");
+dotenv.config();
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 const axios = require("axios");
 
 const resumeRoutes = require("./routes/resumeRoutes");
 const aiRoutes = require("./routes/aiRoutes");
 const { requireAuth } = require("./middlewares/authMiddleware");
-
-dotenv.config();
 const app = express();
 
 const PORT = process.env.PORT || 5001;
