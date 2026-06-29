@@ -12,6 +12,7 @@
   "author": "Pranjal Kumar Verma",
   "license": "ISC",
   "dependencies": {
+    "@google/genai": "^2.10.0",
     "axios": "^1.13.2",
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
