@@ -77,6 +77,12 @@ const resumeSchema = new mongoose.Schema({
       rating: { type: Number, min: 0, max: 100 },
     },
   ],
+
+  // 🔒 Sharing: must be explicitly enabled by the owner
+  isPublic: {
+    type: Boolean,
+    default: false,
+  },
 }, {
   timestamps: true,
 });

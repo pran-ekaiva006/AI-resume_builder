@@ -133,6 +133,7 @@ const ALLOWED_UPDATE_FIELDS = [
   'experience',
   'education',
   'skills',
+  'isPublic',   // owner can toggle sharing
 ];
 
 const updateResumeByResumeId = async (req, res) => {
@@ -215,12 +216,16 @@ const deleteResumeByResumeId = async (req, res) => {
 
 /**
  * 🌐 Get a resume publicly (no auth required — for recruiter sharing)
+ *
+ * Security: returns 404 for both missing AND private (isPublic !== true) resumes
+ * so requesters cannot distinguish "private" from "doesn't exist".
  */
 const getPublicResume = async (req, res) => {
   try {
     const resume = await Resume.findOne({ resumeId: req.params.resumeId });
 
-    if (!resume) {
+    // Treat private resume identically to a missing one — no information leakage.
+    if (!resume || !resume.isPublic) {
       return res.status(404).json({
         success: false,
         message: "Resume not found",
@@ -232,6 +237,7 @@ const getPublicResume = async (req, res) => {
     // Strip sensitive fields before sending publicly
     delete obj.userId;
     delete obj.userEmail;
+    delete obj.isPublic;
     delete obj.__v;
 
     return res.status(200).json({
