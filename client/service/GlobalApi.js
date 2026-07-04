@@ -5,7 +5,9 @@ const API_BASE = import.meta.env.VITE_BACKEND_URL;
 
 // Shared axios instance — auth lives in httpOnly cookies, so we just need
 // withCredentials: true and NO Authorization header.
-const axiosClient = axios.create({
+// Exported so other hooks (e.g. useGenerateAI) can share the same
+// interceptor chain without duplicating the 401 → refresh → retry logic.
+export const axiosClient = axios.create({
   baseURL: `${API_BASE}/api`,
   withCredentials: true,
   headers: { "Content-Type": "application/json" },
