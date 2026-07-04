@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // ✅ Backend URL from .env (should NOT include /api at the end)
-const API_BASE = import.meta.env.VITE_BACKEND_URL;
+const API_BASE = import.meta.env.VITE_BACKEND_URL || "";
 
 // Shared axios instance — auth lives in httpOnly cookies, so we just need
 // withCredentials: true and NO Authorization header.
