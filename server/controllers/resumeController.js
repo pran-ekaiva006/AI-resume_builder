@@ -116,15 +116,45 @@ const getResumeByResumeId = async (req, res) => {
 
 /**
  * ✏️ Update a resume by resumeId
+ *
+ * Security: only fields in ALLOWED_UPDATE_FIELDS are accepted from req.body.
+ * Identity fields (userId, resumeId, userEmail, _id, __v) are silently dropped
+ * to prevent mass-assignment attacks.
  */
+const ALLOWED_UPDATE_FIELDS = [
+  'title',
+  'firstName',
+  'lastName',
+  'jobTitle',
+  'themeColor',
+  'phone',
+  'address',
+  'summery',
+  'experience',
+  'education',
+  'skills',
+];
+
 const updateResumeByResumeId = async (req, res) => {
   try {
     if (!req.user || !req.user.id) {
       return res.status(401).json({ success: false, message: 'Unauthorized: missing user' });
     }
 
+    // Build update payload from allow-list only — unknown / identity fields ignored.
+    const updatePayload = {};
+    for (const field of ALLOWED_UPDATE_FIELDS) {
+      if (Object.prototype.hasOwnProperty.call(req.body, field)) {
+        updatePayload[field] = req.body[field];
+      }
+    }
+
     const query = { resumeId: req.params.resumeId, userId: req.user.id };
-    const updatedResume = await Resume.findOneAndUpdate(query, req.body, { new: true });
+    const updatedResume = await Resume.findOneAndUpdate(
+      query,
+      updatePayload,
+      { new: true, runValidators: true },
+    );
 
     if (!updatedResume) {
       return res.status(404).json({
