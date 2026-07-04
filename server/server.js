@@ -14,6 +14,10 @@ const aiRoutes = require("./routes/aiRoutes");
 const { requireAuth } = require("./middlewares/authMiddleware");
 const app = express();
 
+// Trust Render's reverse proxy so rate limiters and IP logic
+// see the real client IP (from X-Forwarded-For), not the proxy IP.
+app.set('trust proxy', 1);
+
 const PORT = process.env.PORT || 5001;
 const MONGO_URI = process.env.MONGO_URI;
 

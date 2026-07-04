@@ -17,7 +17,6 @@ const router = express.Router();
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 5,
-  validate: { xForwardedForHeader: false, default: true },
   message: { message: 'Too many attempts from this IP, please try again after 15 minutes' }
 });
 
