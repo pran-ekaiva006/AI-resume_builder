@@ -7,10 +7,11 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true, lowercase: true, trim: true },
   password: {
     type: String,
-    required: function () { return !this.googleId; }, // only required for email/password accounts
+    required: function () { return !this.googleId && !this.isDemo; }, // only required for normal email/password accounts
     select: false,
   },
   googleId: { type: String, unique: true, sparse: true }, // sparse allows multiple nulls
+  isDemo: { type: Boolean, default: false },
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
   refreshTokenHash: { type: String, select: false },
   resetPasswordTokenHash: { type: String, select: false },

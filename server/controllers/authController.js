@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Resume = require('../models/Resume');
 const bcrypt = require('bcryptjs');
 const { signAccessToken, signRefreshToken, verifyRefreshToken } = require('../utils/tokenUtils');
 const getCookieOptions = require('../utils/cookieOptions');
@@ -268,5 +269,85 @@ const googleLogin = async (req, res) => {
   }
 };
 
-module.exports = { signup, login, logout, refresh, me, forgotPassword, resetPassword, googleLogin };
+const demoLogin = async (req, res) => {
+  try {
+    const demoId = crypto.randomUUID();
+    const email = `demo-${demoId}@demo.local`;
+    
+    const user = new User({
+      firstName: 'Demo',
+      lastName: 'User',
+      email,
+      isDemo: true,
+    });
+    
+    // Issue tokens (same flow as regular login)
+    const accessToken = signAccessToken(user._id);
+    const refreshToken = signRefreshToken(user._id);
+    user.refreshTokenHash = await bcrypt.hash(refreshToken, 12);
+    await user.save();
+
+    // Create a pre-filled Resume
+    const demoResume = new Resume({
+      title: 'Demo Resume',
+      resumeId: crypto.randomUUID(),
+      userEmail: user.email,
+      userId: user._id,
+      userName: 'Demo User',
+      firstName: 'Demo',
+      lastName: 'User',
+      jobTitle: 'Software Engineer',
+      themeColor: '#3498db',
+      summery: 'Dedicated software engineer with a passion for building scalable web applications. Experienced in React, Node.js, and modern cloud architectures.',
+      experience: [
+        {
+          title: 'Senior Developer',
+          companyName: 'Tech Corp',
+          city: 'San Francisco',
+          state: 'CA',
+          startDate: '2020-01',
+          endDate: 'Present',
+          workSummery: 'Led frontend development for a high-traffic SaaS platform. Improved performance by 40% and mentored junior developers.'
+        }
+      ],
+      education: [
+        {
+          universityName: 'State University',
+          degree: 'BS',
+          major: 'Computer Science',
+          startDate: '2015-08',
+          endDate: '2019-05',
+          description: 'Graduated with honors. Participated in multiple hackathons.'
+        }
+      ],
+      skills: [
+        { name: 'React', rating: 5 },
+        { name: 'JavaScript', rating: 5 },
+        { name: 'Node.js', rating: 4 },
+        { name: 'CSS', rating: 4 }
+      ]
+    });
+    await demoResume.save();
+
+    res.cookie('accessToken', accessToken, getCookieOptions('access'));
+    res.cookie('refreshToken', refreshToken, getCookieOptions('refresh'));
+
+    return res.status(200).json({
+      success: true,
+      user: {
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        isDemo: user.isDemo
+      }
+    });
+  } catch (err) {
+    console.error('Demo login error:', err);
+    res.status(500).json({ message: 'Server error during demo login' });
+  }
+};
+
+module.exports = { signup, login, logout, refresh, me, forgotPassword, resetPassword, googleLogin, demoLogin };
 

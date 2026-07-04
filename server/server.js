@@ -40,6 +40,8 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const axios = require("axios");
+const User = require("./models/User");
+const Resume = require("./models/Resume");
 
 const resumeRoutes = require("./routes/resumeRoutes");
 const aiRoutes = require("./routes/aiRoutes");
@@ -123,6 +125,32 @@ if (process.env.NODE_ENV === "production") {
     }
   }, 14 * 60 * 1000); // Every 14 minutes
 }
+
+// 🧹 Demo Account Cleanup Task (Runs every hour)
+setInterval(async () => {
+  try {
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    
+    // Find all demo users older than 24 hours
+    const expiredDemoUsers = await User.find({
+      isDemo: true,
+      createdAt: { $lt: twentyFourHoursAgo }
+    });
+
+    if (expiredDemoUsers.length > 0) {
+      const userIds = expiredDemoUsers.map(user => user._id);
+      
+      // Cascade delete Resumes
+      const resumeResult = await Resume.deleteMany({ userId: { $in: userIds } });
+      // Delete Users
+      const userResult = await User.deleteMany({ _id: { $in: userIds } });
+      
+      console.log(`🧹 Cleanup complete: Deleted ${userResult.deletedCount} demo users and ${resumeResult.deletedCount} resumes.`);
+    }
+  } catch (err) {
+    console.error("🧹 Demo cleanup failed:", err.message);
+  }
+}, 60 * 60 * 1000); // Every hour
 
 // ✅ DB Connection & Server start
 (async () => {
