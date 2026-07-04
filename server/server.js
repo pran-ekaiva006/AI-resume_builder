@@ -3,10 +3,17 @@
 const dotenv = require("dotenv");
 dotenv.config();
 
-// ── Fail-fast: required secrets ───────────────────────────────────────────
-// In production both JWT secrets MUST be set before we do anything else.
-// In development, missing secrets are allowed but a visible warning is printed.
-const REQUIRED_SECRETS = ['ACCESS_TOKEN_SECRET', 'REFRESH_TOKEN_SECRET'];
+// ── Fail-fast: required environment variables ───────────────────────────────
+// In production all critical variables MUST be set before we do anything else.
+// In development, missing variables are allowed but a visible warning is printed.
+const REQUIRED_SECRETS = [
+  'ACCESS_TOKEN_SECRET',
+  'REFRESH_TOKEN_SECRET',
+  'MONGO_URI',
+  'GEMINI_API_KEY',
+  'CLIENT_URL',
+  'GOOGLE_CLIENT_ID',
+];
 
 if (process.env.NODE_ENV === 'production') {
   const missing = REQUIRED_SECRETS.filter((k) => !process.env[k]);
