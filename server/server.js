@@ -3,6 +3,31 @@
 const dotenv = require("dotenv");
 dotenv.config();
 
+// ── Fail-fast: required secrets ───────────────────────────────────────────
+// In production both JWT secrets MUST be set before we do anything else.
+// In development, missing secrets are allowed but a visible warning is printed.
+const REQUIRED_SECRETS = ['ACCESS_TOKEN_SECRET', 'REFRESH_TOKEN_SECRET'];
+
+if (process.env.NODE_ENV === 'production') {
+  const missing = REQUIRED_SECRETS.filter((k) => !process.env[k]);
+  if (missing.length) {
+    console.error(
+      `\n🚨 FATAL: The following environment variables must be set in production:\n` +
+      missing.map((k) => `   • ${k}`).join('\n') +
+      '\nShutting down.\n',
+    );
+    process.exit(1);
+  }
+} else {
+  const missing = REQUIRED_SECRETS.filter((k) => !process.env[k]);
+  if (missing.length) {
+    console.warn(
+      `\n⚠️  WARNING: ${missing.join(', ')} ${missing.length === 1 ? 'is' : 'are'} not set. ` +
+      'Using insecure dev fallback(s). Set these before deploying to production.\n',
+    );
+  }
+}
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
