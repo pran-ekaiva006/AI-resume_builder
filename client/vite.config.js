@@ -10,6 +10,17 @@ export default defineConfig({
       "client/src": path.resolve(__dirname, "./src"),
     },
   },
+  test: {
+    globals: true,
+    environment: "jsdom",
+    setupFiles: ["./src/test/setup.js"],
+    alias: {
+      "client/src": path.resolve(__dirname, "./src"),
+      // Match what Summery.jsx resolves for its relative imports:
+      // '../../../../../service/GlobalApi' from forms/ → <client>/service/GlobalApi
+      "service/GlobalApi": path.resolve(__dirname, "./service/GlobalApi"),
+    },
+  },
   server: {
     watch: {
       usePolling: true,

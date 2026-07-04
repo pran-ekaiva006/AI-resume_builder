@@ -76,26 +76,9 @@ function Summery({ enabledNext }) {
     try {
       await UpdateResumeDetail(id, { summery });
       toast.success("✅ Summary saved successfully!");
-    } catch (error) {
-      toast.error("Server error — Failed to save summary ❌");
-    } finally {
-      setSaveLoading(false);
-    }
-  };
-
-  const onSave = async (e) => {
-    e.preventDefault();
-    setSaveLoading(true);
-    const data = {
-      summery: summery,
-    };
-    try {
-      const resp = await UpdateResumeDetail(params?.resumeId, data);
-      toast.success('Summary updated successfully ✅');
       enabledNext(true);
     } catch (error) {
-      console.error(error);
-      toast.error('Failed to update summary ❌'); 
+      toast.error("Server error — Failed to save summary ❌");
     } finally {
       setSaveLoading(false);
     }
