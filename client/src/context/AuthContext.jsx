@@ -60,8 +60,14 @@ export const AuthProvider = ({ children }) => {
     return response.data;
   };
 
+  const demoLogin = async () => {
+    const response = await axios.post(`${API_URL}/demo-login`, {}, { withCredentials: true });
+    setUser(response.data.user);
+    return response.data;
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout, googleLogin, checkSession }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, logout, googleLogin, demoLogin, checkSession }}>
       {children}
     </AuthContext.Provider>
   );

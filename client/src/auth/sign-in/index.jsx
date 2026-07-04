@@ -3,11 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Info } from 'lucide-react';
 import { GoogleLogin } from '@react-oauth/google';
 
 function SignInpage() {
-  const { login, googleLogin } = useAuth();
+  const { login, googleLogin, demoLogin } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -36,6 +36,19 @@ function SignInpage() {
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Google sign-in failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDemoLogin = async () => {
+    setError(null);
+    setLoading(true);
+    try {
+      await demoLogin();
+      navigate('/dashboard');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Demo sign-in failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -96,6 +109,26 @@ function SignInpage() {
             width="100%"
             text="signin_with"
           />
+        </div>
+
+        {/* Demo User Sign-In */}
+        <div className='mt-6 bg-blue-50 border border-blue-200 rounded-md p-4'>
+          <div className='flex items-start mb-3'>
+            <Info className='h-5 w-5 text-blue-500 mr-2 flex-shrink-0 mt-0.5' />
+            <p className='text-sm text-gray-700 leading-tight'>
+              Reviewing this project? Click below to instantly sign in with a demo account.
+            </p>
+          </div>
+          <Button 
+            type="button"
+            variant='outline' 
+            className='w-full border-blue-300 text-blue-700 hover:bg-blue-100 hover:text-blue-800' 
+            onClick={handleDemoLogin} 
+            disabled={loading}
+          >
+            {loading ? <Loader2 className='animate-spin h-4 w-4 mr-2' /> : null}
+            Continue as Demo User
+          </Button>
         </div>
 
         <div className='mt-6 text-center space-y-2 text-sm'>
