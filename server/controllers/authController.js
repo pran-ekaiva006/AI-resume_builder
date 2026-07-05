@@ -10,18 +10,18 @@ const sendEmail = require('../utils/sendEmail');
 const signup = async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.body;
-    
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'Email already in use' });
     }
 
     const user = new User({ firstName, lastName, email, password });
-    
+
     const accessToken = signAccessToken(user._id);
     const refreshToken = signRefreshToken(user._id);
-    
-    // Fix bcrypt 72-byte truncation: pre-hash the JWT with SHA-256
+
+
     const tokenPreHash = crypto.createHash('sha256').update(refreshToken).digest('base64');
     user.refreshTokenHash = await bcrypt.hash(tokenPreHash, 12);
     await user.save();
@@ -48,7 +48,7 @@ const signup = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    
+
     const user = await User.findOne({ email }).select('+password');
     if (!user || !(await user.comparePassword(password))) {
       return res.status(401).json({ message: 'Invalid email or password' });
@@ -56,7 +56,7 @@ const login = async (req, res) => {
 
     const accessToken = signAccessToken(user._id);
     const refreshToken = signRefreshToken(user._id);
-    
+
     // Fix bcrypt 72-byte truncation: pre-hash the JWT with SHA-256
     const tokenPreHash = crypto.createHash('sha256').update(refreshToken).digest('base64');
     user.refreshTokenHash = await bcrypt.hash(tokenPreHash, 12);
@@ -91,13 +91,13 @@ const logout = async (req, res) => {
           await User.findByIdAndUpdate(decoded.sub, { refreshTokenHash: null });
         }
       } catch (err) {
-         console.error('Error decoding refresh token during logout', err);
+        console.error('Error decoding refresh token during logout', err);
       }
     }
-    
+
     res.clearCookie('accessToken', getCookieOptions('access'));
     res.clearCookie('refreshToken', getCookieOptions('refresh'));
-    
+
     return res.status(200).json({ success: true, message: 'Logged out successfully' });
   } catch (err) {
     console.error('Logout error:', err);
@@ -124,7 +124,7 @@ const refresh = async (req, res) => {
       return res.status(401).json({ message: 'Invalid refresh token' });
     }
 
-    // Fix bcrypt 72-byte truncation: pre-hash the JWT with SHA-256 for comparison
+
     const incomingTokenPreHash = crypto.createHash('sha256').update(refreshToken).digest('base64');
     const isValid = await bcrypt.compare(incomingTokenPreHash, user.refreshTokenHash);
     if (!isValid) {
@@ -137,8 +137,8 @@ const refresh = async (req, res) => {
 
     const newAccessToken = signAccessToken(user._id);
     const newRefreshToken = signRefreshToken(user._id);
-    
-    // Fix bcrypt 72-byte truncation: pre-hash the JWT with SHA-256 for saving
+
+
     const newTokenPreHash = crypto.createHash('sha256').update(newRefreshToken).digest('base64');
     user.refreshTokenHash = await bcrypt.hash(newTokenPreHash, 12);
     await user.save();
@@ -161,8 +161,8 @@ const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
     const user = await User.findOne({ email });
-    
-    // Always return success to prevent email enumeration
+
+
     if (!user) {
       return res.status(200).json({ success: true, message: 'If that email is registered, a reset link has been sent.' });
     }
@@ -204,7 +204,7 @@ const resetPassword = async (req, res) => {
       return res.status(400).json({ message: 'Token is invalid or has expired' });
     }
 
-    user.password = password; // pre-save hook will hash it
+    user.password = password;
     user.resetPasswordTokenHash = undefined;
     user.resetPasswordExpires = undefined;
     await user.save();
@@ -226,7 +226,7 @@ const googleLogin = async (req, res) => {
       return res.status(400).json({ message: 'Google credential is required' });
     }
 
-    // Verify the Google ID token
+
     const ticket = await googleClient.verifyIdToken({
       idToken: credential,
       audience: process.env.GOOGLE_CLIENT_ID,
@@ -234,16 +234,16 @@ const googleLogin = async (req, res) => {
     const payload = ticket.getPayload();
     const { sub: googleId, email, given_name, family_name } = payload;
 
-    // Find existing user by googleId or email
+
     let user = await User.findOne({ $or: [{ googleId }, { email }] });
 
     if (user) {
-      // Link Google ID if user exists by email but hasn't linked Google yet
+
       if (!user.googleId) {
         user.googleId = googleId;
       }
     } else {
-      // Create a new user (no password needed for Google accounts)
+
       user = new User({
         firstName: given_name || 'User',
         lastName: family_name || '',
@@ -252,7 +252,7 @@ const googleLogin = async (req, res) => {
       });
     }
 
-    // Issue tokens (same flow as regular login)
+
     const accessToken = signAccessToken(user._id);
     const refreshToken = signRefreshToken(user._id);
     user.refreshTokenHash = await bcrypt.hash(refreshToken, 12);
@@ -281,21 +281,20 @@ const demoLogin = async (req, res) => {
   try {
     const demoId = crypto.randomUUID();
     const email = `demo-${demoId}@demo.local`;
-    
+
     const user = new User({
       firstName: 'Demo',
       lastName: 'User',
       email,
       isDemo: true,
     });
-    
-    // Issue tokens (same flow as regular login)
+
+
     const accessToken = signAccessToken(user._id);
     const refreshToken = signRefreshToken(user._id);
     user.refreshTokenHash = await bcrypt.hash(refreshToken, 12);
     await user.save();
 
-    // Create a pre-filled Resume
     const demoResume = new Resume({
       title: 'Demo Resume',
       resumeId: crypto.randomUUID(),

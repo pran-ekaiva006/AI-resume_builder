@@ -1,16 +1,3 @@
-/**
- * server/__tests__/auth.test.js
- *
- * Integration tests for the full auth flow:
- *   signup → login → me → refresh → logout
- *
- * Uses the shared in-memory MongoDB setup from setup.js and the real
- * Express app from testApp.js.
- *
- * NOTE: The auth routes have a rate limiter (5 req / 15 min per IP).
- * Each describe block uses a unique X-Forwarded-For IP so tests don't
- * trip the limiter across blocks. The app has trust proxy enabled.
- */
 
 'use strict';
 
@@ -18,9 +5,7 @@ const request = require('supertest');
 const app = require('./testApp');
 const User = require('../models/User');
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
+
 const TEST_USER = {
   firstName: 'Test',
   lastName: 'User',
@@ -211,9 +196,7 @@ describe('POST /api/auth/refresh', () => {
     const initialCookieStr = cookieHeader(signupRes.headers['set-cookie']);
     const initialParsed = parseCookies(signupRes.headers['set-cookie']);
 
-    // Wait >1 second so the JWT iat (issued-at timestamp, in whole seconds)
-    // differs between signup and first refresh, guaranteeing the rotated
-    // refresh token is a different string from the original.
+
     await new Promise((r) => setTimeout(r, 1500));
 
     // First refresh succeeds — this rotates the token in the DB

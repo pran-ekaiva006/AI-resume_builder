@@ -33,7 +33,7 @@ function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-[#10131C]/80 backdrop-blur-xl border-b border-white/10">
+    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-ink/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Left: Logo/Icon + Brand Name */}
@@ -41,17 +41,17 @@ function Header() {
             <div className="bg-brass p-2 rounded-xl group-hover:bg-brass/90 transition-colors">
               <FileText className="h-6 w-6 text-ink" />
             </div>
-            <span className="text-xl font-display font-bold text-text-on-dark tracking-tight">
+            <span className="text-xl font-display font-bold text-ink tracking-tight">
               AI Resume Builder
             </span>
           </Link>
 
           {/* Center: Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="text-text-on-dark/70 hover:text-brass transition-colors font-body text-sm font-medium">
+            <a href="#features" className="text-ink/70 hover:text-brass transition-colors font-body text-sm font-medium">
               Features
             </a>
-            <a href="#how-it-works" className="text-text-on-dark/70 hover:text-brass transition-colors font-body text-sm font-medium">
+            <a href="#how-it-works" className="text-ink/70 hover:text-brass transition-colors font-body text-sm font-medium">
               How it Works
             </a>
           </nav>
@@ -62,7 +62,7 @@ function Header() {
               <Link to="/dashboard">
                 <Button
                   variant="outline"
-                  className="rounded-full px-4 py-2 text-sm border-white/20 text-text-on-dark hover:bg-white/10 hover:text-white transition focus:ring-2 focus:ring-brass focus:ring-offset-2 focus:ring-offset-ink"
+                  className="rounded-full px-4 py-2 text-sm border-ink/20 text-ink hover:bg-ink/5 hover:text-ink transition focus:ring-2 focus:ring-brass focus:ring-offset-2 focus:ring-offset-white"
                 >
                   Dashboard
                 </Button>
@@ -76,17 +76,17 @@ function Header() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuLabel>
-                    <div className="flex flex-col">
+                    <div className="flex flex-col text-ink">
                       <span className="text-sm font-medium">
                         {user?.firstName} {user?.lastName}
                       </span>
-                      <span className="text-xs text-muted-foreground truncate">
+                      <span className="text-xs text-ink/70 truncate">
                         {user?.email}
                       </span>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate('/dashboard')} className="cursor-pointer">
+                  <DropdownMenuItem onClick={() => navigate('/dashboard')} className="cursor-pointer text-ink">
                     <User className="mr-2 h-4 w-4" />
                     Dashboard
                   </DropdownMenuItem>
