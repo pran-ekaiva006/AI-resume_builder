@@ -243,7 +243,7 @@ export default function Home() {
               </p>
               <Link 
                 to="/auth/sign-in" 
-                className="inline-flex justify-center items-center bg-ink text-text-on-dark px-10 py-4 rounded-md font-body font-semibold text-lg hover:bg-ink/90 transition-all duration-300 shadow-[4px_4px_0_rgba(16,19,28,0.2)] hover:-translate-y-1 hover:shadow-[6px_6px_0_rgba(16,19,28,0.2)] focus:outline-none focus:ring-2 focus:ring-ink focus:ring-offset-2 focus:ring-offset-brass"
+                className="inline-flex justify-center items-center bg-ink text-parchment px-10 py-4 rounded-md font-body font-semibold text-lg hover:bg-ink/90 transition-all duration-300 shadow-[4px_4px_0_rgba(16,19,28,0.2)] hover:-translate-y-1 hover:shadow-[6px_6px_0_rgba(16,19,28,0.2)] focus:outline-none focus:ring-2 focus:ring-ink focus:ring-offset-2 focus:ring-offset-brass"
               >
                 Get Started Now
               </Link>
