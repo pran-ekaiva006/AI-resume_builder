@@ -5,15 +5,14 @@
  * patch prevents mass-assignment of identity fields (userId, resumeId) while
  * still allowing legitimate field updates (title, etc.).
  *
- * Uses mongodb-memory-server so no real DB is needed, and Supertest to drive
- * the full Express middleware stack (auth mock included).
+ * Uses the shared in-memory MongoDB setup from setup.js. Builds a minimal
+ * Express app with a fake auth middleware so we can control req.user directly.
  */
 
 'use strict';
 
 const express = require('express');
 const mongoose = require('mongoose');
-const { MongoMemoryServer } = require('mongodb-memory-server');
 const request = require('supertest');
 
 const Resume = require('../models/Resume');
@@ -39,26 +38,6 @@ function buildApp(fakeUser) {
 
   return app;
 }
-
-// ---------------------------------------------------------------------------
-// In-memory MongoDB lifecycle
-// ---------------------------------------------------------------------------
-let mongod;
-
-beforeAll(async () => {
-  mongod = await MongoMemoryServer.create();
-  await mongoose.connect(mongod.getUri());
-});
-
-afterAll(async () => {
-  await mongoose.disconnect();
-  await mongod.stop();
-});
-
-afterEach(async () => {
-  // Clear collection between tests to avoid state bleed
-  await Resume.deleteMany({});
-});
 
 // ---------------------------------------------------------------------------
 // Tests

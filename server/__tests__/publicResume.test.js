@@ -6,50 +6,16 @@
  *  - Returns 200 with resume body when isPublic is true
  *  - Strips sensitive fields (userId, userEmail, isPublic) from the public response
  *
- * Uses mongodb-memory-server — no live DB required.
+ * Uses the shared in-memory MongoDB setup from setup.js.
  */
 
 'use strict';
 
-const express = require('express');
 const mongoose = require('mongoose');
-const { MongoMemoryServer } = require('mongodb-memory-server');
 const request = require('supertest');
+const app = require('./testApp');
 
 const Resume = require('../models/Resume');
-const resumeController = require('../controllers/resumeController');
-
-// ---------------------------------------------------------------------------
-// Minimal Express app — only mounts the public GET route (no auth needed)
-// ---------------------------------------------------------------------------
-function buildApp() {
-  const app = express();
-  app.set('trust proxy', 1);
-  app.use(express.json());
-
-  app.get('/api/resumes/public/:resumeId', resumeController.getPublicResume);
-
-  return app;
-}
-
-// ---------------------------------------------------------------------------
-// In-memory MongoDB lifecycle
-// ---------------------------------------------------------------------------
-let mongod;
-
-beforeAll(async () => {
-  mongod = await MongoMemoryServer.create();
-  await mongoose.connect(mongod.getUri());
-});
-
-afterAll(async () => {
-  await mongoose.disconnect();
-  await mongod.stop();
-});
-
-afterEach(async () => {
-  await Resume.deleteMany({});
-});
 
 // ---------------------------------------------------------------------------
 // Tests
@@ -64,7 +30,6 @@ describe('GET /api/resumes/public/:resumeId — isPublic gate', () => {
       // isPublic defaults to false
     });
 
-    const app = buildApp();
     const res = await request(app).get(`/api/resumes/public/${doc.resumeId}`);
 
     expect(res.status).toBe(404);
@@ -74,7 +39,6 @@ describe('GET /api/resumes/public/:resumeId — isPublic gate', () => {
   });
 
   it('returns 404 for a resumeId that does not exist at all', async () => {
-    const app = buildApp();
     const res = await request(app).get('/api/resumes/public/nonexistent-uuid-9999');
 
     expect(res.status).toBe(404);
@@ -92,7 +56,6 @@ describe('GET /api/resumes/public/:resumeId — isPublic gate', () => {
       isPublic: true,
     });
 
-    const app = buildApp();
     const res = await request(app).get(`/api/resumes/public/${doc.resumeId}`);
 
     expect(res.status).toBe(200);
@@ -110,7 +73,6 @@ describe('GET /api/resumes/public/:resumeId — isPublic gate', () => {
       isPublic: true,
     });
 
-    const app = buildApp();
     const res = await request(app).get(`/api/resumes/public/${doc.resumeId}`);
 
     expect(res.status).toBe(200);
@@ -130,8 +92,6 @@ describe('GET /api/resumes/public/:resumeId — isPublic gate', () => {
       title: 'Toggled Resume',
       isPublic: true,
     });
-
-    const app = buildApp();
 
     // Confirm it's publicly accessible first
     const before = await request(app).get(`/api/resumes/public/${doc.resumeId}`);
