@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const API_URL = (import.meta.env.VITE_BACKEND_URL || "") + '/api/auth';
+  const API_URL = (import.meta.env.DEV ? "" : (import.meta.env.VITE_BACKEND_URL || "")) + '/api/auth';
 
   const checkSession = async () => {
     try {
@@ -16,7 +16,11 @@ export const AuthProvider = ({ children }) => {
       const response = await axios.get(`${API_URL}/me`, { withCredentials: true });
       setUser(response.data.user);
     } catch (error) {
-      setUser(null);
+      setUser((prev) => {
+        // Prevent race condition: if login() successfully set the user 
+        // while this initial checkSession request was in flight, don't wipe it out.
+        return prev ? prev : null;
+      });
     } finally {
       setLoading(false);
     }
