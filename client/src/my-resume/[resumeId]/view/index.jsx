@@ -22,9 +22,7 @@ function ViewResume() {
 
   const GetResumeInfo = async () => {
     try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/resumes/public/${resumeId}`
-      );
+      const response = await axios.get(`/api/resumes/public/${resumeId}`);
       const data = response.data?.data;   // ✅ extract actual data
 
       if (!data || typeof data !== 'object') {

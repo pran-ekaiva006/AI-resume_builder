@@ -6,7 +6,6 @@ import axios from 'axios';
 import { LoaderCircle, FileText, ArrowRight } from 'lucide-react';
 import { Button } from 'client/src/components/ui/button';
 
-const API_BASE = import.meta.env.VITE_BACKEND_URL;
 
 function PublicResumeView() {
   const [resumeInfo, setResumeInfo] = useState(null);
@@ -23,7 +22,7 @@ function PublicResumeView() {
   const fetchPublicResume = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API_BASE}/api/resumes/public/${resumeId}`);
+      const response = await axios.get(`/api/resumes/public/${resumeId}`);
       setResumeInfo(response.data.data);
     } catch (err) {
       console.error('Error fetching public resume:', err);

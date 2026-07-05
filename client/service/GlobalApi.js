@@ -1,7 +1,8 @@
 import axios from "axios";
 
-// ✅ Force relative URL in dev so Vite proxy is always used (fixes CORS/cookie drops)
-const API_BASE = import.meta.env.DEV ? "" : (import.meta.env.VITE_BACKEND_URL || "");
+// ✅ ALWAYS use relative URL so the proxy (Vite or Netlify) handles requests.
+// This is strictly required to prevent the browser from dropping cookies in Incognito Mode (Cross-Origin).
+const API_BASE = "";
 
 // Shared axios instance — auth lives in httpOnly cookies, so we just need
 // withCredentials: true and NO Authorization header.
