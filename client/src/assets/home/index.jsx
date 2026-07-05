@@ -11,6 +11,7 @@ import {
 import Footer from "client/src/components/custom/Footer";
 import Header from "client/src/components/custom/Header";
 import { Link } from "react-router-dom";
+import ResumeAssemblyHero from "../../components/three/ResumeAssemblyHero";
 
 export default function Home() {
 
@@ -68,42 +69,56 @@ export default function Home() {
       <Header />
       <main>
         {/* Hero Section */}
-        <section className="relative overflow-hidden pt-20 pb-32">
-          <div className="absolute inset-0 -z-10">
-            <div className="absolute top-20 left-10 w-20 h-20 bg-blue-200/30 rounded-full blur-xl animate-pulse"></div>
-            <div className="absolute top-40 right-20 w-32 h-32 bg-purple-200/30 rounded-full blur-xl animate-pulse delay-1000"></div>
-            <div className="absolute bottom-20 left-1/3 w-24 h-24 bg-pink-200/30 rounded-full blur-xl animate-pulse delay-2000"></div>
-          </div>
+        <section className="relative overflow-hidden bg-ink text-text-on-dark min-h-[calc(100vh-80px)] flex items-center pt-24 pb-16 lg:pt-0 lg:pb-0">
+          
+          {/* Grid Overlay */}
+          <div 
+            className="absolute inset-0 z-0 pointer-events-none"
+            style={{
+              backgroundImage: 'linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px)',
+              backgroundSize: '4rem 4rem'
+            }}
+          ></div>
 
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 className="text-5xl md:text-7xl font-extrabold leading-tight mb-8">
-              <span className="bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent">
-                Build Your
-              </span>
-              <br />
-              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Perfect Resume
-              </span>
-              <br />
-              <span className="bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent">
-                With AI
-              </span>
-            </h1>
+          {/* Registration Marks */}
+          <div className="absolute top-6 left-6 w-8 h-8 border-t border-l border-parchment/40 pointer-events-none hidden sm:block"></div>
+          <div className="absolute top-6 right-6 w-8 h-8 border-t border-r border-parchment/40 pointer-events-none hidden sm:block"></div>
+          <div className="absolute bottom-6 left-6 w-8 h-8 border-b border-l border-parchment/40 pointer-events-none hidden sm:block"></div>
+          <div className="absolute bottom-6 right-6 w-8 h-8 border-b border-r border-parchment/40 pointer-events-none hidden sm:block"></div>
 
-            <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto mb-12 leading-relaxed">
-              Transform your career with our AI-powered resume builder. Create
-              professional, ATS-friendly resumes that get you noticed by top
-              employers.
-            </p>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+              
+              {/* Left Column: Copy & CTAs */}
+              <div className="text-left max-w-2xl">
+                <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05] mb-6">
+                  Turn your experience into an interview-ready resume.
+                </h1>
+                <p className="font-body text-lg sm:text-xl text-text-on-dark/80 mb-10 max-w-xl leading-relaxed">
+                  Build a professional resume tailored to your industry in minutes. Let our intelligent formatting engine handle the design while you focus on taking the next step in your career.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Link 
+                    to="/auth/sign-in" 
+                    className="inline-flex justify-center items-center bg-brass text-ink px-8 py-4 rounded-md font-body font-semibold text-lg hover:brightness-110 transition-all duration-300 shadow-sm"
+                  >
+                    Get Started
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
+                  <a 
+                    href="#how-it-works"
+                    className="inline-flex justify-center items-center bg-transparent border border-parchment/30 text-text-on-dark px-8 py-4 rounded-md font-body font-semibold text-lg hover:border-parchment hover:bg-parchment/5 transition-all duration-300"
+                  >
+                    See how it works
+                  </a>
+                </div>
+              </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-            <Link 
-  to="/auth/sign-in" 
-  className="group bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-300 transform hover:-translate-y-1"
->
-  Start Building Free
-  <ArrowRight className="inline-block ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-</Link>
+              {/* Right Column: 3D Hero */}
+              <div className="w-full relative lg:-mr-12">
+                <ResumeAssemblyHero />
+              </div>
+              
             </div>
           </div>
         </section>
