@@ -100,7 +100,7 @@ function Header() {
             </div>
           ) : (
             <Link to="/auth/sign-in">
-              <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium px-5 py-2 rounded-full shadow-md flex items-center gap-2 transition-all duration-200">
+              <Button className="bg-brass hover:brightness-110 text-ink font-medium px-5 py-2 rounded-md shadow-sm flex items-center gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brass focus:ring-offset-2">
                 Get Started <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
