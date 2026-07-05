@@ -21,7 +21,9 @@ const signup = async (req, res) => {
     const accessToken = signAccessToken(user._id);
     const refreshToken = signRefreshToken(user._id);
     
-    user.refreshTokenHash = await bcrypt.hash(refreshToken, 12);
+    // Fix bcrypt 72-byte truncation: pre-hash the JWT with SHA-256
+    const tokenPreHash = crypto.createHash('sha256').update(refreshToken).digest('base64');
+    user.refreshTokenHash = await bcrypt.hash(tokenPreHash, 12);
     await user.save();
 
     res.cookie('accessToken', accessToken, getCookieOptions('access'));
@@ -55,7 +57,9 @@ const login = async (req, res) => {
     const accessToken = signAccessToken(user._id);
     const refreshToken = signRefreshToken(user._id);
     
-    user.refreshTokenHash = await bcrypt.hash(refreshToken, 12);
+    // Fix bcrypt 72-byte truncation: pre-hash the JWT with SHA-256
+    const tokenPreHash = crypto.createHash('sha256').update(refreshToken).digest('base64');
+    user.refreshTokenHash = await bcrypt.hash(tokenPreHash, 12);
     await user.save();
 
     res.cookie('accessToken', accessToken, getCookieOptions('access'));
@@ -120,7 +124,9 @@ const refresh = async (req, res) => {
       return res.status(401).json({ message: 'Invalid refresh token' });
     }
 
-    const isValid = await bcrypt.compare(refreshToken, user.refreshTokenHash);
+    // Fix bcrypt 72-byte truncation: pre-hash the JWT with SHA-256 for comparison
+    const incomingTokenPreHash = crypto.createHash('sha256').update(refreshToken).digest('base64');
+    const isValid = await bcrypt.compare(incomingTokenPreHash, user.refreshTokenHash);
     if (!isValid) {
       user.refreshTokenHash = null;
       await user.save();
@@ -132,7 +138,9 @@ const refresh = async (req, res) => {
     const newAccessToken = signAccessToken(user._id);
     const newRefreshToken = signRefreshToken(user._id);
     
-    user.refreshTokenHash = await bcrypt.hash(newRefreshToken, 12);
+    // Fix bcrypt 72-byte truncation: pre-hash the JWT with SHA-256 for saving
+    const newTokenPreHash = crypto.createHash('sha256').update(newRefreshToken).digest('base64');
+    user.refreshTokenHash = await bcrypt.hash(newTokenPreHash, 12);
     await user.save();
 
     res.cookie('accessToken', newAccessToken, getCookieOptions('access'));
