@@ -1,12 +1,17 @@
-import React from 'react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter, useNavigate } from 'react-router-dom';
-import { vi } from 'vitest';
-import SignInpage from '../index';
+import { MemoryRouter } from 'react-router-dom';
+import SignInPage from '../index';
 import { useAuth } from '../../../context/AuthContext';
+import * as router from 'react-router-dom';
 
-// Mock the routing hooks
+// 1. Mock the AuthContext
+vi.mock('../../../context/AuthContext', () => ({
+  useAuth: vi.fn(),
+}));
+
+// 2. Mock react-router-dom's useNavigate
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom');
   return {
@@ -15,50 +20,96 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
-// Mock the AuthContext hook
-vi.mock('../../../context/AuthContext', () => ({
-  useAuth: vi.fn(),
-}));
-
-// Mock GoogleLogin to render a dummy component since we don't want to load external scripts
+// 3. Mock GoogleLogin
 vi.mock('@react-oauth/google', () => ({
-  GoogleLogin: () => <div data-testid="google-login-mock">Google Login</div>,
+  GoogleLogin: () => <button data-testid="google-login-mock">Mock Google Login</button>,
 }));
 
-describe('SignInpage Demo User Flow', () => {
+describe('SignInPage Component', () => {
+  const mockLogin = vi.fn();
   const mockNavigate = vi.fn();
-  const mockDemoLogin = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
-    useNavigate.mockReturnValue(mockNavigate);
     useAuth.mockReturnValue({
-      login: vi.fn(),
+      login: mockLogin,
+      demoLogin: vi.fn(),
       googleLogin: vi.fn(),
-      demoLogin: mockDemoLogin,
     });
+    vi.mocked(router.useNavigate).mockReturnValue(mockNavigate);
   });
 
-  it('calls demoLogin and navigates to /dashboard on clicking "Continue as Demo User"', async () => {
-    mockDemoLogin.mockResolvedValueOnce({ success: true, user: { isDemo: true } });
-
-    render(
+  const renderComponent = () => {
+    return render(
       <MemoryRouter>
-        <SignInpage />
+        <SignInPage />
       </MemoryRouter>
     );
+  };
 
-    const demoButton = screen.getByRole('button', { name: /continue as demo user/i });
-    expect(demoButton).toBeInTheDocument();
+  it('successful login navigates to /dashboard', async () => {
+    mockLogin.mockResolvedValueOnce();
+    renderComponent();
 
-    await userEvent.click(demoButton);
+    const user = userEvent.setup();
+    const emailInput = screen.getByPlaceholderText('Enter your email');
+    const passwordInput = screen.getByPlaceholderText('Enter your password');
+    const submitBtn = screen.getByRole('button', { name: /sign in/i });
 
-    // Assert demoLogin was called
-    expect(mockDemoLogin).toHaveBeenCalledTimes(1);
+    await user.type(emailInput, 'test@example.com');
+    await user.type(passwordInput, 'password123');
+    await user.click(submitBtn);
 
-    // Assert it navigates to /dashboard on success
+    expect(mockLogin).toHaveBeenCalledWith('test@example.com', 'password123');
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
     });
+  });
+
+  it('failed login shows the error message from the mocked rejected promise', async () => {
+    mockLogin.mockRejectedValueOnce({
+      response: { data: { message: 'Invalid credentials provided.' } }
+    });
+    renderComponent();
+
+    const user = userEvent.setup();
+    await user.type(screen.getByPlaceholderText('Enter your email'), 'wrong@example.com');
+    await user.type(screen.getByPlaceholderText('Enter your password'), 'wrongpass');
+    await user.click(screen.getByRole('button', { name: /sign in/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Invalid credentials provided.')).toBeInTheDocument();
+    });
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it('submit button shows a loading state and is disabled while the request is in flight', async () => {
+    // Return a promise that never resolves so it stays in "loading" state
+    mockLogin.mockImplementation(() => new Promise(() => {}));
+    renderComponent();
+
+    const user = userEvent.setup();
+    await user.type(screen.getByPlaceholderText('Enter your email'), 'test@example.com');
+    await user.type(screen.getByPlaceholderText('Enter your password'), 'password123');
+    
+    const submitBtn = screen.getByRole('button', { name: /sign in/i });
+    expect(submitBtn).not.toBeDisabled();
+    expect(submitBtn).toHaveTextContent('Sign In');
+
+    await user.click(submitBtn);
+
+    expect(submitBtn).toBeDisabled();
+    expect(submitBtn).toHaveTextContent('Signing in...');
+  });
+
+  it('required-field validation blocks submission with empty inputs', async () => {
+    renderComponent();
+    
+    const submitBtn = screen.getByRole('button', { name: /sign in/i });
+    
+    const user = userEvent.setup();
+    await user.click(submitBtn);
+
+    expect(mockLogin).not.toHaveBeenCalled();
   });
 });
