@@ -28,6 +28,8 @@ module.exports = {
         parchment: "var(--parchment)",
         brass: "var(--brass)",
         teal: "var(--teal)",
+        "text-on-dark": "var(--text-on-dark)",
+        "text-on-light": "var(--text-on-light)",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
