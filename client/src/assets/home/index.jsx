@@ -91,8 +91,9 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
               
               {/* Left Column: Copy & CTAs */}
-              <div className="text-left max-w-2xl">
-                <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05] mb-6">
+              <div className="text-left max-w-2xl relative">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-teal/10 blur-[100px] rounded-full pointer-events-none -z-10 hidden lg:block"></div>
+                <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05] mb-6 relative z-10">
                   Turn your experience into an interview-ready resume.
                 </h1>
                 <p className="font-body text-base sm:text-lg md:text-xl text-text-on-dark/80 mb-10 max-w-xl leading-relaxed">
@@ -227,23 +228,39 @@ export default function Home() {
 
 
         {/* CTA Section */}
-        <section className="py-24 bg-brass text-ink relative overflow-hidden">
-          <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <section className="py-32 bg-ink text-text-on-dark relative overflow-hidden border-t border-white/5">
+          {/* Background pattern */}
+          <div 
+            className="absolute inset-0 z-0 pointer-events-none opacity-20"
+            style={{
+              backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0)',
+              backgroundSize: '32px 32px'
+            }}
+          ></div>
+          {/* Ambient glow */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl h-[60%] bg-brass/10 blur-[120px] rounded-full pointer-events-none z-0"></div>
+
+          <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.2, ease: "easeOut" }}
+              className="bg-surface/50 backdrop-blur-xl border border-white/10 p-12 md:p-20 rounded-3xl shadow-2xl relative overflow-hidden"
             >
+              {/* Corner accents */}
+              <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-brass/50 rounded-tl-3xl"></div>
+              <div className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-brass/50 rounded-br-3xl"></div>
+
               <h2 className="font-display text-4xl md:text-5xl font-bold tracking-tight mb-6">
                 Ready to Land Your Dream Job?
               </h2>
-              <p className="font-body text-xl mb-10 opacity-90 max-w-2xl mx-auto">
+              <p className="font-body text-xl mb-10 opacity-80 max-w-2xl mx-auto leading-relaxed">
                 Join thousands of professionals who've already transformed their careers with our AI-powered resume builder.
               </p>
               <Link 
                 to="/auth/sign-in" 
-                className="inline-flex justify-center items-center bg-ink text-parchment px-10 py-4 rounded-md font-body font-semibold text-lg hover:bg-ink/90 transition-all duration-300 shadow-[4px_4px_0_rgba(16,19,28,0.2)] hover:-translate-y-1 hover:shadow-[6px_6px_0_rgba(16,19,28,0.2)] focus:outline-none focus:ring-2 focus:ring-ink focus:ring-offset-2 focus:ring-offset-brass"
+                className="inline-flex justify-center items-center bg-brass text-ink px-10 py-4 rounded-md font-body font-semibold text-lg hover:brightness-110 transition-all duration-300 shadow-lg hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-brass focus:ring-offset-2 focus:ring-offset-surface"
               >
                 Get Started Now
               </Link>

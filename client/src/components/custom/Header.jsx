@@ -33,25 +33,25 @@ function Header() {
   };
 
   return (
-    <header className="relative z-50 bg-white/80 backdrop-blur-md border-b border-gray-200/50">
+    <header className="sticky top-0 z-50 bg-ink/80 backdrop-blur-xl border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Left: Logo/Icon + Brand Name */}
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-2 rounded-xl">
-              <FileText className="h-6 w-6 text-white" />
+          <Link to="/" className="flex items-center space-x-2 group">
+            <div className="bg-brass p-2 rounded-xl group-hover:bg-brass/90 transition-colors">
+              <FileText className="h-6 w-6 text-ink" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="text-xl font-display font-bold text-text-on-dark tracking-tight">
               AI Resume Builder
             </span>
           </Link>
 
           {/* Center: Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="text-gray-600 hover:text-blue-600 transition-colors">
+            <a href="#features" className="text-text-on-dark/70 hover:text-brass transition-colors font-body text-sm font-medium">
               Features
             </a>
-            <a href="#how-it-works" className="text-gray-600 hover:text-blue-600 transition-colors">
+            <a href="#how-it-works" className="text-text-on-dark/70 hover:text-brass transition-colors font-body text-sm font-medium">
               How it Works
             </a>
           </nav>
@@ -62,7 +62,7 @@ function Header() {
               <Link to="/dashboard">
                 <Button
                   variant="outline"
-                  className="rounded-full px-4 py-2 text-sm hover:bg-gray-100 transition"
+                  className="rounded-full px-4 py-2 text-sm border-white/20 text-text-on-dark hover:bg-white/10 hover:text-white transition focus:ring-2 focus:ring-brass focus:ring-offset-2 focus:ring-offset-ink"
                 >
                   Dashboard
                 </Button>
@@ -70,7 +70,7 @@ function Header() {
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center justify-center w-9 h-9 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold text-sm cursor-pointer hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                  <button className="flex items-center justify-center w-9 h-9 rounded-full bg-teal text-ink font-semibold text-sm cursor-pointer hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-teal focus:ring-offset-2 focus:ring-offset-ink">
                     {getInitials()}
                   </button>
                 </DropdownMenuTrigger>
