@@ -150,7 +150,7 @@ export default function Home() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-100px" }}
                   transition={{ duration: 0.2, ease: "easeOut", delay: index * 0.1 }}
-                  className="group p-8 rounded-xl bg-parchment border-2 border-ink shadow-[4px_4px_0_var(--ink),8px_8px_0_rgba(16,19,28,0.15)] hover:-translate-y-1 hover:shadow-[6px_6px_0_var(--ink),12px_12px_0_rgba(16,19,28,0.15)] transition-all duration-200 flex flex-col"
+                  className="group p-8 rounded-xl bg-parchment border border-ink/10 shadow-[0_2px_8px_rgba(16,19,28,0.04),0_8px_24px_rgba(16,19,28,0.04),0_16px_32px_rgba(16,19,28,0.04)] hover:-translate-y-1 hover:shadow-[0_4px_12px_rgba(16,19,28,0.06),0_12px_32px_rgba(16,19,28,0.06),0_24px_48px_rgba(16,19,28,0.06)] transition-all duration-300 flex flex-col"
                 >
                   <div className="bg-brass border-2 border-ink p-3 rounded-lg w-fit mb-6">
                     <feature.icon className="h-6 w-6 text-ink" />
