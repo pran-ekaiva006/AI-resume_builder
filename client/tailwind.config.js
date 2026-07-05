@@ -17,14 +17,24 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        display: ['"Space Grotesk"', 'sans-serif'],
+        body: ['"Inter"', 'sans-serif'],
+        mono: ['"IBM Plex Mono"', 'monospace'],
+      },
       colors: {
+        ink: "var(--ink)",
+        surface: "var(--surface)",
+        parchment: "var(--parchment)",
+        brass: "var(--brass)",
+        teal: "var(--teal)",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#9f5bff",
+          DEFAULT: "var(--brass)",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {

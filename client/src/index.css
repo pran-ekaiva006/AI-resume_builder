@@ -43,6 +43,14 @@
 }
   @layer base {
     :root {
+      --ink: #10131C;
+      --surface: #1B2030;
+      --parchment: #F6F1E4;
+      --brass: #C9A227;
+      --teal: #4FD1C5;
+      --text-on-dark: #EDEBE3;
+      --text-on-light: #191B22;
+
       --background: 0 0% 100%;
       --foreground: 0 0% 3.9%;
 
@@ -75,6 +83,14 @@
     }
 
     .dark {
+      --ink: #10131C;
+      --surface: #1B2030;
+      --parchment: #F6F1E4;
+      --brass: #C9A227;
+      --teal: #4FD1C5;
+      --text-on-dark: #EDEBE3;
+      --text-on-light: #191B22;
+
       --background: 0 0% 3.9%;
       --foreground: 0 0% 98%;
 
