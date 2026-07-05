@@ -26,7 +26,7 @@ function Footer() {
             <h4 className="font-display font-semibold mb-4 text-lg">Contact Us</h4>
             <ul className="space-y-2 text-text-on-dark/70">
               <li>
-                <a href="https://github.com/pran-ekaiva006" target="_blank" rel="noopener noreferrer" className="hover:text-brass transition-colors duration-200">
+                <a href="https://github.com/pran-ekaiva006" target="_blank" rel="noopener noreferrer" className="hover:text-brass transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brass focus:ring-offset-2 focus:ring-offset-surface rounded-sm">
                   GitHub Profile
                 </a>
               </li>
