@@ -38,7 +38,6 @@ const resumeSchema = new mongoose.Schema({
   themeColor: {
     type: String,
     default: '#ff6666',
-    match: [/^#([0-9A-F]{3}){1,2}$/i, "Invalid theme color"],
   },
   phone: String,
   address: String,
