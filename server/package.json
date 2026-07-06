@@ -4,6 +4,7 @@
   "description": "Backend for AI Resume Builder",
   "main": "server.js",
   "scripts": {
+    "postinstall": "npm install --prefix ../client && npm run build --prefix ../client",
     "start": "node server.js",
     "dev": "nodemon server.js",
     "build": "echo 'No build step required'",
