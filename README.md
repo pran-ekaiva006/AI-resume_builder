@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./client/public/banner.png" alt="AI Resume Builder Banner" width="100%" />
+  <img src="./client/public/hero-banner.png" alt="AI Resume Builder Banner" width="100%" />
 
   <h1>AI Resume Builder</h1>
   <p>Turn your experience into an interview-ready resume.</p>
