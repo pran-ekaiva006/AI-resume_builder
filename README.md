@@ -7,7 +7,7 @@
   <a href="https://github.com/pran-ekaiva006/AI-resume_builder">
     <img src="https://img.shields.io/badge/GitHub-Repo-blue?logo=github&style=flat-square" alt="GitHub Repo">
   </a>
-  <a href="https://capable-churros-e51954.netlify.app/">
+  <a href="https://ai-resume-builder-6-o5vo.onrender.com">
     <img src="https://img.shields.io/badge/Live-Demo-blue?logo=render&logoColor=white&style=flat-square" alt="Live Demo">
   </a>
   <a href="https://github.com/pran-ekaiva006/AI-resume_builder/blob/main/LICENSE">
