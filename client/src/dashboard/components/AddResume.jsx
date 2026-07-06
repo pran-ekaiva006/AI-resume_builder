@@ -14,7 +14,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from 'sonner';
-import { useTiltEffect } from '../../../hooks/useTiltEffect';
+import { useTiltEffect } from '../../hooks/useTiltEffect';
 
 function AddResume({ refreshData }) {
   const [openDialog, setOpenDialog] = useState(false);

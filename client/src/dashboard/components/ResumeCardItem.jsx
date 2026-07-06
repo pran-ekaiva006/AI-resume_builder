@@ -19,7 +19,7 @@ import {
 } from "client/src/components/ui/alert-dialog";
 import { useApiClient } from '../../../service/GlobalApi';
 import { toast } from 'sonner';
-import { useTiltEffect } from '../../../hooks/useTiltEffect';
+import { useTiltEffect } from '../../hooks/useTiltEffect';
 
 function ResumeCardItem({ resume, refreshData }) {
   const navigate = useNavigate();
