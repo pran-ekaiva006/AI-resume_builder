@@ -19,18 +19,21 @@ import {
 } from "client/src/components/ui/alert-dialog";
 import { useApiClient } from '../../../service/GlobalApi';
 import { toast } from 'sonner';
+import { useTiltEffect } from '../../../hooks/useTiltEffect';
 
 function ResumeCardItem({ resume, refreshData }) {
   const navigate = useNavigate();
   const [openAlert, setOpenAlert] = useState(false);
   const [loading, setLoading] = useState(false);
+  
+  const tiltRef = useTiltEffect({ maxAngle: 5, scale: 1.02 });
 
   const { DeleteResumeById } = useApiClient();
 
   const onDelete = async () => {
     try {
       setLoading(true);
-      toast.loading('Deleting resume...', { id: 'delete-toast' }); // ✅ Show loading toast
+      toast.loading('Deleting resume...', { id: 'delete-toast' });
       
       await DeleteResumeById(resume.resumeId);
       
@@ -50,9 +53,8 @@ function ResumeCardItem({ resume, refreshData }) {
     }
   };
 
-  // ✅ Safe data handling
   const resumeTitle = resume?.title?.trim() || "Untitled Resume";
-  const themeColor = resume?.themeColor || "#ff6666";
+  const themeColor = resume?.themeColor || "var(--brass)";
   const createdAt = resume?.createdAt
     ? new Date(resume.createdAt).toLocaleDateString('en-IN', {
         day: '2-digit',
@@ -64,60 +66,68 @@ function ResumeCardItem({ resume, refreshData }) {
   const resumeId = resume?.resumeId;
 
   return (
-    <div className="group relative transition-all hover:scale-[1.03] hover:shadow-md">
-      <Link to={`/dashboard/resume/${resumeId}/edit`}>
-        <div
-          className="p-14 bg-gradient-to-b from-pink-100 via-purple-200 to-blue-200 h-[260px] rounded-t-lg border-t-4 flex items-center justify-center"
-          style={{ borderColor: themeColor }}
-        >
-          <img src="/cv.png" width={70} height={70} alt="Resume Icon" />
+    <div 
+      ref={tiltRef}
+      className="group relative bg-parchment rounded-xl flex flex-col h-[280px] border border-ink/20 shadow-[4px_4px_0_var(--ink),8px_8px_0_rgba(16,19,28,0.05)] hover:shadow-[6px_6px_0_var(--ink),12px_12px_0_rgba(16,19,28,0.08)] transition-shadow duration-300"
+    >
+      <Link to={`/dashboard/resume/${resumeId}/edit`} className="flex-1 flex flex-col cursor-pointer">
+        {/* Top Accent Bar */}
+        <div 
+          className="h-2 w-full rounded-t-xl" 
+          style={{ backgroundColor: themeColor }}
+        />
+        
+        {/* Card Body */}
+        <div className="flex-1 flex items-center justify-center p-6 relative overflow-hidden">
+          {/* Subtle background decoration */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-ink/5 rounded-bl-full pointer-events-none -z-0"></div>
+          <img src="/cv.png" width={64} height={64} alt="Resume Icon" className="relative z-10 opacity-90 drop-shadow-sm group-hover:scale-105 transition-transform" />
         </div>
       </Link>
 
-      <div
-        className="border p-3 flex justify-between items-center text-white rounded-b-lg"
-        style={{ background: themeColor }}
-      >
-        <div>
-          <h2 className="text-sm font-semibold truncate w-[110px]">
+      {/* Footer Area */}
+      <div className="border-t border-ink/10 p-4 flex justify-between items-center bg-white/50 rounded-b-xl backdrop-blur-sm z-20">
+        <div className="flex-1 min-w-0 pr-2">
+          <h2 className="font-display text-base font-bold text-ink truncate">
             {resumeTitle}
           </h2>
-          <p className="text-[11px] opacity-90">{createdAt}</p>
+          <p className="font-mono text-[10px] text-ink/60 uppercase tracking-wider mt-1">
+            {createdAt}
+          </p>
         </div>
 
         <DropdownMenu>
-          <DropdownMenuTrigger>
-            <MoreVertical className="h-4 w-4 cursor-pointer hover:opacity-80" />
+          <DropdownMenuTrigger className="p-2 -mr-2 rounded-md hover:bg-ink/5 transition-colors focus:outline-none">
+            <MoreVertical className="h-4 w-4 text-ink/70" />
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => navigate(`/dashboard/resume/${resumeId}/edit`)}>
+          <DropdownMenuContent align="end" className="w-40 font-body bg-parchment border-ink/20 shadow-lg">
+            <DropdownMenuItem onClick={() => navigate(`/dashboard/resume/${resumeId}/edit`)} className="cursor-pointer hover:bg-ink/5 focus:bg-ink/5">
               Edit
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => navigate(`/my-resume/${resumeId}/view`)}>
+            <DropdownMenuItem onClick={() => navigate(`/my-resume/${resumeId}/view`)} className="cursor-pointer hover:bg-ink/5 focus:bg-ink/5">
               View
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setOpenAlert(true)}>
+            <DropdownMenuItem onClick={() => setOpenAlert(true)} className="cursor-pointer text-destructive hover:bg-destructive/10 focus:bg-destructive/10">
               Delete
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Delete Confirmation Dialog */}
         <AlertDialog open={openAlert}>
-          <AlertDialogContent>
+          <AlertDialogContent className="font-body bg-parchment border-ink/20 shadow-xl">
             <AlertDialogHeader>
-              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-              <AlertDialogDescription>
+              <AlertDialogTitle className="font-display font-bold text-ink">Are you sure?</AlertDialogTitle>
+              <AlertDialogDescription className="text-ink/70">
                 This will permanently delete your resume from our servers.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel onClick={() => setOpenAlert(false)}>
+              <AlertDialogCancel onClick={() => setOpenAlert(false)} className="border-ink/20 hover:bg-ink/5">
                 Cancel
               </AlertDialogCancel>
-              <AlertDialogAction onClick={onDelete} disabled={loading}>
-                {loading ? <Loader2Icon className="animate-spin" /> : 'Delete'}
+              <AlertDialogAction onClick={onDelete} disabled={loading} className="bg-destructive hover:bg-destructive/90 text-white">
+                {loading ? <Loader2Icon className="animate-spin h-4 w-4" /> : 'Delete'}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

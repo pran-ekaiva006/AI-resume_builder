@@ -14,6 +14,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from 'sonner';
+import { useTiltEffect } from '../../../hooks/useTiltEffect';
 
 function AddResume({ refreshData }) {
   const [openDialog, setOpenDialog] = useState(false);
@@ -23,6 +24,8 @@ function AddResume({ refreshData }) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { CreateNewResume } = useApiClient();
+  
+  const tiltRef = useTiltEffect({ maxAngle: 4, scale: 1.02 });
 
   const onCreate = async () => {
     if (!resumeTitle.trim()) {
@@ -40,7 +43,7 @@ function AddResume({ refreshData }) {
       firstName: user?.firstName || 'First',
       lastName: user?.lastName || 'Last',
       jobTitle: 'Full Stack Developer',
-      themeColor: "#ff6666",
+      themeColor: "var(--brass)",
       phone: "(123)-456-7890",
       address: "525 N Tryon Street, NC 28117",
       summery:
@@ -81,9 +84,7 @@ function AddResume({ refreshData }) {
     };
 
     try {
-
       const response = await CreateNewResume(resumeData);
-
 
       // Refresh Dashboard data so the title shows immediately
       if (refreshData) await refreshData();
@@ -103,39 +104,45 @@ function AddResume({ refreshData }) {
   return (
     <div>
       <div
-        className="p-14 py-24 border items-center flex justify-center bg-secondary
-        rounded-lg h-[280px] hover:scale-105 transition-all hover:shadow-md
-        cursor-pointer border-dashed"
+        ref={tiltRef}
+        className="group bg-parchment rounded-xl h-[280px] border border-ink/20 shadow-[4px_4px_0_var(--ink),8px_8px_0_rgba(16,19,28,0.05)] hover:shadow-[6px_6px_0_var(--ink),12px_12px_0_rgba(16,19,28,0.08)] transition-shadow duration-300 flex flex-col items-center justify-center cursor-pointer text-ink/70 hover:text-ink relative overflow-hidden"
         onClick={() => setOpenDialog(true)}
       >
-        <PlusSquare />
+        <div className="absolute inset-0 bg-ink/[0.02] opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <PlusSquare className="w-12 h-12 mb-3 stroke-[1.5]" />
+        <span className="font-display font-bold text-lg">Create New</span>
       </div>
 
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-        <DialogContent>
+        <DialogContent className="bg-parchment border-ink/20 font-body text-ink shadow-xl">
           <DialogHeader>
-            <DialogTitle>Create New Resume</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="font-display font-bold text-2xl text-ink">Create New Resume</DialogTitle>
+            <DialogDescription className="text-ink/70">
               Add a title for your new resume
             </DialogDescription>
           </DialogHeader>
 
           <Input
-            className="my-2"
+            className="my-4 border-ink/30 focus-visible:ring-brass bg-white/50"
             placeholder="Ex. Frontend Developer Resume"
             value={resumeTitle}
-            onChange={(e) => {
-
-              setResumeTitle(e.target.value);
-            }}
+            onChange={(e) => setResumeTitle(e.target.value)}
           />
 
-          <div className="flex justify-end gap-5 mt-4">
-            <Button onClick={() => setOpenDialog(false)} variant="ghost">
+          <div className="flex justify-end gap-3 mt-2">
+            <Button 
+              onClick={() => setOpenDialog(false)} 
+              variant="ghost" 
+              className="hover:bg-ink/5 text-ink/80"
+            >
               Cancel
             </Button>
-            <Button disabled={!resumeTitle.trim() || loading} onClick={onCreate}>
-              {loading ? <Loader2 className="animate-spin" /> : 'Create'}
+            <Button 
+              disabled={!resumeTitle.trim() || loading} 
+              onClick={onCreate}
+              className="bg-brass hover:bg-brass/90 text-ink font-semibold"
+            >
+              {loading ? <Loader2 className="animate-spin h-4 w-4" /> : 'Create'}
             </Button>
           </div>
         </DialogContent>
