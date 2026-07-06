@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
-import { setLogoutCallback } from '../../service/GlobalApi';
+import { axiosClient, setLogoutCallback } from '../../service/GlobalApi';
 
 const AuthContext = createContext(null);
 
@@ -8,12 +7,10 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const API_URL = '/api/auth';
-
   const checkSession = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API_URL}/me`, { withCredentials: true });
+      const response = await axiosClient.get(`/auth/me`);
       setUser(response.data.user);
     } catch (error) {
       setUser((prev) => {
@@ -37,20 +34,20 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
-    const response = await axios.post(`${API_URL}/login`, { email, password }, { withCredentials: true });
+    const response = await axiosClient.post(`/auth/login`, { email, password });
     setUser(response.data.user);
     return response.data;
   };
 
   const signup = async (firstName, lastName, email, password) => {
-    const response = await axios.post(`${API_URL}/signup`, { firstName, lastName, email, password }, { withCredentials: true });
+    const response = await axiosClient.post(`/auth/signup`, { firstName, lastName, email, password });
     setUser(response.data.user);
     return response.data;
   };
 
   const logout = async () => {
     try {
-      await axios.post(`${API_URL}/logout`, {}, { withCredentials: true });
+      await axiosClient.post(`/auth/logout`, {});
     } catch (err) {
       console.error('Logout error:', err);
     } finally {
@@ -59,13 +56,13 @@ export const AuthProvider = ({ children }) => {
   };
 
   const googleLogin = async (credential) => {
-    const response = await axios.post(`${API_URL}/google`, { credential }, { withCredentials: true });
+    const response = await axiosClient.post(`/auth/google`, { credential });
     setUser(response.data.user);
     return response.data;
   };
 
   const demoLogin = async () => {
-    const response = await axios.post(`${API_URL}/demo-login`, {}, { withCredentials: true });
+    const response = await axiosClient.post(`/auth/demo-login`, {});
     setUser(response.data.user);
     return response.data;
   };
