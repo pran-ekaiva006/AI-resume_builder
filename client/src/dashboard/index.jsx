@@ -45,10 +45,20 @@ function Dashboard() {
   
   const displayEmail = user?.email?.endsWith('@demo.local') ? 'demo@demo.local' : user?.email;
 
+  if (loading) {
+    return (
+      <div className="min-h-[calc(100vh-80px)] bg-ink text-text-on-dark flex items-center justify-center">
+        <div className="animate-pulse font-body text-text-on-dark/60">Loading…</div>
+      </div>
+    );
+  }
+
+  const hasResumes = !loadingResumes && resumeList.length > 0;
+
   return (
     <div className="min-h-[calc(100vh-80px)] bg-ink text-text-on-dark p-6 md:p-10 lg:px-32 flex flex-col gap-10">
       
-      {/* SECTION 1: Profile Panel */}
+      {/* SECTION 1: Profile Panel — always visible */}
       <section className="bg-surface rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center md:items-start gap-6 border border-white/5 shadow-2xl">
         {/* Avatar */}
         <div className="flex-shrink-0 w-20 h-20 md:w-24 md:h-24 rounded-full bg-teal flex items-center justify-center text-text-on-light font-display font-bold text-3xl md:text-4xl shadow-inner">
@@ -87,37 +97,49 @@ function Dashboard() {
         <h2 className="font-display font-bold text-3xl tracking-tight text-text-on-dark">My Workspace</h2>
         <p className="font-body text-text-on-dark/70 mt-2">Start creating an AI-powered resume for your next job role.</p>
 
-        {/* Grid container for cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-8">
-          <AddResume refreshData={fetchResumes} />
-
-          {loadingResumes ? (
-            // Loading placeholders
-            [1, 2, 3, 4].map((item, index) => (
+        {/* Loading state */}
+        {loadingResumes && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-8">
+            {[1, 2, 3, 4].map((item, index) => (
               <div
                 key={index}
                 className="h-[280px] rounded-lg bg-surface/50 border border-ink/20 animate-pulse"
               />
-            ))
-          ) : resumeList.length > 0 ? (
-            // Resume cards
-            resumeList.map((resume, index) => (
+            ))}
+          </div>
+        )}
+
+        {/* Has resumes — normal grid */}
+        {hasResumes && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-8">
+            <AddResume refreshData={fetchResumes} />
+            {resumeList.map((resume, index) => (
               <ResumeCardItem
                 key={resume._id || index}
                 resume={resume}
                 refreshData={fetchResumes}
               />
-            ))
-          ) : null}
-        </div>
+            ))}
+          </div>
+        )}
 
-        {/* Empty State Illustration */}
+        {/* Empty state — single centered composition */}
         {!loadingResumes && resumeList.length === 0 && (
-          <div className="mt-16 flex flex-col items-center justify-center opacity-80 pointer-events-none">
-            <div className="transform scale-[0.6] -mt-16 -mb-20">
+          <div className="flex flex-col items-center justify-center mt-12 mb-8">
+            {/* Illustration */}
+            <div className="transform scale-[0.55] -mb-12 pointer-events-none">
               <ResumeAssemblyFallback />
             </div>
-            <p className="font-body text-lg text-text-on-dark/60 mt-4">Your first resume starts here</p>
+
+            {/* Caption */}
+            <p className="font-body text-lg text-text-on-dark/60 mt-4 mb-8">
+              Your first resume starts here
+            </p>
+
+            {/* Create New action */}
+            <div className="w-56">
+              <AddResume refreshData={fetchResumes} />
+            </div>
           </div>
         )}
       </section>
@@ -126,3 +148,4 @@ function Dashboard() {
 }
 
 export default Dashboard;
+
