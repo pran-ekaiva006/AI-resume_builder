@@ -69,13 +69,20 @@ app.use("/api", (req, res) => {
   res.status(404).json({ message: "❌ API Route not found" });
 });
 
-// ✅ Serve Static React App in Production
-if (process.env.NODE_ENV === "production" || process.env.SERVE_CLIENT === "true") {
-  const clientBuildPath = path.join(__dirname, "../client/dist");
+const fs = require("fs");
+const clientBuildPath = path.join(__dirname, "../client/dist");
+
+// ✅ Serve Static React App if build exists
+if (fs.existsSync(clientBuildPath)) {
   app.use(express.static(clientBuildPath));
 
   app.get("/{*path}", (req, res) => {
     res.sendFile(path.join(clientBuildPath, "index.html"));
+  });
+} else {
+  // Fallback for development if not serving client
+  app.get("/", (_, res) => {
+    res.send("API is running, but frontend build is missing");
   });
 }
 
