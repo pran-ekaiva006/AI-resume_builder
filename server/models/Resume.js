@@ -37,7 +37,7 @@ const resumeSchema = new mongoose.Schema({
   jobTitle: String,
   themeColor: {
     type: String,
-    default: '#ff6666',
+    default: '#C9A227',
   },
   phone: String,
   address: String,

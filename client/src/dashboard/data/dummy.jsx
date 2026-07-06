@@ -12,7 +12,7 @@ export default{
     experience:[
         {
             id:1,
-            title:'Full Stack Developer',
+            title:'DevOps Developer',
             companyName:'Amazon',
             city:'New York',
             state:'NY',

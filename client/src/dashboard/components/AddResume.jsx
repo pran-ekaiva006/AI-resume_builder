@@ -42,8 +42,8 @@ function AddResume({ refreshData }) {
       userEmail: user?.email || 'no-email@example.com',
       firstName: user?.firstName || 'First',
       lastName: user?.lastName || 'Last',
-      jobTitle: 'Full Stack Developer',
-      themeColor: "var(--brass)",
+      jobTitle: resumeTitle.trim(),
+      themeColor: "#ff6666",
       phone: "(123)-456-7890",
       address: "525 N Tryon Street, NC 28117",
       summery:
@@ -51,7 +51,7 @@ function AddResume({ refreshData }) {
       experience: [
         {
           id: 1,
-          title: 'Full Stack Developer',
+          title: resumeTitle.trim(),
           companyName: 'Amazon',
           city: 'New York',
           state: 'NY',
