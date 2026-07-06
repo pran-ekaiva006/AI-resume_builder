@@ -70,7 +70,7 @@ app.use("/api", (req, res) => {
 });
 
 const fs = require("fs");
-const clientBuildPath = path.join(__dirname, "../client/dist");
+const clientBuildPath = path.join(__dirname, "public");
 
 // ✅ Serve Static React App if build exists
 if (fs.existsSync(clientBuildPath)) {
