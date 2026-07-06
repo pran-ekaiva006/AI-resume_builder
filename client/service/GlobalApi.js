@@ -1,24 +1,15 @@
 import axios from "axios";
 
-// ✅ ALWAYS use relative URL so the proxy (Vite or Netlify) handles requests.
-// This is strictly required to prevent the browser from dropping cookies in Incognito Mode (Cross-Origin).
-const API_BASE = "";
+const API_BASE = import.meta.env.DEV ? "" : (import.meta.env.VITE_BACKEND_URL || "");
 
-// Shared axios instance — auth lives in httpOnly cookies, so we just need
-// withCredentials: true and NO Authorization header.
-// Exported so other hooks (e.g. useGenerateAI) can share the same
-// interceptor chain without duplicating the 401 → refresh → retry logic.
+
 export const axiosClient = axios.create({
   baseURL: `${API_BASE}/api`,
   withCredentials: true,
   headers: { "Content-Type": "application/json" },
 });
 
-// ── 401 Refresh Interceptor ───────────────────────────────────────
-// On a 401, try POST /api/auth/refresh once. If that succeeds,
-// retry the original request. If the refresh also fails, clear user
-// state and let the App.jsx guard redirect to sign-in.
-// To avoid infinite loops, we mark retried requests with _retry.
+
 let logoutCallback = null;
 
 export const setLogoutCallback = (fn) => {

@@ -1,9 +1,4 @@
-/**
- * server/__tests__/resumeOwnership.test.js
- *
- * Tests the ownership boundaries for Resume CRUD operations.
- * Ensures users cannot access, modify, or delete resumes they do not own.
- */
+
 
 'use strict';
 
@@ -12,7 +7,7 @@ const app = require('./testApp');
 const User = require('../models/User');
 const Resume = require('../models/Resume');
 
-// Helper to sign up and get cookies
+
 async function createUserAndGetCookies(ip, email) {
   const res = await request(app)
     .post('/api/auth/signup')
@@ -23,19 +18,19 @@ async function createUserAndGetCookies(ip, email) {
       email,
       password: 'SecurePass123!',
     });
-  
+
   if (res.status !== 201) {
     throw new Error(`Failed to create user ${email}: ${res.status}`);
   }
 
   const cookiesArray = res.headers['set-cookie'];
   const cookiesStr = cookiesArray.map(c => c.split(';')[0]).join('; ');
-  
+
   const user = await User.findOne({ email });
   return { cookies: cookiesStr, user };
 }
 
-// Helper to create a resume for a user
+
 async function createResume(cookies, title) {
   const res = await request(app)
     .post('/api/resumes')
@@ -46,12 +41,12 @@ async function createResume(cookies, title) {
       lastName: 'Doe',
       userEmail: 'dummy@example.com'
     });
-  
+
   if (res.status !== 201) {
-    throw new Error(`Failed to create resume: ${res.status} - ${JSON.stringify(res.body)}`);
+    throw new Error(`Failed to create resume: ${res.status}`);
   }
-  
-  return res.body.resume;
+
+  return res.body.data;
 }
 
 describe('Resume Ownership Boundaries', () => {
@@ -59,7 +54,7 @@ describe('Resume Ownership Boundaries', () => {
   let userB, cookiesB;
   let resumeA;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     // 1. Create two separate users
     const resA = await createUserAndGetCookies('10.10.1.1', 'usera@example.com');
     userA = resA.user;
@@ -118,7 +113,7 @@ describe('Resume Ownership Boundaries', () => {
       const resA = await request(app)
         .get('/api/resumes')
         .set('Cookie', cookiesA);
-      
+
       expect(resA.status).toBe(200);
       expect(resA.body.data.length).toBe(1);
       expect(resA.body.data[0].resumeId).toBe(resumeA.resumeId);
@@ -127,7 +122,7 @@ describe('Resume Ownership Boundaries', () => {
       const resB = await request(app)
         .get('/api/resumes')
         .set('Cookie', cookiesB);
-      
+
       expect(resB.status).toBe(200);
       expect(resB.body.data.length).toBe(1);
       expect(resB.body.data[0].resumeId).toBe(resumeB.resumeId);
@@ -143,7 +138,7 @@ describe('Resume Ownership Boundaries', () => {
       const delRes = await request(app)
         .delete(`/api/resumes/${resumeA.resumeId}`)
         .set('Cookie', cookiesA);
-      
+
       expect(delRes.status).toBe(200);
       expect(delRes.body.success).toBe(true);
 
@@ -151,7 +146,7 @@ describe('Resume Ownership Boundaries', () => {
       const getRes = await request(app)
         .get(`/api/resumes/${resumeA.resumeId}`)
         .set('Cookie', cookiesA);
-      
+
       expect(getRes.status).toBe(404);
       expect(getRes.body.message).toBe('Resume not found or unauthorized');
 
