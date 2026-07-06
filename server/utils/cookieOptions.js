@@ -1,9 +1,8 @@
 const getCookieOptions = (type = 'access') => {
-  const isProd = process.env.NODE_ENV === 'production';
   return {
     httpOnly: true,
-    secure: isProd,
-    sameSite: 'lax', // Use lax since frontend and backend are now on the exact same domain
+    secure: true, // required for sameSite: 'none'
+    sameSite: 'none', // allows cross-site cookies (e.g. frontend on Netlify, backend on Render)
     maxAge: type === 'refresh' ? 30 * 24 * 60 * 60 * 1000 : 15 * 60 * 1000 // 30 days or 15 mins
   };
 };
