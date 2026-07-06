@@ -123,11 +123,24 @@ const STEPS = [
   { id: 6, label: 'Share' }
 ];
 
+const THEME_COLORS = [
+  { hex: '#ff6666', name: 'Coral' },
+  { hex: '#C9A227', name: 'Brass' },
+  { hex: '#4FD1C5', name: 'Teal' },
+  { hex: '#6366F1', name: 'Indigo' },
+  { hex: '#F97316', name: 'Orange' },
+  { hex: '#EC4899', name: 'Pink' },
+  { hex: '#10B981', name: 'Emerald' },
+  { hex: '#3B82F6', name: 'Blue' },
+];
+
 function FormSection() {
   const [activeFormIndex, setActiveFormIndex] = useState(1);
   const [direction, setDirection] = useState(1);
   const [enableNext, setEnableNext] = useState(true);
   const { resumeId } = useParams();
+  const { resumeInfo, setResumeInfo } = useContext(ResumeInfoContext);
+  const { UpdateResumeDetail } = useApiClient();
 
   const handleNext = () => {
     setDirection(1);
@@ -139,16 +152,47 @@ function FormSection() {
     setActiveFormIndex(activeFormIndex - 1);
   };
 
+  const handleThemeColor = async (color) => {
+    // Optimistic update — preview updates instantly
+    setResumeInfo((prev) => ({ ...prev, themeColor: color }));
+
+    // Persist to backend
+    try {
+      await UpdateResumeDetail(resumeId, { themeColor: color });
+    } catch (err) {
+      console.error('Failed to update theme color:', err);
+      toast.error('Failed to save theme color');
+    }
+  };
+
   return (
     <div className="flex flex-col">
       {/* Header Controls */}
       <div className='flex justify-between items-center bg-parchment p-2 rounded-lg mb-4 text-text-on-light'>
-        <div className='flex gap-5'>
+        <div className='flex items-center gap-3'>
           <Link to={"/dashboard"}>
             <Button variant="outline" className="border-ink/20 text-text-on-light hover:bg-ink/5">
               <Home className="h-4 w-4" />
             </Button>
           </Link>
+
+          {/* Theme Color Picker */}
+          <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-white/60 border border-ink/10">
+            {THEME_COLORS.map((c) => (
+              <button
+                key={c.hex}
+                title={c.name}
+                aria-label={`Set theme color to ${c.name}`}
+                onClick={() => handleThemeColor(c.hex)}
+                className="w-5 h-5 rounded-full border-2 transition-all duration-200 hover:scale-125 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-brass/50"
+                style={{
+                  backgroundColor: c.hex,
+                  borderColor: resumeInfo?.themeColor === c.hex ? '#10131C' : 'transparent',
+                  boxShadow: resumeInfo?.themeColor === c.hex ? '0 0 0 1px white inset' : 'none',
+                }}
+              />
+            ))}
+          </div>
         </div>
         <div className='flex gap-2'>
           {activeFormIndex > 1 && (
