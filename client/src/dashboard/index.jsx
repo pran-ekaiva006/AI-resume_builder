@@ -3,7 +3,6 @@ import AddResume from "./components/AddResume";
 import ResumeCardItem from "./components/ResumeCardItem";
 import { useAuth } from "../context/AuthContext";
 import { useApiClient } from "../../service/GlobalApi";
-import ResumeAssemblyFallback from "../components/three/ResumeAssemblyFallback";
 
 function Dashboard() {
   const { user, loading } = useAuth();
@@ -76,12 +75,12 @@ function Dashboard() {
         {/* Stats */}
         <div className="flex gap-4 sm:gap-8 mt-6 md:mt-2 w-full md:w-auto justify-center md:justify-end">
           <div className="flex flex-col items-center md:items-end">
-            <span className="font-mono text-2xl font-semibold text-brass">{resumeList.length}</span>
+            <span className="text-2xl font-semibold text-brass font-sans">{resumeList.length}</span>
             <span className="font-mono text-xs text-text-on-dark/50 uppercase tracking-wider mt-1">Resumes</span>
           </div>
           <div className="w-px bg-white/10" />
           <div className="flex flex-col items-center md:items-end">
-            <span className="font-mono text-2xl font-semibold text-teal">{publicCount}</span>
+            <span className="text-2xl font-semibold text-teal font-sans">{publicCount}</span>
             <span className="font-mono text-xs text-text-on-dark/50 uppercase tracking-wider mt-1">Public</span>
           </div>
           <div className="w-px bg-white/10" />
@@ -125,12 +124,7 @@ function Dashboard() {
 
         {/* Empty state — single centered composition */}
         {!loadingResumes && resumeList.length === 0 && (
-          <div className="flex flex-col items-center justify-center mt-12 mb-8">
-            {/* Illustration */}
-            <div className="transform scale-[0.55] -mb-12 pointer-events-none">
-              <ResumeAssemblyFallback />
-            </div>
-
+          <div className="flex flex-col items-center justify-start mt-12 mb-8">
             {/* Caption */}
             <p className="font-body text-lg text-text-on-dark/60 mt-4 mb-8">
               Your first resume starts here

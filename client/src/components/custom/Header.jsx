@@ -48,7 +48,7 @@ function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-ink/95 backdrop-blur-xl border-b border-white/10 text-text-on-dark">
+    <header className="sticky top-0 z-50 bg-[#10131C]/95 backdrop-blur-xl border-b border-white/10 text-text-on-dark">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Left: Logo/Icon + Brand Name */}
@@ -56,22 +56,20 @@ function Header() {
             <div className="bg-brass p-2 rounded-xl group-hover:bg-brass/90 transition-colors duration-150">
               <FileText className="h-6 w-6 text-text-on-light" />
             </div>
-            <span className="text-xl font-display font-bold text-text-on-light tracking-tight">
+            <span className="text-xl font-display font-bold text-text-on-dark tracking-tight">
               AI Resume Builder
             </span>
           </Link>
 
-          {/* Center: Navigation — only shown on public/logged-out pages */}
-          {!isSignedIn && (
-            <nav className="hidden md:flex items-center space-x-8">
-              <a href="#features" onClick={(e) => handleNavClick(e, 'features')} className="text-text-on-light hover:text-brass transition-colors duration-150 font-body text-sm font-medium">
-                Features
-              </a>
-              <a href="#how-it-works" onClick={(e) => handleNavClick(e, 'how-it-works')} className="text-text-on-light hover:text-brass transition-colors duration-150 font-body text-sm font-medium">
-                How it Works
-              </a>
-            </nav>
-          )}
+          {/* Center: Navigation */}
+          <nav className="hidden md:flex items-center space-x-8">
+            <a href="#features" onClick={(e) => handleNavClick(e, 'features')} className="text-text-on-dark hover:text-brass transition-colors duration-150 font-body text-sm font-medium">
+              Features
+            </a>
+            <a href="#how-it-works" onClick={(e) => handleNavClick(e, 'how-it-works')} className="text-text-on-dark hover:text-brass transition-colors duration-150 font-body text-sm font-medium">
+              How it Works
+            </a>
+          </nav>
 
           {/* Right: Auth buttons */}
           {isSignedIn ? (
