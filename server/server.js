@@ -50,7 +50,7 @@ const MONGO_URI = process.env.MONGO_URI;
 if (process.env.NODE_ENV === "production") {
   setInterval(async () => {
     try {
-      await axios.get(`${process.env.RENDER_EXTERNAL_URL || 'http://localhost:5001'}/`);
+      await axios.get(`${process.env.RENDER_EXTERNAL_URL || 'http://localhost:5001'}/api/health`);
       if (process.env.NODE_ENV !== "production") console.log("⏰ Keep-alive ping sent");
     } catch (err) {
       console.error("Keep-alive ping failed:", err.message);

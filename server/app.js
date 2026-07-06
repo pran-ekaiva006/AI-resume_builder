@@ -3,6 +3,7 @@
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const path = require("path");
 const { requireAuth } = require("./middlewares/authMiddleware");
 
 const app = express();
@@ -46,7 +47,7 @@ const aiRoutes = require("./routes/aiRoutes");
 app.use("/api/ai", requireAuth, aiRoutes);
 
 // 🔥 Health check
-app.get("/", (_, res) => {
+app.get("/api/health", (_, res) => {
   res.send("🚀 API Running Successfully");
 });
 
@@ -62,10 +63,20 @@ app.use((err, req, res, next) => {
   });
 });
 
-// 🚨 404 handler
-app.use((req, res) => {
-  if (process.env.NODE_ENV !== "production") console.log(`❌ 404 - Route not found: ${req.method} ${req.url}`);
-  res.status(404).json({ message: "❌ Route not found" });
+// 🚨 404 handler for API routes
+app.use("/api", (req, res) => {
+  if (process.env.NODE_ENV !== "production") console.log(`❌ 404 - API Route not found: ${req.method} ${req.url}`);
+  res.status(404).json({ message: "❌ API Route not found" });
 });
+
+// ✅ Serve Static React App in Production
+if (process.env.NODE_ENV === "production" || process.env.SERVE_CLIENT === "true") {
+  const clientBuildPath = path.join(__dirname, "../client/dist");
+  app.use(express.static(clientBuildPath));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(clientBuildPath, "index.html"));
+  });
+}
 
 module.exports = app;
