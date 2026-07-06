@@ -47,24 +47,24 @@ function SharePanel() {
   };
 
   return (
-    <div className="p-5 shadow-lg rounded-lg border-t-brass border-t-4 mt-10 bg-surface">
-      <h2 className="font-display font-bold text-lg mb-1 text-ink">Share Resume</h2>
-      <p className="font-body text-sm text-ink/70 mb-5">
+    <div className="p-5 shadow-lg rounded-lg border-t-brass border-t-4 mt-10 bg-surface text-text-on-dark">
+      <h2 className="font-display font-bold text-lg mb-1 text-text-on-dark">Share Resume</h2>
+      <p className="font-body text-sm text-text-on-dark/70 mb-5">
         A public link lets anyone with the URL view your resume — great for recruiters and
         online applications. Your resume is <strong>private by default</strong>.
       </p>
 
       {/* Toggle */}
-      <div className="flex items-center justify-between p-4 rounded-lg border border-ink/10 bg-parchment">
+      <div className="flex items-center justify-between p-4 rounded-lg border border-ink/10 bg-parchment text-text-on-light">
         <div className="flex items-center gap-3">
           {isPublic
             ? <Globe className="h-5 w-5 text-teal" />
-            : <Lock className="h-5 w-5 text-ink/40" />}
+            : <Lock className="h-5 w-5 text-text-on-light/40" />}
           <div>
-            <p className="font-body font-medium text-sm text-ink">
+            <p className="font-body font-medium text-sm text-text-on-light">
               {isPublic ? 'Public — anyone with the link can view' : 'Private — only you can view'}
             </p>
-            <p className="font-body text-xs text-ink/50 mt-0.5">
+            <p className="font-body text-xs text-text-on-light/60 mt-0.5">
               {isPublic
                 ? 'Toggle off to make it private again.'
                 : 'Toggle on to generate a shareable public link.'}
@@ -92,11 +92,11 @@ function SharePanel() {
       {/* Public URL */}
       {isPublic && (
         <div className="mt-4">
-          <p className="font-mono text-xs font-semibold text-ink/60 uppercase tracking-wide mb-2">
+          <p className="font-mono text-xs font-semibold text-text-on-dark/60 uppercase tracking-wide mb-2">
             Public link
           </p>
-          <div className="flex items-center gap-2 p-3 rounded-md border border-ink/10 bg-white text-sm break-all">
-            <span className="flex-1 font-body text-ink/80 text-xs">{publicUrl}</span>
+          <div className="flex items-center gap-2 p-3 rounded-md border border-ink/10 bg-white text-sm break-all text-text-on-light">
+            <span className="flex-1 font-body text-text-on-light/80 text-xs">{publicUrl}</span>
             <button
               id="copy-public-url"
               aria-label="Copy public URL"
@@ -105,7 +105,7 @@ function SharePanel() {
             >
               {copied
                 ? <Check className="h-4 w-4 text-teal" />
-                : <Copy className="h-4 w-4 text-ink/40" />}
+                : <Copy className="h-4 w-4 text-text-on-light/40" />}
             </button>
           </div>
         </div>
@@ -131,10 +131,10 @@ function FormSection() {
   return (
     <div className="flex flex-col">
       {/* Header Controls */}
-      <div className='flex justify-between items-center bg-white/50 p-2 rounded-lg mb-4'>
+      <div className='flex justify-between items-center bg-parchment p-2 rounded-lg mb-4 text-text-on-light'>
         <div className='flex gap-5'>
           <Link to={"/dashboard"}>
-            <Button variant="outline" className="border-ink/20 text-ink hover:bg-ink/5">
+            <Button variant="outline" className="border-ink/20 text-text-on-light hover:bg-ink/5">
               <Home className="h-4 w-4" />
             </Button>
           </Link>
@@ -144,7 +144,7 @@ function FormSection() {
             <Button 
               size="sm"
               variant="outline"
-              className="border-ink/20 text-ink hover:bg-ink/5"
+              className="border-ink/20 text-text-on-light hover:bg-ink/5"
               onClick={() => setActiveFormIndex(activeFormIndex - 1)}
             > 
               <ArrowLeft className="h-4 w-4" /> 
@@ -152,7 +152,7 @@ function FormSection() {
           )}
           <Button
             disabled={!enableNext}
-            className="flex gap-2 bg-brass hover:bg-brass/90 text-ink font-semibold" 
+            className="flex gap-2 bg-brass hover:bg-brass/90 text-text-on-light font-semibold" 
             size="sm"
             onClick={() => setActiveFormIndex(activeFormIndex + 1)}
           > 
@@ -172,9 +172,9 @@ function FormSection() {
               <div className="flex flex-col items-center gap-1.5">
                 <div 
                   className={`w-7 h-7 rounded-full flex items-center justify-center font-mono text-sm font-bold transition-colors duration-300 ${
-                    isActive ? 'bg-brass text-ink border-2 border-brass' : 
-                    isCompleted ? 'bg-teal text-ink border-2 border-teal' : 
-                    'bg-transparent border-2 border-ink/20 text-ink/40'
+                    isActive ? 'bg-brass text-text-on-light border-2 border-brass' : 
+                    isCompleted ? 'bg-teal text-text-on-light border-2 border-teal' : 
+                    'bg-transparent border-2 border-text-on-dark/30 text-text-on-dark/50'
                   }`}
                 >
                   {isCompleted ? <Check className="w-3.5 h-3.5" strokeWidth={3} /> : step.id}
@@ -182,14 +182,14 @@ function FormSection() {
                 <span className={`font-mono text-[9px] uppercase tracking-wider transition-colors duration-300 ${
                   isActive ? 'text-brass font-bold' : 
                   isCompleted ? 'text-teal font-semibold' : 
-                  'text-ink/40 font-medium'
+                  'text-text-on-dark/50 font-medium'
                 }`}>
                   {step.label}
                 </span>
               </div>
               {index < STEPS.length - 1 && (
                 <div className={`w-4 sm:w-8 md:w-12 h-[2px] mx-1 sm:mx-2 transition-colors duration-300 rounded-full ${
-                  isCompleted ? 'bg-teal' : 'bg-ink/10'
+                  isCompleted ? 'bg-teal' : 'bg-text-on-dark/20'
                 }`} />
               )}
             </div>
@@ -205,7 +205,7 @@ function FormSection() {
             initial={{ opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -16 }}
-            transition={{ duration: 0.2, ease: "linear" }} // ~200ms, no bounce (linear or easeOut)
+            transition={{ duration: 0.2, ease: "linear" }}
           >
             {activeFormIndex == 1 && <PersonalDetail enabledNext={(v) => setEnableNext(v)} />}
             {activeFormIndex == 2 && <Summery enabledNext={(v) => setEnableNext(v)} />}

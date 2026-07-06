@@ -68,7 +68,7 @@ function ResumeCardItem({ resume, refreshData }) {
   return (
     <div 
       ref={tiltRef}
-      className="group relative bg-parchment rounded-xl flex flex-col h-[280px] border border-ink/20 shadow-[4px_4px_0_var(--ink),8px_8px_0_rgba(16,19,28,0.05)] hover:shadow-[6px_6px_0_var(--ink),12px_12px_0_rgba(16,19,28,0.08)] transition-shadow duration-300"
+      className="group relative bg-parchment text-text-on-light rounded-xl flex flex-col h-[280px] border border-ink/20 shadow-[4px_4px_0_var(--ink),8px_8px_0_rgba(16,19,28,0.05)] hover:shadow-[6px_6px_0_var(--ink),12px_12px_0_rgba(16,19,28,0.08)] transition-shadow duration-300"
     >
       <Link to={`/dashboard/resume/${resumeId}/edit`} className="flex-1 flex flex-col cursor-pointer">
         {/* Top Accent Bar */}
@@ -86,26 +86,26 @@ function ResumeCardItem({ resume, refreshData }) {
       </Link>
 
       {/* Footer Area */}
-      <div className="border-t border-ink/10 p-4 flex justify-between items-center bg-white/50 rounded-b-xl backdrop-blur-sm z-20">
+      <div className="border-t border-ink/10 p-4 flex justify-between items-center bg-white/50 rounded-b-xl backdrop-blur-sm z-20 text-text-on-light">
         <div className="flex-1 min-w-0 pr-2">
-          <h2 className="font-display text-base font-bold text-ink truncate">
+          <h2 className="font-display text-base font-bold text-text-on-light truncate">
             {resumeTitle}
           </h2>
-          <p className="font-mono text-[10px] text-ink/60 uppercase tracking-wider mt-1">
+          <p className="font-mono text-[10px] text-text-on-light/60 uppercase tracking-wider mt-1">
             {createdAt}
           </p>
         </div>
 
         <DropdownMenu>
-          <DropdownMenuTrigger className="p-2 -mr-2 rounded-md hover:bg-ink/5 transition-colors focus:outline-none">
-            <MoreVertical className="h-4 w-4 text-ink/70" />
+          <DropdownMenuTrigger className="p-2 -mr-2 rounded-md hover:bg-ink/5 transition-colors focus:outline-none text-text-on-light">
+            <MoreVertical className="h-4 w-4 text-text-on-light/70" />
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent align="end" className="w-40 font-body bg-parchment border-ink/20 shadow-lg">
-            <DropdownMenuItem onClick={() => navigate(`/dashboard/resume/${resumeId}/edit`)} className="cursor-pointer hover:bg-ink/5 focus:bg-ink/5">
+          <DropdownMenuContent align="end" className="w-40 font-body bg-parchment text-text-on-light border-ink/20 shadow-lg">
+            <DropdownMenuItem onClick={() => navigate(`/dashboard/resume/${resumeId}/edit`)} className="cursor-pointer hover:bg-ink/5 focus:bg-ink/5 text-text-on-light">
               Edit
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => navigate(`/my-resume/${resumeId}/view`)} className="cursor-pointer hover:bg-ink/5 focus:bg-ink/5">
+            <DropdownMenuItem onClick={() => navigate(`/my-resume/${resumeId}/view`)} className="cursor-pointer hover:bg-ink/5 focus:bg-ink/5 text-text-on-light">
               View
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setOpenAlert(true)} className="cursor-pointer text-destructive hover:bg-destructive/10 focus:bg-destructive/10">
@@ -115,15 +115,15 @@ function ResumeCardItem({ resume, refreshData }) {
         </DropdownMenu>
 
         <AlertDialog open={openAlert}>
-          <AlertDialogContent className="font-body bg-parchment border-ink/20 shadow-xl">
+          <AlertDialogContent className="font-body bg-parchment text-text-on-light border-ink/20 shadow-xl">
             <AlertDialogHeader>
-              <AlertDialogTitle className="font-display font-bold text-ink">Are you sure?</AlertDialogTitle>
-              <AlertDialogDescription className="text-ink/70">
+              <AlertDialogTitle className="font-display font-bold text-text-on-light">Are you sure?</AlertDialogTitle>
+              <AlertDialogDescription className="text-text-on-light/70">
                 This will permanently delete your resume from our servers.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel onClick={() => setOpenAlert(false)} className="border-ink/20 hover:bg-ink/5">
+              <AlertDialogCancel onClick={() => setOpenAlert(false)} className="border-ink/20 hover:bg-ink/5 text-text-on-light">
                 Cancel
               </AlertDialogCancel>
               <AlertDialogAction onClick={onDelete} disabled={loading} className="bg-destructive hover:bg-destructive/90 text-white">

@@ -33,13 +33,13 @@ function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-ink/95 backdrop-blur-xl border-b border-white/10">
+    <header className="sticky top-0 z-50 bg-ink/95 backdrop-blur-xl border-b border-white/10 text-text-on-dark">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Left: Logo/Icon + Brand Name */}
           <Link to="/" className="flex items-center space-x-2 group">
             <div className="bg-brass p-2 rounded-xl group-hover:bg-brass/90 transition-colors duration-150">
-              <FileText className="h-6 w-6 text-ink" />
+              <FileText className="h-6 w-6 text-text-on-light" />
             </div>
             <span className="text-xl font-display font-bold text-text-on-dark tracking-tight">
               AI Resume Builder
@@ -62,7 +62,7 @@ function Header() {
               <Link to="/dashboard">
                 <Button
                   variant="outline"
-                  className="rounded-full px-4 py-2 text-sm border-brass text-brass bg-transparent hover:bg-brass hover:text-ink transition-all duration-150 focus:ring-2 focus:ring-brass focus:ring-offset-2 focus:ring-offset-ink"
+                  className="rounded-full px-4 py-2 text-sm border-brass text-brass bg-transparent hover:bg-brass hover:text-text-on-light transition-all duration-150 focus:ring-2 focus:ring-brass focus:ring-offset-2 focus:ring-offset-ink"
                 >
                   Dashboard
                 </Button>
@@ -70,11 +70,11 @@ function Header() {
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center justify-center w-9 h-9 rounded-full bg-teal text-ink font-semibold text-sm cursor-pointer hover:bg-teal/80 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-teal focus:ring-offset-2 focus:ring-offset-ink">
+                  <button className="flex items-center justify-center w-9 h-9 rounded-full bg-teal text-text-on-light font-semibold text-sm cursor-pointer hover:bg-teal/80 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-teal focus:ring-offset-2 focus:ring-offset-ink">
                     {getInitials()}
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 bg-surface border-white/10 shadow-xl">
+                <DropdownMenuContent align="end" className="w-56 bg-surface text-text-on-dark border-white/10 shadow-xl">
                   <DropdownMenuLabel>
                     <div className="flex flex-col text-text-on-dark">
                       <span className="text-sm font-body font-medium">
@@ -100,7 +100,7 @@ function Header() {
             </div>
           ) : (
             <Link to="/auth/sign-in">
-              <Button className="bg-brass hover:bg-brass/90 text-ink font-body font-medium px-5 py-2 rounded-md shadow-sm flex items-center gap-2 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-brass focus:ring-offset-2 focus:ring-offset-ink">
+              <Button className="bg-brass hover:bg-brass/90 text-text-on-light font-body font-medium px-5 py-2 rounded-md shadow-sm flex items-center gap-2 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-brass focus:ring-offset-2 focus:ring-offset-ink">
                 Get Started <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>

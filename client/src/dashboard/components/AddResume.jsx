@@ -105,25 +105,25 @@ function AddResume({ refreshData }) {
     <div>
       <div
         ref={tiltRef}
-        className="group bg-parchment rounded-xl h-[280px] border border-ink/20 shadow-[4px_4px_0_var(--ink),8px_8px_0_rgba(16,19,28,0.05)] hover:shadow-[6px_6px_0_var(--ink),12px_12px_0_rgba(16,19,28,0.08)] transition-shadow duration-300 flex flex-col items-center justify-center cursor-pointer text-ink/70 hover:text-ink relative overflow-hidden"
+        className="group bg-parchment text-text-on-light rounded-xl h-[280px] border border-ink/20 shadow-[4px_4px_0_var(--ink),8px_8px_0_rgba(16,19,28,0.05)] hover:shadow-[6px_6px_0_var(--ink),12px_12px_0_rgba(16,19,28,0.08)] transition-shadow duration-300 flex flex-col items-center justify-center cursor-pointer hover:text-text-on-light relative overflow-hidden"
         onClick={() => setOpenDialog(true)}
       >
         <div className="absolute inset-0 bg-ink/[0.02] opacity-0 group-hover:opacity-100 transition-opacity"></div>
-        <PlusSquare className="w-12 h-12 mb-3 stroke-[1.5]" />
-        <span className="font-display font-bold text-lg">Create New</span>
+        <PlusSquare className="w-12 h-12 mb-3 stroke-[1.5] text-text-on-light/70 group-hover:text-text-on-light transition-colors" />
+        <span className="font-display font-bold text-lg text-text-on-light/70 group-hover:text-text-on-light transition-colors">Create New</span>
       </div>
 
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-        <DialogContent className="bg-parchment border-ink/20 font-body text-ink shadow-xl">
+        <DialogContent className="bg-parchment text-text-on-light border-ink/20 font-body shadow-xl">
           <DialogHeader>
-            <DialogTitle className="font-display font-bold text-2xl text-ink">Create New Resume</DialogTitle>
-            <DialogDescription className="text-ink/70">
+            <DialogTitle className="font-display font-bold text-2xl text-text-on-light">Create New Resume</DialogTitle>
+            <DialogDescription className="text-text-on-light/70">
               Add a title for your new resume
             </DialogDescription>
           </DialogHeader>
 
           <Input
-            className="my-4 border-ink/30 focus-visible:ring-brass bg-white/50"
+            className="my-4 border-ink/30 text-text-on-light focus-visible:ring-brass bg-white/50"
             placeholder="Ex. Frontend Developer Resume"
             value={resumeTitle}
             onChange={(e) => setResumeTitle(e.target.value)}
@@ -133,14 +133,14 @@ function AddResume({ refreshData }) {
             <Button 
               onClick={() => setOpenDialog(false)} 
               variant="ghost" 
-              className="hover:bg-ink/5 text-ink/80"
+              className="hover:bg-ink/5 text-text-on-light/80"
             >
               Cancel
             </Button>
             <Button 
               disabled={!resumeTitle.trim() || loading} 
               onClick={onCreate}
-              className="bg-brass hover:bg-brass/90 text-ink font-semibold"
+              className="bg-brass hover:bg-brass/90 text-text-on-light font-semibold"
             >
               {loading ? <Loader2 className="animate-spin h-4 w-4" /> : 'Create'}
             </Button>
