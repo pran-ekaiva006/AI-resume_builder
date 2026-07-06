@@ -65,23 +65,48 @@ function ResumeCardItem({ resume, refreshData }) {
 
   const resumeId = resume?.resumeId;
 
+  const hasSummary = Boolean(resume?.summery?.trim());
+  const hasExperience = Array.isArray(resume?.experience) && resume.experience.length > 0;
+  const hasEducation = Array.isArray(resume?.education) && resume.education.length > 0;
+  const hasSkills = Array.isArray(resume?.skills) && resume.skills.length > 0;
+
+  const completionScore = [hasSummary, hasExperience, hasEducation, hasSkills].filter(Boolean).length;
+  const completionPercentage = Math.round((completionScore / 4) * 100);
+  const isPublic = resume?.isPublic || false;
+
   return (
     <div 
       ref={tiltRef}
       className="group relative bg-parchment text-text-on-light rounded-xl flex flex-col h-[280px] border border-ink/20 shadow-[4px_4px_0_var(--ink),8px_8px_0_rgba(16,19,28,0.05)] hover:shadow-[6px_6px_0_var(--ink),12px_12px_0_rgba(16,19,28,0.08)] transition-shadow duration-300"
     >
-      <Link to={`/dashboard/resume/${resumeId}/edit`} className="flex-1 flex flex-col cursor-pointer">
-        {/* Top Accent Bar */}
-        <div 
-          className="h-2 w-full rounded-t-xl" 
-          style={{ backgroundColor: themeColor }}
-        />
+      <Link to={`/dashboard/resume/${resumeId}/edit`} className="flex-1 flex flex-col cursor-pointer relative overflow-hidden rounded-t-xl">
+        {/* Public/Private Badge */}
+        <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/60 border border-ink/10 backdrop-blur-md z-20 shadow-sm transition-opacity group-hover:opacity-100">
+          <div className={`w-1.5 h-1.5 rounded-full ${isPublic ? 'bg-teal shadow-[0_0_4px_var(--teal)]' : 'bg-ink/30'}`} />
+          <span className="font-mono text-[9px] uppercase tracking-wider text-ink/70 font-medium">
+            {isPublic ? 'Public' : 'Private'}
+          </span>
+        </div>
         
         {/* Card Body */}
-        <div className="flex-1 flex items-center justify-center p-6 relative overflow-hidden">
+        <div className="flex-1 flex items-center justify-center p-6 relative">
           {/* Subtle background decoration */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-ink/5 rounded-bl-full pointer-events-none -z-0"></div>
-          <img src="/cv.png" width={64} height={64} alt="Resume Icon" className="relative z-10 opacity-90 drop-shadow-sm group-hover:scale-105 transition-transform" />
+          <img src="/cv.png" width={64} height={64} alt="Resume Icon" className="relative z-10 opacity-90 drop-shadow-sm group-hover:scale-105 transition-transform duration-300" />
+        </div>
+
+        {/* Completion Indicator */}
+        <div className="absolute bottom-3 left-4 right-4 z-20">
+          <div className="flex justify-between items-center mb-1.5">
+            <span className="font-mono text-[9px] uppercase tracking-wider text-ink/50">Completion</span>
+            <span className="font-mono text-[9px] font-semibold text-ink/70">{completionPercentage}%</span>
+          </div>
+          <div className="h-1 w-full bg-ink/10 rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-brass rounded-full transition-all duration-1000 ease-out" 
+              style={{ width: `${completionPercentage}%` }}
+            />
+          </div>
         </div>
       </Link>
 

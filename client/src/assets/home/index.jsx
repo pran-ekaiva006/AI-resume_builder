@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { 
   Share2, 
   ArrowRight, 
@@ -9,12 +9,25 @@ import {
 } from "lucide-react";
 import Footer from "client/src/components/custom/Footer";
 import Header from "client/src/components/custom/Header";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import ResumeAssemblyHero from "../../components/three/ResumeAssemblyHero";
 import { motion, MotionConfig } from "framer-motion";
 
 export default function Home() {
+  const location = useLocation();
 
+  // Scroll to hash section when arriving from another route (e.g. /#features)
+  useEffect(() => {
+    if (location.hash) {
+      const sectionId = location.hash.replace('#', '');
+      // Small delay to ensure the DOM has rendered
+      const timer = setTimeout(() => {
+        const el = document.getElementById(sectionId);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [location.hash]);
 
 
   const features = [

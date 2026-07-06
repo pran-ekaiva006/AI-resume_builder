@@ -31,44 +31,96 @@ function Dashboard() {
     }
   };
 
+  const getInitials = () => {
+    if (user?.firstName && user?.lastName) {
+      return `${user.firstName[0]}${user.lastName[0]}`.toUpperCase();
+    }
+    if (user?.firstName) return user.firstName[0].toUpperCase();
+    if (user?.email) return user.email[0].toUpperCase();
+    return 'U';
+  };
+
+  const publicCount = resumeList.filter(r => r?.isPublic).length;
+  const memberSince = user?.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Unknown';
+  
+  const displayEmail = user?.email?.endsWith('@demo.local') ? 'demo@demo.local' : user?.email;
+
   return (
-    <div className="min-h-[calc(100vh-80px)] bg-ink text-text-on-dark p-10 md:px-20 lg:px-32">
-      <h2 className="font-display font-bold text-4xl tracking-tight">My Workspace</h2>
-      <p className="font-body text-text-on-dark/80 mt-2">Start creating an AI-powered resume for your next job role.</p>
-
-      {/* Grid container for cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-10">
-        <AddResume refreshData={fetchResumes} />
-
-        {loadingResumes ? (
-          // Loading placeholders
-          [1, 2, 3, 4].map((item, index) => (
-            <div
-              key={index}
-              className="h-[280px] rounded-lg bg-surface/50 border border-ink/20 animate-pulse"
-            />
-          ))
-        ) : resumeList.length > 0 ? (
-          // Resume cards
-          resumeList.map((resume, index) => (
-            <ResumeCardItem
-              key={resume._id || index}
-              resume={resume}
-              refreshData={fetchResumes}
-            />
-          ))
-        ) : null}
-      </div>
-
-      {/* Empty State Illustration */}
-      {!loadingResumes && resumeList.length === 0 && (
-        <div className="mt-16 flex flex-col items-center justify-center opacity-80 pointer-events-none">
-          <div className="transform scale-[0.6] -mt-16 -mb-20">
-            <ResumeAssemblyFallback />
-          </div>
-          <p className="font-body text-lg text-text-on-dark/60 mt-4">Your first resume starts here</p>
+    <div className="min-h-[calc(100vh-80px)] bg-ink text-text-on-dark p-6 md:p-10 lg:px-32 flex flex-col gap-10">
+      
+      {/* SECTION 1: Profile Panel */}
+      <section className="bg-surface rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center md:items-start gap-6 border border-white/5 shadow-2xl">
+        {/* Avatar */}
+        <div className="flex-shrink-0 w-20 h-20 md:w-24 md:h-24 rounded-full bg-teal flex items-center justify-center text-text-on-light font-display font-bold text-3xl md:text-4xl shadow-inner">
+          {getInitials()}
         </div>
-      )}
+        
+        {/* User Info */}
+        <div className="flex flex-col items-center md:items-start flex-1 text-center md:text-left mt-2 md:mt-0">
+          <h2 className="font-display font-bold text-2xl md:text-3xl text-text-on-dark tracking-tight">
+            {user?.firstName} {user?.lastName}
+          </h2>
+          <p className="font-body text-text-on-dark/70 mt-1">{displayEmail}</p>
+        </div>
+
+        {/* Stats */}
+        <div className="flex gap-4 sm:gap-8 mt-6 md:mt-2 w-full md:w-auto justify-center md:justify-end">
+          <div className="flex flex-col items-center md:items-end">
+            <span className="font-mono text-2xl font-semibold text-brass">{resumeList.length}</span>
+            <span className="font-mono text-xs text-text-on-dark/50 uppercase tracking-wider mt-1">Resumes</span>
+          </div>
+          <div className="w-px bg-white/10" />
+          <div className="flex flex-col items-center md:items-end">
+            <span className="font-mono text-2xl font-semibold text-teal">{publicCount}</span>
+            <span className="font-mono text-xs text-text-on-dark/50 uppercase tracking-wider mt-1">Public</span>
+          </div>
+          <div className="w-px bg-white/10" />
+          <div className="flex flex-col items-center md:items-end">
+            <span className="font-mono text-base md:text-lg font-semibold text-text-on-dark mt-1 md:mt-0">{memberSince}</span>
+            <span className="font-mono text-xs text-text-on-dark/50 uppercase tracking-wider mt-2 md:mt-1">Member Since</span>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 2: Resumes Panel */}
+      <section>
+        <h2 className="font-display font-bold text-3xl tracking-tight text-text-on-dark">My Workspace</h2>
+        <p className="font-body text-text-on-dark/70 mt-2">Start creating an AI-powered resume for your next job role.</p>
+
+        {/* Grid container for cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-8">
+          <AddResume refreshData={fetchResumes} />
+
+          {loadingResumes ? (
+            // Loading placeholders
+            [1, 2, 3, 4].map((item, index) => (
+              <div
+                key={index}
+                className="h-[280px] rounded-lg bg-surface/50 border border-ink/20 animate-pulse"
+              />
+            ))
+          ) : resumeList.length > 0 ? (
+            // Resume cards
+            resumeList.map((resume, index) => (
+              <ResumeCardItem
+                key={resume._id || index}
+                resume={resume}
+                refreshData={fetchResumes}
+              />
+            ))
+          ) : null}
+        </div>
+
+        {/* Empty State Illustration */}
+        {!loadingResumes && resumeList.length === 0 && (
+          <div className="mt-16 flex flex-col items-center justify-center opacity-80 pointer-events-none">
+            <div className="transform scale-[0.6] -mt-16 -mb-20">
+              <ResumeAssemblyFallback />
+            </div>
+            <p className="font-body text-lg text-text-on-dark/60 mt-4">Your first resume starts here</p>
+          </div>
+        )}
+      </section>
     </div>
   );
 }

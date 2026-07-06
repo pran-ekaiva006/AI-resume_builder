@@ -10,7 +10,14 @@ const requireAuth = async (req, res, next) => {
     const payload = verifyAccessToken(token);
     const user = await User.findById(payload.sub);
     if (!user) return res.status(401).json({ message: 'Unauthorized: user not found' });
-    req.user = { id: user._id.toString(), email: user.email, role: user.role };
+    req.user = { 
+      id: user._id.toString(), 
+      email: user.email, 
+      role: user.role,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      createdAt: user.createdAt
+    };
     next();
   } catch (err) {
     return res.status(401).json({ message: 'Unauthorized: invalid or expired token' });

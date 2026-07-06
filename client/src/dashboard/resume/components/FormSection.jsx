@@ -125,8 +125,19 @@ const STEPS = [
 
 function FormSection() {
   const [activeFormIndex, setActiveFormIndex] = useState(1);
+  const [direction, setDirection] = useState(1);
   const [enableNext, setEnableNext] = useState(true);
   const { resumeId } = useParams();
+
+  const handleNext = () => {
+    setDirection(1);
+    setActiveFormIndex(activeFormIndex + 1);
+  };
+
+  const handleBack = () => {
+    setDirection(-1);
+    setActiveFormIndex(activeFormIndex - 1);
+  };
 
   return (
     <div className="flex flex-col">
@@ -145,7 +156,7 @@ function FormSection() {
               size="sm"
               variant="outline"
               className="border-ink/20 text-text-on-light hover:bg-ink/5"
-              onClick={() => setActiveFormIndex(activeFormIndex - 1)}
+              onClick={handleBack}
             > 
               <ArrowLeft className="h-4 w-4" /> 
             </Button>
@@ -154,7 +165,7 @@ function FormSection() {
             disabled={!enableNext}
             className="flex gap-2 bg-brass hover:bg-brass/90 text-text-on-light font-semibold" 
             size="sm"
-            onClick={() => setActiveFormIndex(activeFormIndex + 1)}
+            onClick={handleNext}
           > 
             Next
             <ArrowRight className="h-4 w-4" /> 
@@ -199,12 +210,13 @@ function FormSection() {
 
       {/* Form Content with Transitions */}
       <div className="relative overflow-visible">
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={activeFormIndex}
-            initial={{ opacity: 0, x: 16 }}
+            custom={direction}
+            initial={(d) => ({ opacity: 0, x: d * 16 })}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -16 }}
+            exit={(d) => ({ opacity: 0, x: d * -16 })}
             transition={{ duration: 0.2, ease: "linear" }}
           >
             {activeFormIndex == 1 && <PersonalDetail enabledNext={(v) => setEnableNext(v)} />}

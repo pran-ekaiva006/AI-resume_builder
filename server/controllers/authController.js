@@ -36,7 +36,8 @@ const signup = async (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        role: user.role
+        role: user.role,
+        createdAt: user.createdAt
       }
     });
   } catch (err) {
@@ -72,7 +73,8 @@ const login = async (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        role: user.role
+        role: user.role,
+        createdAt: user.createdAt
       }
     });
   } catch (err) {
@@ -269,6 +271,7 @@ const googleLogin = async (req, res) => {
         lastName: user.lastName,
         email: user.email,
         role: user.role,
+        createdAt: user.createdAt
       },
     });
   } catch (err) {
@@ -347,7 +350,8 @@ const demoLogin = async (req, res) => {
         lastName: user.lastName,
         email: user.email,
         role: user.role,
-        isDemo: user.isDemo
+        isDemo: user.isDemo,
+        createdAt: user.createdAt
       }
     });
   } catch (err) {
