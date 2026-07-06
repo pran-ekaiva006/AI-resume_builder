@@ -3,7 +3,7 @@ const getCookieOptions = (type = 'access') => {
   return {
     httpOnly: true,
     secure: isProd,
-    sameSite: isProd ? 'none' : 'lax',
+    sameSite: 'lax', // Use lax since frontend and backend are now on the exact same domain
     maxAge: type === 'refresh' ? 30 * 24 * 60 * 60 * 1000 : 15 * 60 * 1000 // 30 days or 15 mins
   };
 };
