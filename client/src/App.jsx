@@ -3,6 +3,7 @@ import { useAuth } from "./context/AuthContext";
 import Header from "./components/custom/Header";
 import { Toaster } from "./components/ui/sonner";
 import { LoaderCircle } from "lucide-react";
+import { Analytics } from '@vercel/analytics/react';
 
 function App() {
   const { user, loading } = useAuth();
@@ -25,6 +26,7 @@ function App() {
       ) : (
         <Navigate to="/auth/sign-in" />
       )}
+      <Analytics />
     </>
   );
 }
