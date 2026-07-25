@@ -1,7 +1,8 @@
 import fs from 'fs';
 
-// Default to the known Render URL if VITE_BACKEND_URL is not set during Netlify build
-const backendUrl = process.env.VITE_BACKEND_URL || 'https://ai-resume-builder-6-o5vo.onrender.com';
+// Use the VITE_BACKEND_URL environment variable set in your frontend hosting
+// platform (e.g. Netlify). Update this fallback to your actual Vercel backend URL.
+const backendUrl = process.env.VITE_BACKEND_URL || 'https://your-backend.vercel.app';
 
 const redirects = `
 /api/*  ${backendUrl}/api/:splat  200!

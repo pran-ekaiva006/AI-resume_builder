@@ -1,23 +1,36 @@
-
+// server/app.js
+//
+// Express application — routes, middleware, error handlers.
+//
+// This file is imported by:
+//   • api/index.js  (Vercel serverless entry point)
+//   • server.js     (local development with app.listen())
+//   • __tests__/    (Jest tests via testApp.js)
 
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const path = require("path");
+const connectDB = require("./lib/connectDB");
 const { requireAuth } = require("./middlewares/authMiddleware");
 
 const app = express();
 
 app.set('trust proxy', 1);
 
-// ✅ CORS config
+// ── CORS config ──────────────────────────────────────────────────────────
+// Reads CLIENT_URL from environment so the allowed origin is configurable
+// per deployment without code changes. Keeps localhost for local dev.
+const allowedOrigins = [
+  "http://localhost:5173",
+];
+
+if (process.env.CLIENT_URL) {
+  allowedOrigins.push(process.env.CLIENT_URL);
+}
+
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://ai-resume-builder-6-o5vo.onrender.com",
-      "https://capable-churros-e51954.netlify.app",
-    ],
+    origin: allowedOrigins,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -26,6 +39,24 @@ app.use(
 
 app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser());
+
+// ── Ensure MongoDB is connected before any route handler ─────────────────
+// In serverless (Vercel), there is no persistent process, so the DB
+// connection must be established (or reused) on every invocation.
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error("❌ MongoDB connection failed:", err.message);
+    res.status(503).json({
+      success: false,
+      message: "Database connection failed. Please try again shortly.",
+    });
+  }
+});
+
+// ── Routes ───────────────────────────────────────────────────────────────
 
 // ✅ PUBLIC RESUME ROUTE (no auth required — for recruiter sharing)
 const { getPublicResume } = require("./controllers/resumeController");
@@ -45,6 +76,10 @@ app.use("/api/auth", authRoutes);
 // ✅ AI ROUTES NOW REQUIRE AUTH
 const aiRoutes = require("./routes/aiRoutes");
 app.use("/api/ai", requireAuth, aiRoutes);
+
+// ✅ CRON ROUTES (protected by CRON_SECRET, not user auth)
+const cronRoutes = require("./routes/cronRoutes");
+app.use("/api/cron", cronRoutes);
 
 // 🔥 Health check
 app.get("/api/health", (_, res) => {
@@ -69,21 +104,14 @@ app.use("/api", (req, res) => {
   res.status(404).json({ message: "❌ API Route not found" });
 });
 
-const fs = require("fs");
-const clientBuildPath = path.join(__dirname, "public");
-
-// ✅ Serve Static React App if build exists
-if (fs.existsSync(clientBuildPath)) {
-  app.use(express.static(clientBuildPath));
-
-  app.get("/{*path}", (req, res) => {
-    res.sendFile(path.join(clientBuildPath, "index.html"));
+// ── Root fallback ────────────────────────────────────────────────────────
+// No static file serving — the frontend is deployed separately.
+app.get("/", (_, res) => {
+  res.json({
+    success: true,
+    message: "AI Resume Builder API",
+    docs: "All API routes are under /api/*",
   });
-} else {
-  // Fallback for development if not serving client
-  app.get("/", (_, res) => {
-    res.send("API is running, but frontend build is missing");
-  });
-}
+});
 
 module.exports = app;
