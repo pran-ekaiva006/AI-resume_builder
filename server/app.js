@@ -18,19 +18,28 @@ const app = express();
 app.set('trust proxy', 1);
 
 // ── CORS config ──────────────────────────────────────────────────────────
-// Reads CLIENT_URL from environment so the allowed origin is configurable
-// per deployment without code changes. Keeps localhost for local dev.
-const allowedOrigins = [
-  "http://localhost:5173",
-];
-
-if (process.env.CLIENT_URL) {
-  allowedOrigins.push(process.env.CLIENT_URL);
-}
-
+// Use a dynamic origin function. This ensures that even if CLIENT_URL has a
+// trailing slash in Vercel settings, it will still match correctly.
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      
+      const allowedOrigins = ["http://localhost:5173"];
+      
+      // Clean the CLIENT_URL env var (remove trailing slash if present)
+      if (process.env.CLIENT_URL) {
+        allowedOrigins.push(process.env.CLIENT_URL.replace(/\/$/, ""));
+      }
+
+      if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === "development") {
+        callback(null, true);
+      } else {
+        console.error(`Blocked by CORS: ${origin}`);
+        callback(null, false); // Block without throwing to avoid crash
+      }
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
